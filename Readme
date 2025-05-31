@@ -1,0 +1,89 @@
+#### Step 1: **Basic Concept of NAT (Network Address Translation)**
+
+* **What is NAT?**
+  NAT allows multiple devices in your **local network** (e.g., your Wi-Fi or home network) to share a **single public IP address** assigned by your **Internet Service Provider (ISP)**. It translates the **private IP addresses** of devices (like `192.168.x.x`) to a **single public IP** that is visible on the internet.
+
+* **Why is NAT important?**
+  Without NAT, each device on your local network would need its own unique public IP to communicate over the internet. NAT helps reduce the number of public IP addresses required, but it also makes it tricky to initiate direct communication from outside the local network (because devices within the network only have **private IPs**).
+
+#### Step 2: **The Role of STUN (Session Traversal Utilities for NAT)**
+
+* **What does STUN do?**
+  STUN helps a device **discover its public IP address** and the **type of NAT** it's behind. This allows devices to figure out how to communicate with each other if they are behind NATs (which most devices are).
+
+* **Why do we need it?**
+  When two devices (e.g., Alice and Bob) want to communicate over the internet, the NAT router typically hides their private IPs. So, they need to discover their **public IPs** to establish a direct connection.
+
+#### Step 3: **How the STUN Process Works**
+
+1. **Device Sends Request to STUN Server**:
+
+   * Alice's device (in Kenya) sends a request to a **public STUN server** (e.g., `stun.l.google.com:19302`).
+   * This request is sent from her **private IP address** (e.g., `192.168.88.254`) and **private port** (e.g., `50000`).
+
+2. **Router Modifies the Request**:
+
+   * Alice’s router forwards this request, but it modifies the **source IP** to the **public IP** assigned to Alice's router by the ISP (e.g., `203.0.113.56`) and changes the **source port** to something like `54000`.
+
+3. **STUN Server Replies**:
+
+   * The **STUN server** receives the request and responds with Alice's **public IP address** (e.g., `203.0.113.56:54000`).
+
+4. **Device Receives the Response**:
+
+   * Alice’s device now knows its **public IP address** (`203.0.113.56`) and the **port** (`54000`) that can be used for communication over the internet.
+   * This information is stored as a **server-reflexive (srflx)** candidate, which is part of the **ICE candidates**.
+
+#### Step 4: **Why SRFLX Candidates Are Important**
+
+* **Public IP and Port (SRFLX)**:
+  The **public IP** and **port** that Alice receives from the STUN server is what her device will use to attempt a connection with Bob (who could be in the USA).
+
+* **What if STUN Doesn't Work?**
+  If the devices can't connect using **host** or **srflx** candidates (e.g., due to firewall restrictions), they will try **TURN** servers, which relay the media traffic.
+
+#### Step 5: **Real-World Example of STUN in Action**
+
+* **Scenario**:
+  Alice (in Kenya) wants to connect with Bob (in the USA). They are both using WebRTC for video calling.
+
+* **Alice’s Process**:
+
+  * Alice’s device sends a request to the **STUN server**.
+  * The STUN server replies with Alice’s **public IP** (`203.0.113.56:54000`).
+  * Alice uses this public IP and port to try connecting with Bob.
+
+* **Bob’s Process**:
+
+  * Bob’s device does the same thing, sending a request to the **STUN server**.
+  * The STUN server replies with Bob’s **public IP** (`198.51.100.23:60000`).
+  * Bob tries to connect to Alice using the **public IP and port** that the STUN server provided.
+
+* **Final Communication**:
+  If the **srflx candidates** from both Alice and Bob are **reachable** (i.e., the NATs allow communication), their **peer-to-peer connection** is established directly. If not, **TURN servers** will relay the media.
+
+---
+
+### 💡 **In Summary**:
+
+* **STUN** servers are used by devices to discover their **public IP**.
+* Devices send requests to STUN servers, which respond with the **public IP** seen from the internet, allowing the devices to try and connect with each other.
+* This process allows WebRTC to handle **NAT traversal** so that devices behind routers can still communicate with each other directly.
+* **STUN** is just the **first step**; **TURN** servers are used if direct communication fails.
+
+---
+
+#### 🤔 **Suggested Next Steps to Deepen Your Understanding**:
+
+1. **Set Up a STUN Server**:
+   Try setting up your own STUN server on your local machine or using a service like Google’s `stun.l.google.com:19302` to experiment with how it responds to requests from different devices on your network.
+
+2. **Learn About TURN**:
+   Explore how **TURN servers** function as a fallback mechanism for relaying media when direct peer-to-peer communication isn't possible.
+
+3. **Use WebRTC Applications**:
+   Try using **WebRTC-based applications** like **Google Meet** or **Jitsi Meet**, and observe how they handle connectivity. You can also use browser developer tools to inspect network traffic and WebRTC internals.
+
+---
+
+This breakdown should help you understand **how STUN works** and how **NAT traversal** occurs in WebRTC. Feel free to ask if you want me to dive deeper into any part of the process or clarify something further!
