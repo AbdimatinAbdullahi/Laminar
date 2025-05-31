@@ -3,3 +3,8 @@ frontend/node_modules/
 frontend/package-lock.json
 frontend/eslint.config.js
 comments.txt
+
+# Ignoring configuration files and depedency files
+backend/user-service/config.py
+backend/user-service/Pipfile.lock
+backend/user-service/Pipfile
