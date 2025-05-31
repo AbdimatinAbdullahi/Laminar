@@ -1,0 +1,4 @@
+# Ignore some frontend files
+frontend/node_modules
+frontend/package-lock.json
+frontend/eslint.config.js
