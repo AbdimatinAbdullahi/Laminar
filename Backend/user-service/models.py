@@ -10,8 +10,8 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
     fullname =  db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(200), nullanle=False)
-    is_verified = db.Column(db.Boolean)
+    email = db.Column(db.String(200), nullable=False)
+    is_verified = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     password = db.Column(db.String(512), nullable=False)
 
