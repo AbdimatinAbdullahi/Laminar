@@ -8,3 +8,5 @@ comments.txt
 backend/user-service/config.py
 backend/user-service/Pipfile.lock
 backend/user-service/Pipfile
+**/__pycache__/
+**/*.pyc
