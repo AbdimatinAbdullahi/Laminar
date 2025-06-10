@@ -47,7 +47,6 @@ export const AuthProvider = ({children})=>{
                 navigate('/@me') 
             }
         }
-
         authenticateUser()
         
     }, [])

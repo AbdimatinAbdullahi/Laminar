@@ -5,13 +5,12 @@ import {Eye, EyeOff} from 'lucide-react'
 import {useAuth} from '../context/AuthContext'
 
 
-
-
 function Signup() {
 
   const {signup} = useAuth()
   const [typePassword, settypePassword] = useState("password")
-  const [userCredintials, setUserCredintials] = useState({ fullname: "", password: "", email: ""})
+  const [typeConfirmPassword, setTypeConfirmPassword] = useState("password")
+  const [userCredintials, setUserCredintials] = useState({ fullname: "", password: "", email: "", confirmPassword: ""})
 
 
   const handleRegister = (e)=>{
@@ -24,13 +23,12 @@ function Signup() {
 
 
   return (
-    <div className={style.signupContainer} >
+    <div className={style.signupContainer}>
       <form className={style.formContainer}>
         
         <div className={style.formHeader}>
             Welcome to Laminar
         </div>
-
 
         <div className={style.fullnameInput}>
           <input type="text" placeholder='Enter fullname' onChange={(e)=> setUserCredintials({...userCredintials, fullname: e.target.value})} />
@@ -41,13 +39,13 @@ function Signup() {
         </div>
 
         <div className={style.passwordInput}>
-          <input type={typePassword} placeholder='Create password' onChange={(e) => setUserCredintials({...userCredintials, password: e.target.value})}/>
+          <input type={typePassword} value={userCredintials.password} placeholder='Create password' onChange={(e) => setUserCredintials({...userCredintials, password: e.target.value})}/>
           {typePassword === "text" ? <EyeOff onClick={()=>settypePassword("password")} size={40}/> : <Eye size={40} onClick={()=>settypePassword("text")}/>}
         </div>
 
         <div className={style.confirmPasswordInput}>
-          <input type={typePassword} placeholder='Create password' onChange={(e) => setUserCredintials({...userCredintials, password: e.target.value})}/>
-          {typePassword === "text" ? <EyeOff onClick={()=>settypePassword("password")} size={40}/> : <Eye size={40} onClick={()=>settypePassword("text")}/>}
+          <input type={typeConfirmPassword} value={userCredintials.confirmPassword} placeholder='Confirm password' onChange={(e) => setUserCredintials({...userCredintials, confirmPassword: e.target.value})}/>
+          {typeConfirmPassword === "text" ? <EyeOff onClick={()=>setTypeConfirmPassword("password")} size={40}/> : <Eye size={40} onClick={()=>setTypeConfirmPassword("text")}/>}
         </div>
 
         <div className={style.submitBut}>
@@ -55,7 +53,7 @@ function Signup() {
         </div>
 
         <div className={style.somCon}>
-          <div>Already have an account? <Link to='/register'>Sign In</Link></div>
+          <div>Already have an account? <Link to='/login'>Sign In</Link></div>
         </div>
 
       </form>
