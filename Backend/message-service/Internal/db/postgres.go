@@ -70,3 +70,7 @@ func AutoMigrateTables() {
 
 	log.Println("Tables created successfully! ✅")
 }
+
+func GetPostgresDB() *gorm.DB {
+	return GormDB
+}
