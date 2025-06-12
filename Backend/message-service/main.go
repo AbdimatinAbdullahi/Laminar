@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"laminar/Internal/db"
 	"laminar/Internal/workspace"
 	"log"
@@ -25,17 +26,27 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 
 func main() {
+
+	// Postgres database connectection
 	if err := db.InitPostgres(); err != nil {
 		log.Fatalf("Error initializinf db connection : %v", err)
+		os.Exit(1)
+	}
+
+	// Mongo_db database connection
+
+	if err := db.InitMongo(context.Background()); err != nil {
+		log.Fatalf("Error connecting to mongo db: %v", err)
 		os.Exit(1)
 	}
 
 	defer db.ClosePostgres()
 
 	// db.AutoMigrateTables()
-
+	db.SeedMessages(context.Background())
 	gormDB := db.GetPostgresDB()
 
+	// Establishing dependecies for workspace package that is used to load workspace data like workspaces, channels and messages
 	workspaceRepo := workspace.NewRepository(gormDB)
 	workspaceSvc := workspace.NewService(workspaceRepo)
 	workspaceHandler := workspace.NewHandler(workspaceSvc)

@@ -16,8 +16,9 @@ type repository struct {
 	db *gorm.DB
 }
 
+// Constructor function that takes in the value and assign it to  a struct concrete type: db
 func NewRepository(db *gorm.DB) Repository {
-	return &repository{db}
+	return &repository{db: db}
 }
 
 func (r *repository) GetWorspaceByUserId(userId string) ([]models.Workspace, error) {

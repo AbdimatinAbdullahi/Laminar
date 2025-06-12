@@ -6,6 +6,7 @@ type Service interface {
 	GetUserWorkspaceAndChannels(userId string) ([]WorkspaceWithChannels, error)
 }
 
+// One property that is called repo
 type service struct {
 	repo Repository
 }
