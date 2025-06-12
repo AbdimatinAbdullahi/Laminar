@@ -48,6 +48,10 @@ func CloseMongo(ctx context.Context) {
 	}
 }
 
+func GetMongo() *mongo.Database {
+	return MongoDatabase
+}
+
 func SeedMessages(ctx context.Context) error {
 	users := []uuid.UUID{
 		uuid.MustParse("4261498a-7b23-4bf1-bf16-46d4f3deb513"),

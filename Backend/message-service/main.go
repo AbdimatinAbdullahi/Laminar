@@ -43,11 +43,12 @@ func main() {
 	defer db.ClosePostgres()
 
 	// db.AutoMigrateTables()
-	db.SeedMessages(context.Background())
+	// db.SeedMessages(context.Background())
 	gormDB := db.GetPostgresDB()
+	mongoDB := db.GetMongo()
 
 	// Establishing dependecies for workspace package that is used to load workspace data like workspaces, channels and messages
-	workspaceRepo := workspace.NewRepository(gormDB)
+	workspaceRepo := workspace.NewRepository(gormDB, mongoDB)
 	workspaceSvc := workspace.NewService(workspaceRepo)
 	workspaceHandler := workspace.NewHandler(workspaceSvc)
 
