@@ -1,9 +1,6 @@
 import React, {useReducer, useContext, createContext, useEffect, useState, act} from "react";
 import axios from "axios";
 
-
-
-
 const ChatContext = createContext()
 
 // This context id used: getting user id and sending to backend
@@ -71,7 +68,7 @@ export const ChatProvider = ({children})=>{
             }
 
         } catch (error) {
-            dispatch({type: "LOAD_ERROR", })
+            dispatch({type: "LOAD_ERROR", payload: error})
             console.error("Error fetching the data from backend: ", error)
         }
       }

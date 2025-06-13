@@ -3,7 +3,6 @@
     color: white;
     width: 25%;
     height: 100%;
-    border: 1px solid wheat;
     display: flex;
     flex-direction: row;
 }

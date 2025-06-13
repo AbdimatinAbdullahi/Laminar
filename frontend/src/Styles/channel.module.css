@@ -1,3 +1,8 @@
+:root{
+    --font-seculr-one: "Secular One";
+    --font-noto-sans: "Noto sans";
+}
+
 .channelContainer{
     width: 85%;
     background-color: #232222;
@@ -5,4 +10,90 @@
 
 .channels{
     background-color: #232222;
+}
+
+.workspaceDetails{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #232222;
+    background: #232222;
+    width: 100%;
+    height: 6%;
+    border: 1px solid white;
+    border-top-left-radius: 6px;
+    box-sizing: border-box;
+    padding: 0 1em;
+}
+
+.workspaceDetails div{
+    background-color: #232222;
+    background: #232222; 
+    font-family: var(--font-seculr-one); 
+    box-sizing: border-box;
+    font-size: 1.9em;
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+}
+
+.Icon{
+    background-color: #232222;
+    color: white;
+    box-sizing: border-box;
+}
+
+.channelHeader{
+    width: 100%;
+    height: 3%;
+    background-color: #232222;
+    font-family: var(--font-seculr-one);
+    font-size: 2em;
+    color: white;
+    /* border:  1px solid white; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 1em;
+    margin-top: 2em;
+}
+.channelContainer div{
+    background-color: #232222;
+}
+
+.channels{
+    /* border: 1px solid white; */
+    width: 100%;
+    height: 30%;
+    box-sizing: border-box;
+    padding: 0 1em;
+    padding-top: 1em;
+    overflow-y: auto;
+}
+
+.channel{
+    width: 100%;
+    height: 14%;
+    font-family: var(--font-noto-sans);
+    color: white;
+    font-size: 2em;
+    margin-bottom: 1em;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 0.4em;
+    &:hover{
+        background-color: rgb(255, 255, 255, 0.4);
+        border-radius: 4px;
+        cursor: pointer;
+    }
+}
+
+.channel::-webkit-scrollbar-button{
+    display: none;
 }
