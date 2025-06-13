@@ -7,7 +7,6 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 
 	"laminar/Internal/config"
 	"laminar/Internal/models"
@@ -22,9 +21,7 @@ func InitPostgres() error {
 
 	var err error
 
-	GormDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	GormDB, err = gorm.Open(postgres.Open(dsn))
 
 	if err != nil {
 		return fmt.Errorf("failed to connect to postgres: %w", err)
