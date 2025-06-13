@@ -6,21 +6,17 @@ import axios from "axios";
 
 const ChatContext = createContext()
 
-
 // This context id used: getting user id and sending to backend
 // Response: Workspaces, Channels and Each message channels limited to 50 for pagination later implement infinit scroll as user scrolls up
 //Take default workspace as first
 
 
-
-
 const initialState = {
-    workspace : [],
+    workspaces : [],
     channels : [],
-    messages: [],
-    selectedWorkspace: null,
     loading: false,
-    error: null
+    error: null,
+    selectedWorkspace: null
 }
 
 
@@ -30,11 +26,22 @@ const reducer = (state, action)=>{
             return {...state, loading: true}
         
         case "LOAD_ENDS":
-            return {...state, loading:false, workspace:action.payload.workspace, channels: action.payload.channels, messages: action.payload.messages, selectedWorkspace: action.payload[0] || null}
+            // get the first response data which will be used to select the first workspace
+            const first = action.payload.length > 0 ? action.payload[0].Workspace : null;
+            return {...state, 
+                loading:false, 
+                workspaces:action.payload.map(item => item.Workspace), 
+                channels:action.payload.flatMap(item => item.Channels),
+                selectedWorkspace: first
+            }
         
         case "LOAD_ERROR":
             return {...state, loading: false, error: action.payload}
-        default:
+
+        case "SELECT_WORKSPACE":
+            return {...state, loading:false, selectedWorkspace:action.payload}
+        
+            default:
             return state
     }
 }
@@ -59,7 +66,7 @@ export const ChatProvider = ({children})=>{
                 }              
             })
             if(res.status == 200){
-                dispatch({type: "LOAD_ENDS", payload: res.data})
+                dispatch({"type" : "LOAD_ENDS", payload: res.data})
                 console.log(res.data)
             }
 
@@ -71,6 +78,11 @@ export const ChatProvider = ({children})=>{
 
       fetchWorkspaceData()
     }, [])
+
+
+    useEffect(() => {
+        console.log("Loaded data: ", state);
+    }, [state]);
 
 
     return(

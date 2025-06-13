@@ -1,6 +1,42 @@
+:root{
+    --font-seculr-one: "Secular One";
+    --font-noto-sans: "Noto sans";
+}
+
 .workspaceContainer{
     width: 15%;
     height: 100%;
     background-color: black;
     border-right: 1px solid white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.directMessage{
+    margin-top: 1em;
+}
+
+.directMessage, .workspace, .CreateWorkspace{
+    width: 80%;
+    aspect-ratio: 1/1;
+    background: #422c43;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2em;
+    &:hover{
+        cursor: pointer;
+        background-color: #FF00C8;
+    }
+    font-family: var(--font-seculr-one);
+}
+
+.Icon{
+    color: black;
+    background-color: #422c43;
+    &:hover{
+        background-color: #FF00C8;
+    }
 }

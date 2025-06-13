@@ -17,48 +17,29 @@ func NewService(repo Repository) Service {
 
 type WorkspaceWithChannels struct {
 	Workspace models.Workspace
-	Channels  []ChannelWithMessages
-}
-
-type ChannelWithMessages struct {
-	Channel  models.Channels
-	Messages []models.Message
+	Channels  []models.Channels
 }
 
 func (s *service) GetUserWorkspaceAndChannels(userId string) ([]WorkspaceWithChannels, error) {
+	// Fetch al workspaces
 	workspaces, err := s.repo.GetWorspaceByUserId(userId)
 	if err != nil {
 		return nil, err
 	}
 
+	// Results silce tp hold results
 	var results []WorkspaceWithChannels
 
 	for _, ws := range workspaces {
-
 		channels, err := s.repo.GetChannelsByWorkspace(ws.ID.String())
 		if err != nil {
 			return nil, err
 		}
-
-		var channelsWithMessages []ChannelWithMessages
-		for _, ch := range channels {
-			messages, err := s.repo.GetChannelsMessages(ch.ID.String())
-			if err != nil {
-				return nil, err
-			}
-
-			channelsWithMessages = append(channelsWithMessages, ChannelWithMessages{
-				Channel:  ch,
-				Messages: messages,
-			})
-
-		}
 		results = append(results, WorkspaceWithChannels{
 			Workspace: ws,
-			Channels:  channelsWithMessages,
+			Channels:  channels,
 		})
 	}
 
 	return results, nil
-
 }
