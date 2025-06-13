@@ -6,6 +6,7 @@
 .channelContainer{
     width: 85%;
     background-color: #232222;
+    position: relative;
 }
 
 .channels{
@@ -37,7 +38,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+    &:hover{
+        cursor: pointer;
+    }    
 }
 
 .Icon{

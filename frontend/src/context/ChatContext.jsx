@@ -1,5 +1,6 @@
 import React, {useReducer, useContext, createContext, useEffect, useState, act} from "react";
 import axios from "axios";
+import {useNavigate} from 'react-router'
 
 const ChatContext = createContext()
 
@@ -45,7 +46,7 @@ const reducer = (state, action)=>{
 
 export const ChatProvider = ({children})=>{
     const [state, dispatch] = useReducer(reducer, initialState)
-    
+    const navigate = useNavigate()
     useEffect(()=>{
       const fetchWorkspaceData = async () => {
         dispatch({type: "LOAD_START"})
@@ -68,6 +69,7 @@ export const ChatProvider = ({children})=>{
             }
 
         } catch (error) {
+            navigate('/')
             dispatch({type: "LOAD_ERROR", payload: error})
             console.error("Error fetching the data from backend: ", error)
         }

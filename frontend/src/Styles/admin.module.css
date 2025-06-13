@@ -1,0 +1,36 @@
+.addminfContainer{
+    width: 100%;
+    background-color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    box-sizing: border-box;
+    padding-top: 4em;
+    overflow-y: auto;
+}
+
+.addminfContainer::-webkit-scrollbar{
+    display: none;
+}
+
+.workspaceDetails, .workspaceMembers, .Invitations, .timeZone, .leaveWorkspace, .deleteWorkspace{
+    width: 40%;
+    min-height: 15%;
+    border: 1px solid black;
+    margin-bottom: 2em;
+}
+
+.workspaceDetails h3, .workspaceMembers h3, .Invitations h3, .timeZone h3, .leaveWorkspace h3, .deleteWorkspace h3{
+    font-size: 4em;
+    font-family: var(--font-noto-sans);
+    color: gray;
+}
+
+.workspaceDetails p, .workspaceMembers p, .Invitations p, .timeZone p, .leaveWorkspace p, .deleteWorkspace p{
+    font-family: var(--font-noto-sans);
+    font-size: 2em;
+    font-weight: 400;
+    color: black;
+}

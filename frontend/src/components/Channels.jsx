@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import style from '../Styles/channel.module.css'
 import { ChevronDown, Plus, Settings } from 'lucide-react';
+
+
+import { useNavigate } from 'react-router';
+
 
 function Channels({ data }) {
 
   const {selectedWorkspace, channels} = data
+  const navigate = useNavigate()
 
   if(!selectedWorkspace){
     return <div>Select a workspace</div>;
@@ -12,22 +17,17 @@ function Channels({ data }) {
 
   const filteredChannels = channels.filter((channel) => channel.workspace_id === selectedWorkspace.id)
 
-
-  const handleClickWorkspace = () =>{
-    console.log("Tool bar opened!")
-  }
-
-
   return (
     <div className={style.channelContainer}>
 
       {/* Selected Workspace */}
       <div className={style.workspaceDetails}>
-        <div>
+        <div onClick={()=> navigate(`/setting/${selectedWorkspace.id}`)} >
           {selectedWorkspace.name}
         </div>
-        <ChevronDown className={style.Icon} size={50} onClick={()=> handleClickWorkspace(selectedWorkspace)} />
+        <ChevronDown className={style.Icon} size={50} />
       </div>
+
 
       {/* Channel Headers */}
       <div className={style.channelHeader}>
