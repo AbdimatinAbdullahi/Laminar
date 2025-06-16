@@ -1,42 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import style from '../Styles/admin.module.css';
-import { useParams } from 'react-router';
-import axios from 'axios';
+import React from 'react'
+import style from '../Styles/admin.module.css'
+import { useAdminContext } from '../context/AdminContext'
 
 function AdminSetting() {
 
-
-    // Fetch workspace data nad dispatch this information
-    const { worspaceId } = useParams()
-    const [worspaceData, setWorspaceData] = useState([])
-    const [members, setmembers] = useState([])
-
-    useEffect(()=>{
-        const fetchWorkspaceData = async()=>{
-            try {
-                const wsResponse = await axios.get("http://localhost:8008/workspace-data", { wsId: worspaceId})
-                if(wsResponse.status == 200){
-                    setWorspaceData(wsResponse.data.workspaceData) // Will make it array 
-                }
-            } catch (error) {
-                console.log("Error fetching workspace data", error)
-            }
-        }
-
-
-        const workspaceMembers = async () =>{
-            try {
-                const memebersRs = await axios.get('http://localhost:8008/workspace-data',  {wsId: worspaceId})
-                if(memebersRs.status == 200){
-                    setmembers(memebersRs.data.members)
-                }
-            } catch (error) {
-                
-            }
-        }
-    }, [])
-
-
+  const { state, dispatch } = useAdminContext
 
   return (
     <div className={style.addminfContainer}>
@@ -78,7 +46,8 @@ function AdminSetting() {
       </div>
       
     </div>
-  );
+
+  )
 }
 
-export default AdminSetting;
+export default AdminSetting

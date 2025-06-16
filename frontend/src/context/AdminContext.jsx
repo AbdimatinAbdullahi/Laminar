@@ -1,0 +1,142 @@
+import React, {useReducer, useContext, useEffect, createContext} from "react";
+import { useParams } from "react-router";
+import axios from "axios";
+
+
+const inititialState = {
+    workspaceMemebers : [],
+    workspaceData: [],
+    loading: false
+}
+
+
+// Function that takes in current state and function and returns new state
+const reducer = (state, action) =>{
+    switch(action.type){
+        case "LOAD_WORKSPACE_DATA":
+            return {...state, workspaceData: action.payload.workspaceData, loading: false}
+        case "LOAD_WORKSPACE_MEMBERS":
+            return {...state, workspaceMemebers: action.payload.members, loading:false}
+        case "LOAD_START":
+            return {...state, loading: true}
+        case "LOAD_END":
+            return {...state, loading : false}
+        default:
+            return state
+    }
+}
+
+
+const AdminContext = createContext()
+
+export const AdminProvider = ({children}) =>{
+
+    // state, dispatch
+    const [state, dispatch] = useReducer(reducer, inititialState)
+    const { workspaceId } = useParams()
+
+
+    useEffect(()=>{
+
+        // Fetch workspace data: And we can change the name of workspace here also main
+        const fetchWorkspaceData = async()=>{
+
+            dispatch({type: "LOAD_START"})
+
+            try {
+
+                const wsResponse = await axios.get("http://localhost:8008/workspace-data",
+                    { params:  { wsId : workspaceId } }
+                    )
+
+                if(wsResponse.status == 200){
+                    console.log(wsResponse.data)
+                    dispatch({type: "LOAD_WORKSPACE_DATA", workspaceData: wsResponse.data.workspace})
+                }
+
+            } catch (error) {
+                console.error("Error fetching workspace data", error)
+            }
+        }
+
+        // Those without and creator privilieges only leaveing the workspace
+        const leaveWorkspace = async (wsId, userId) => {
+            try {
+                dispatch({type: "LOAD_START"})
+                const lvRs = await axios.post("http://localhost:8008/leave-workspace", {
+                    userId: userId,
+                    workspaceId: wsId
+                }
+                )
+
+                if(lvRs.status == 200){
+                    dispatch({type: "LOAD_END"})
+                    // Log the user out of current workspace and so on
+                    // Remove the user from the workspace member list
+                }
+
+            } catch (error) {
+                console.error("Failed leaving workspace: ", error)
+            } finally {
+                dispatch({type: "LOAD_END"})
+            }
+        }
+
+
+        // Only for creator of workspace
+        const deleteWorkspace = async (userId, wsId)=>{
+            try {
+                dispatch({type: "LOAD_START"})
+                const dlRs = await axios.delete("http://localhost:8008/delete-workspace", {
+                    params: {
+                        userId: userId, 
+                        workspaceId: wsId
+                    }
+                } )
+
+                if(dlRs.status == 200){
+                    // delete all the user
+                    // Permanently delete the messages
+                    // delete all the channels
+                    // any associated with this workspace
+                }
+            } catch (error) {
+                console.error("Somethings happens while deleting workspace: ", error)
+            } finally{
+                dispatch({type: "LOAD_END"})
+            }
+        }
+
+        const fetchWorkspaceMembers = async () =>{
+            try {
+
+                dispatch({type: "LOAD_START"})
+
+                const memebersRs = await axios.get('http://localhost:8008/workspace-members',  {
+                    params: {wsId: workspaceId}
+                })
+
+                if(memebersRs.status == 200){
+                    dispatch({type: "LOAD_WORKSPACE_MEMBERS", workspaceMemebers: action.payload.members, loading: false})
+                }
+
+            } catch (error) {
+                console.error("Error fetching workspace members :" , error)
+            }
+        }
+
+        fetchWorkspaceData()
+        fetchWorkspaceMembers()
+
+    }, [])
+
+
+    return (
+        <AdminContext.Provider value={{ state, dispatch }}  >
+            {children}
+        </AdminContext.Provider>
+    )
+}
+
+
+export const useAdminContext = () => useContext(AdminContext)

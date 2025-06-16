@@ -8,6 +8,7 @@ import ChatRoom from './Pages/ChatRoom'
 import Signup from './Pages/Signup'
 import { ChatProvider } from './context/ChatContext'
 import AdminSetting from './Pages/AdminSetting'
+import { AdminProvider } from './context/AdminContext'
 
 
 function App() {
@@ -23,7 +24,11 @@ function App() {
               <ChatRoom/>
             </ChatProvider>
           }/>
-          <Route path='/setting/:worspaceId' element={<AdminSetting/>}/>
+          <Route path='/setting/:worspaceId' element={
+            <AdminProvider>
+              <AdminSetting/>
+            </AdminProvider>
+          }/>
         </Routes>
       </AuthProvider>
     </Router>
