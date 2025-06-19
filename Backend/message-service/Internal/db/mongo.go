@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"time"
 
-	"laminar/Internal/config"
-	"laminar/Internal/models"
+	"laminar/internal/config"
+	"laminar/internal/models"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"

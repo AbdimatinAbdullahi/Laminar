@@ -5,7 +5,8 @@ import axios from "axios";
 
 const inititialState = {
     workspaceMemebers : [],
-    workspaceData: [],
+    workspaceCreator : null,
+    workspaceData: null,
     loading: false
 }
 
@@ -14,7 +15,7 @@ const inititialState = {
 const reducer = (state, action) =>{
     switch(action.type){
         case "LOAD_WORKSPACE_DATA":
-            return {...state, workspaceData: action.payload.workspaceData, loading: false}
+            return {...state, workspaceData: action.payload.Workspace, workspaceCreator:action.payload.Creator, loading: false}
         case "LOAD_WORKSPACE_MEMBERS":
             return {...state, workspaceMemebers: action.payload.members, loading:false}
         case "LOAD_START":
@@ -37,7 +38,6 @@ export const AdminProvider = ({children}) =>{
 
 
     useEffect(()=>{
-
         // Fetch workspace data: And we can change the name of workspace here also main
         const fetchWorkspaceData = async()=>{
 
@@ -51,7 +51,7 @@ export const AdminProvider = ({children}) =>{
 
                 if(wsResponse.status == 200){
                     console.log(wsResponse.data)
-                    dispatch({type: "LOAD_WORKSPACE_DATA", workspaceData: wsResponse.data.workspace})
+                    dispatch({ type: "LOAD_WORKSPACE_DATA", payload: wsResponse.data })
                 }
 
             } catch (error) {
@@ -59,13 +59,42 @@ export const AdminProvider = ({children}) =>{
             }
         }
 
-        // Those without and creator privilieges only leaveing the workspace
+
+        // Fettching workspace Mmebrs here know!
+        const fetchWorkspaceMembers = async () =>{
+            try {
+
+                dispatch({type: "LOAD_START"})
+
+                const memebersRs = await axios.get('http://localhost:8008/workspace-members',  {
+                    params: {wsId: workspaceId}
+                })
+
+                if(memebersRs.status == 200){
+                    console.log(memebersRs.data)
+                    dispatch({type: "LOAD_WORKSPACE_MEMBERS", workspaceMemebers: memebersRs.data, loading: false})
+                }
+
+            } catch (error) {
+                console.error("Error fetching workspace members :" , error)
+            }
+        }
+
+        fetchWorkspaceData()
+        fetchWorkspaceMembers()
+    }, [workspaceId])
+
+
+    // Those without and creator privilieges only leaveing the workspace
         const leaveWorkspace = async (wsId, userId) => {
             try {
                 dispatch({type: "LOAD_START"})
-                const lvRs = await axios.post("http://localhost:8008/leave-workspace", {
-                    userId: userId,
-                    workspaceId: wsId
+                const lvRs = await axios.delete("http://localhost:8008/leave-workspace", {
+                    params: 
+                    {
+                        userId: userId,
+                        workspaceId: wsId
+                    }
                 }
                 )
 
@@ -107,32 +136,13 @@ export const AdminProvider = ({children}) =>{
             }
         }
 
-        const fetchWorkspaceMembers = async () =>{
-            try {
 
-                dispatch({type: "LOAD_START"})
-
-                const memebersRs = await axios.get('http://localhost:8008/workspace-members',  {
-                    params: {wsId: workspaceId}
-                })
-
-                if(memebersRs.status == 200){
-                    dispatch({type: "LOAD_WORKSPACE_MEMBERS", workspaceMemebers: action.payload.members, loading: false})
-                }
-
-            } catch (error) {
-                console.error("Error fetching workspace members :" , error)
-            }
-        }
-
-        fetchWorkspaceData()
-        fetchWorkspaceMembers()
-
-    }, [])
-
+        useEffect(()=>{
+            console.log("State change obsertvations: ", state)
+        }, [state])
 
     return (
-        <AdminContext.Provider value={{ state, dispatch }}  >
+        <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace }}  >
             {children}
         </AdminContext.Provider>
     )

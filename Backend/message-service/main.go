@@ -53,6 +53,11 @@ func main() {
 	workspaceHandler := workspace.NewHandler(workspaceSvc)
 
 	http.Handle("/workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.GetWorkspaceAndChannels)))
+	http.Handle("/workspace-data", corsMiddleware(http.HandlerFunc(workspaceHandler.GetWorkspaceDetailsHandler)))
+	http.Handle("/workspace-members", corsMiddleware(http.HandlerFunc(workspaceHandler.GetWorkspaceMembers)))
+	http.Handle("/leave-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.LeaveWorkspace)))
+	http.Handle("/delete-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.DeleteWorkspace)))
+
 	log.Println("Server running :8008")
 	http.ListenAndServe(":8008", nil)
 

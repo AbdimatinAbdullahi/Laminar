@@ -3,7 +3,8 @@ package workspace
 import (
 	"encoding/json"
 	"errors"
-	"laminar/Internal/config"
+	"fmt"
+	"laminar/internal/config"
 	"log"
 	"net/http"
 	"strings"
@@ -76,4 +77,81 @@ func (h *Handler) GetWorkspaceAndChannels(w http.ResponseWriter, r *http.Request
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
+}
+
+func (h *Handler) GetWorkspaceDetailsHandler(w http.ResponseWriter, r *http.Request) {
+	wsId := r.URL.Query().Get("wsId")
+
+	if wsId == "" {
+		http.Error(w, "Missing workspace id", http.StatusBadRequest)
+		return
+	}
+
+	data, err := h.svc.GetWorkspaceDetails(wsId)
+
+	if err != nil {
+		fmt.Println("Error Querying the workspace details", err)
+		http.Error(w, "Iinternal Server error", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
+}
+
+func (h *Handler) GetWorkspaceMembers(w http.ResponseWriter, r *http.Request) {
+	wsId := r.URL.Query().Get("wsId")
+	if wsId == "" {
+		http.Error(w, "Missing id ", http.StatusBadRequest)
+	}
+
+	data, err := h.svc.GetMembers(wsId)
+	if err != nil {
+		http.Error(w, "Internal Server error", http.StatusBadRequest)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(&data)
+}
+
+func (h *Handler) LeaveWorkspace(w http.ResponseWriter, r *http.Request) {
+	userId := r.URL.Query().Get("userId")
+	workspaceId := r.URL.Query().Get("workspaceId")
+
+	if userId == "" || workspaceId == "" {
+		http.Error(w, "Missing workspace id or user id", http.StatusBadRequest)
+		return
+	}
+
+	err := h.svc.LeaveWorkspace(workspaceId, userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("User removed successful"))
+
+}
+
+func (h *Handler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
+	userId := r.URL.Query().Get("userId")
+	workspaceId := r.URL.Query().Get("workspaceId")
+
+	if userId == "" || workspaceId == "" {
+		http.Error(w, "Missing user id and workspace id", http.StatusBadRequest)
+		return
+	}
+
+	err := h.svc.DeleteWorkspace(workspaceId, userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("Workspace deleted!"))
+
 }

@@ -8,8 +8,8 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"laminar/Internal/config"
-	"laminar/Internal/models"
+	"laminar/internal/config"
+	"laminar/internal/models"
 )
 
 var GormDB *gorm.DB

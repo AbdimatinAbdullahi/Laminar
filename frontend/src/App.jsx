@@ -24,7 +24,7 @@ function App() {
               <ChatRoom/>
             </ChatProvider>
           }/>
-          <Route path='/setting/:worspaceId' element={
+          <Route path='/setting/:workspaceId' element={
             <AdminProvider>
               <AdminSetting/>
             </AdminProvider>
