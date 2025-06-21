@@ -53,7 +53,6 @@ function AdminSetting() {
           {selectedTab === "usersManagement" && <UserManagement/>}
 
         </div>
-
     </div>
   )
 }
@@ -71,29 +70,11 @@ function General(){
     <div className={style.generalContainer}>
 
         <div className={style.workspaceName}>
-          <h3>Name</h3>
-          <p>Manage and Edit names of the workspace</p>
+          <h3>Workspace name</h3>
+          <p>Manage and Edit names of the workspace (Only creator or user with relevant role) </p>
           <input type="text" value={workspaceData?.Name}/>
-        </div>
-
-        <div className={style.workspaceDate}>
-          <h3>Workspace Created on</h3>
-          <span>{workspaceData?.DateCreated}</span>
-        </div>
-
-        <div className={style.workspaceCreatorDetails}>
-          <div className={style.name}>
-              <h3>Creator Name</h3>
-              <span>
-                {workspaceCreator?.Name}
-              </span>
-          </div>
-
-          <div className={style.email}>
-              <h3>Creator Name</h3>
-              <span>{workspaceCreator?.Email}</span>
-          </div>
-
+          <p>Created on {workspaceData?.DateCreated || "25th May 2018"} </p>
+          <button>Change Name</button>
         </div>
 
         <div className={style.leaveWorkspace}>
@@ -102,10 +83,21 @@ function General(){
           <button>Leave  workspace</button>
         </div>
 
-        <div className={style.deleteWorkspace}>
-          <h3>Delete Workspace</h3>
-          <p>You can delete the workspace if it is not longer functional</p>
-          <button>Delete  workspace</button>
+          <div className={style.name}>
+              <h3>Creator Name</h3>
+              <span>{workspaceCreator?.Name}</span>
+          </div>
+
+          <div className={style.email}>
+              <h3>Creator Name</h3>
+              <span>{workspaceCreator?.Email}</span>
+          </div>
+
+
+          <div className={style.deleteWorkspace}>
+            <h3>Delete Workspace</h3>
+            <p>You can delete the workspace if it is not longer functional</p>
+            <button>Delete  workspace</button>
         </div>
 
     </div>
@@ -121,8 +113,7 @@ function UserManagement(){
     <div className={style.userContainer}>
 
       <div className={style.users}>
-
-
+        
         <div className={style.userHeader}>
           <div className={style.userMan}>
             User Managment

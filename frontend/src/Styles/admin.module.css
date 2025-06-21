@@ -15,7 +15,7 @@
 .controlBar{
     width: 20%;
     height: 100%;
-    border: 1px solid red;
+    border: 1px solid gray;
 }
 
 .controlBar .Header{
@@ -86,14 +86,133 @@
   border-top-right-radius: 20px;
 }
 
-.activeTab{
-    /* background-color: rgb(153, 43, 226, 0.2); */
-}
-
 .activeTab .indicator{
     display: inline;
 }
 
 .selectedContainer{
-    background-color: rgb(209, 211, 214);
+    width: calc(100% - 20%);
+    height: 100%;
+    background-color: rgb(232, 233, 235);
+    box-sizing: border-box;
+}
+
+
+/* General Component */
+.generalContainer{
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    box-sizing: border-box;
+    padding-top: 4em;
+}
+
+.workspaceName{
+    width: 100%;
+    height: 30%;
+    box-sizing: border-box;
+    padding-left: 4em;
+    border-bottom: 1px solid gray;
+}
+
+.workspaceName h3, 
+.workspaceDate h3, 
+.leaveWorkspace h3, 
+.deleteWorkspace h3,
+.generalContainer .name h3,
+.generalContainer .email h3
+{
+    font-family: var(--font-noto-sans);
+    font-weight: 700;
+    font-size: 3em;
+    color: black;
+}
+
+.workspaceName input{
+    width: 40%;
+    margin-top: 1em;
+    background-color: inherit;
+    font-family: var(--font-noto-sans);
+    color: gray;
+    font-weight: 600;
+    font-size: 2.4em;
+    border: none;
+    outline: none;
+}
+
+.leaveWorkspace, .deleteWorkspace{
+    width: 100%;
+    height: 20%;
+    margin-bottom: 2em;
+    padding-left: 4em;
+    background-color: white;
+    border-bottom: 1px solid gray;
+}
+.leaveWorkspace p, 
+.deleteWorkspace p,
+.workspaceName p
+{
+    font-family: var(--font-noto-sans);
+    font-size: 2em;
+    font-weight: 400;
+    color: gray;
+    margin-top: 1em;
+}
+
+.leaveWorkspace button, 
+.deleteWorkspace button,
+.workspaceName button{
+    width: 20%;
+    height: 100px;
+    margin-top: 1em;
+    background-color: #5a67d8;
+    outline: none;
+    font-family: var(--font-noto-sans);
+    font-size: 3em;
+    font-weight: 700;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.workspaceName{
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid black;
+}
+
+.generalContainer .email, 
+.generalContainer .name{
+    width: 100%;
+    height: 8%;
+    box-sizing: border-box;
+    padding-left: 4em;
+}
+
+.generalContainer .email span,
+.generalContainer .name span{
+    font-family: var(--font-noto-sans);
+    color: gray;
+    font-size: 2.4em;
+    font-weight: 400;
+    border-bottom: 1px solid black;
+}
+
+
+/* UserMangement Component */
+
+.userContainer{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 2em;
+}
+
+.users{
+    width: 100%;
+    height: fit-content(40%);
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;   
 }
