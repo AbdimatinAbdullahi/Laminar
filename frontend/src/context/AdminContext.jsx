@@ -17,7 +17,7 @@ const reducer = (state, action) =>{
         case "LOAD_WORKSPACE_DATA":
             return {...state, workspaceData: action.payload.Workspace, workspaceCreator:action.payload.Creator, loading: false}
         case "LOAD_WORKSPACE_MEMBERS":
-            return {...state, workspaceMemebers: action.payload.members, loading:false}
+            return {...state, workspaceMemebers: action.payload, loading:false}
         case "LOAD_START":
             return {...state, loading: true}
         case "LOAD_END":
@@ -72,7 +72,7 @@ export const AdminProvider = ({children}) =>{
 
                 if(memebersRs.status == 200){
                     console.log(memebersRs.data)
-                    dispatch({type: "LOAD_WORKSPACE_MEMBERS", workspaceMemebers: memebersRs.data, loading: false})
+                    dispatch({type: "LOAD_WORKSPACE_MEMBERS", payload:memebersRs.data, loading:false})
                 }
 
             } catch (error) {

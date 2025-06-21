@@ -1,36 +1,99 @@
-.addminfContainer{
+:root{
+    --font-seculr-one: "Secular One";
+    --font-noto-sans: "Noto sans";
+}
+
+/* Admin, User and Info Component */
+.adminContainer{
     width: 100%;
-    background-color: white;
     height: 100vh;
+    background-color: rgb(209, 211, 214);
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
+    flex-direction: row;
+}
+
+.controlBar{
+    width: 20%;
+    height: 100%;
+    border: 1px solid red;
+}
+
+.controlBar .Header{
+    width: 100%;
+    height: 6%;
+    border-bottom: 1px solid rgb(201, 201, 201);
+    font-family: var(--font-seculr-one);
+    color: blueviolet;
+    font-size: 3em;
     box-sizing: border-box;
-    padding-top: 4em;
-    overflow-y: auto;
+    padding-left: 0.2em;
+    display: flex;
+    align-items: center;
 }
 
-.addminfContainer::-webkit-scrollbar{
-    display: none;
+.controlBar .coreManagement{
+    width: 100%;
+    height: fit-content(70%);
+    margin-top: 120px;
 }
 
-.workspaceDetails, .workspaceMembers, .Invitations, .timeZone, .leaveWorkspace, .deleteWorkspace{
-    width: 40%;
-    min-height: 15%;
-    border: 1px solid black;
-    margin-bottom: 2em;
-}
-
-.workspaceDetails h3, .workspaceMembers h3, .Invitations h3, .timeZone h3, .leaveWorkspace h3, .deleteWorkspace h3{
-    font-size: 4em;
-    font-family: var(--font-noto-sans);
-    color: gray;
-}
-
-.workspaceDetails p, .workspaceMembers p, .Invitations p, .timeZone p, .leaveWorkspace p, .deleteWorkspace p{
+.coreManagement h2{
     font-family: var(--font-noto-sans);
     font-size: 2em;
-    font-weight: 400;
+    color: gray;
+    margin-bottom: 50px;
+    margin-left: 0.4em;
+}
+
+
+.general, .users, .billing{
+    width: 100%;
+    height: 120px;
+    /* border: 1px solid black; */
+    /* margin-bottom: 30px; */
+    font-size: 2em;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
     color: black;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /* justify-content: space-between;  */
+    box-sizing: border-box;
+    padding-left: 1em;
+    padding-right: 2em;
+    position: relative;
+    &:hover{
+        cursor: pointer;
+    }
+}
+.icon{
+    background: inherit;
+    color: gray;
+    margin-right: 40px;
+    /* background-color: rgb(153, 43, 226, 0.2) ; */
+}
+.indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  background-color: #5a67d8;
+  border-radius: 0 4px 4px 0;
+  display: none;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.activeTab{
+    /* background-color: rgb(153, 43, 226, 0.2); */
+}
+
+.activeTab .indicator{
+    display: inline;
+}
+
+.selectedContainer{
+    background-color: rgb(209, 211, 214);
 }
