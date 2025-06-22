@@ -7,6 +7,7 @@ const inititialState = {
     workspaceMemebers : [],
     workspaceCreator : null,
     workspaceData: null,
+    invitations: [],
     loading: false
 }
 

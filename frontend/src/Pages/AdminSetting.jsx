@@ -4,7 +4,7 @@ import {Boxes, ReceiptText, UserCog} from 'lucide-react'
 
 
 import {useAdminContext} from '../context/AdminContext'
-
+import UserManagement from '../components/UserManagement'
 
 function AdminSetting() {
 
@@ -28,7 +28,7 @@ function AdminSetting() {
                 <>General</>
               </div>
 
-              <div className={`${style.users} ${selectedTab === "usersManagement" ? style.activeTab : ""}`} onClick={()=>setSelectedTab("usersManagement")} >
+              <div className={`${style.usersTab} ${selectedTab === "usersManagement" ? style.activeTab : ""}`} onClick={()=>setSelectedTab("usersManagement")} >
                 <UserCog size={60} className={style.icon} />
                 <span className={style.indicator}></span> {/* ACTIVE INDICATOR */}
                 <>User managmenent</>
@@ -104,60 +104,3 @@ function General(){
   )
 }
 
-
-function UserManagement(){
-
-  const { state } = useAdminContext()
-  const { workspaceMemebers } = state;
-  return (
-    <div className={style.userContainer}>
-
-      <div className={style.users}>
-        
-        <div className={style.userHeader}>
-          <div className={style.userMan}>
-            User Managment
-          </div>
-          <div className={style.profile}>
-            <div>Profile</div>
-          </div>
-        </div>
-
-
-        <table>
-          <thead>
-            <tr>
-            <th className={style.userDetails}>Name</th>
-            <th className={style.userJoined}>Member since</th>
-            <th className={style.userRole}>Role</th>
-            <th className={style.userAction}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {workspaceMemebers.map((member)=>(
-              <tr key={member.User.Email}>
-
-                <td className={style.rowDet}> 
-                  <div> {member?.User?.Name} </div> 
-                  <div> {member?.User?.Email} </div> 
-                </td>
-
-                <td className={style.rowJoinSince}>
-                    {member.WorkspaceInfo.JoinedAt}
-                </td>
-
-                <td className={style.rowRole}>
-                  {member.WorkspaceInfo.Role}
-                </td>
-
-                <td className={style.rowAction} >
-                  <button> Action </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}

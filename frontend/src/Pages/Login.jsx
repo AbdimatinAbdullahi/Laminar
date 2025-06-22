@@ -11,7 +11,7 @@ function Login() {
 
   const {login} = useAuth()
   const [typePassword, settypePassword] = useState("password")
-  const [userCredintials, setUserCredintials] = useState({ password: "", email: ""})
+  const [userCredintials, setUserCredintials] = useState({ password: "Abdi2156", email: "abdimatinhassan@gmail.com"})
 
 
   const handleLogin = (e)=>{

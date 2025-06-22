@@ -46,7 +46,7 @@
 }
 
 
-.general, .users, .billing{
+.general, .usersTab, .billing{
     width: 100%;
     height: 120px;
     /* border: 1px solid black; */
@@ -200,19 +200,174 @@
 }
 
 
-/* UserMangement Component */
-
+/* User Management */
 .userContainer{
     width: 100%;
     height: 100%;
+    background-color: #e5e5e5;
+    display: flex;
+    flex-direction: column;
     box-sizing: border-box;
-    padding-top: 2em;
+    overflow-y: auto;
 }
 
-.users{
+.membersContainer{
     width: 100%;
-    height: fit-content(40%);
-    border: 1px solid black;
+    height: 100%;
+    background-color: inherit;
+    box-sizing: border-box;
+    padding: 0 2em;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    overflow-y: auto;
+}
+
+.membersContainer::-webkit-scrollbar{
+    display: none;
+}
+
+.userHeader{
+    width: 100%;
+    height: 18%;
+    background-color: inherit;
     display: flex;
-    flex-direction: column;   
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.userMan{
+    background-color: inherit;
+    font-family: var(--font-noto-sans);
+    font-weight: 900;
+    font-size: 3em;
+}
+
+.userMan h2, .userMan p{
+    background-color: inherit;
+    font-family: var(--font-seculr-one);
+}
+
+.userMan p{
+    color: gray;
+    font-weight: 400;
+}
+
+.profile{
+    height: 50%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tableWrapper{
+    background-color: #ffff;
+    width: 100%;
+    height: fit-content;
+    min-height: 20%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding-top: 40px;
+    padding: 0 2em;
+    border-radius: 12px;
+    padding-bottom: 3em;
+}
+
+.userLength{
+    height: 2%;
+    font-size: 3em;
+    color: black;
+    font-family: var(--font-seculr-one);
+    margin-top: 2em;
+}
+
+
+.gridRow {
+  display: grid;
+  grid-template-columns: 2fr 3fr 2fr 1.5fr 1fr 0.5fr;
+  gap: 1rem;
+  padding: 1rem 0.5rem;
+  align-items: center;
+  background-color: inherit;
+  height: 120px;
+}
+
+.gridHeader {
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  height: 100px;
+  font-family: var(--font-noto-sans);
+  font-size: 2.4em;
+  font-weight: 700;
+}
+
+.tableRows > div{
+    font-family: var(--font-noto-sans);
+    font-size: 2em;
+    font-weight: 500;
+    background-color: inherit;
+    color: gray;
+
+}
+
+.tableRows:nth-child(odd){
+  background-color: #f4f4f4;
+}
+
+
+
+.invitations{
+    width: 100%;
+    min-height: 30%;
+    background-color: #e5e5e5;
+    box-sizing: border-box;
+    padding: 0 2em;
+}
+
+.invitationHeader{
+    margin-top: 20px;
+    min-height: 20%;
+    font-family: var(--font-seculr-one);
+    font-size: 3em;
+    padding-bottom: 20px;
+    background-color: inherit;
+}
+.invitationHeader h2{
+    background-color: inherit;
+    width: fit-content;
+}
+
+
+.invitationsTable{
+    min-height: 70%;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-noto-sans);
+    font-weight: 700;
+    color: gray;
+    font-size: 3em;
+}
+.invitationsTable button{
+    width: 600px;
+    height: 100px;
+    background-color: #5a67d8;
+    outline: none;
+    border: none;
+    border-radius: 12px;
+    font-size: 1em;
+    font-family: var(--font-noto-sans);
+    font-weight: 700;
+    color: white;
+    margin-top: 20px;
+    &:hover{
+        cursor: pointer;
+    }
 }
