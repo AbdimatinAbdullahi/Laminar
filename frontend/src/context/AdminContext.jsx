@@ -7,8 +7,9 @@ const inititialState = {
     workspaceMemebers : [],
     workspaceCreator : null,
     workspaceData: null,
-    invitations: [],
-    loading: false
+    invitations: [{Name: "Abdimatin Abdullahi", Email: "abdimatabdullahi@gmail.com", invitedAt: "2024-01-20"}, {Name: "Abdimatin Abdull", Email: "abdimatabdui@gmail.com", invitedAt: "2024-01-26"}],
+    loading: false,
+    // invitations: []
 }
 
 

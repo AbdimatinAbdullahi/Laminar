@@ -71,12 +71,15 @@ function UserManagement() {
 
         <div className={style.invitationsTable}>
           {invitations.length > 0 ? (
+            <>
+            <button>Invite</button>
             <div className={style.invitationList}>
               <div className={`${style.gridRow} ${style.gridHeader}`}>
                 <div>Name</div>
                 <div>Email</div>
                 <div>Status</div>
                 <div>Invited At</div>
+                <div>Action</div>
               </div>
 
               {invitations.map((invite, index) => (
@@ -89,9 +92,12 @@ function UserManagement() {
                   <div>{invite.Email}</div>
                   <div>Pending</div>
                   <div>{dayjs(invite.InvitedAt).fromNow()}</div>
+                  <button>Cancel Invite</button>
                 </div>
               ))}
             </div>
+            </>
+            
           ) : (
             <div className={style.invitationEmptyState}>
               <h3>No invitations found!</h3>
