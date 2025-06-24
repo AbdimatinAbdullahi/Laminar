@@ -270,13 +270,19 @@
 /* Grid Header style */
 .gridHeader {
   font-weight: 600;
-  background-color: #f8f8f8;
+  background-color: #fff;
   border-bottom: 1px solid #ccc;
   font-size: 2.2em;
   font-family: var(--font-noto-sans);
   position: sticky;
   top: 0;
   height: 130px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.gridHeader > div{
+    background-color: inherit;
 }
 
 /* Each data row */
@@ -284,8 +290,11 @@
     height: 120px;
 }
 
+.tableRows:nth-child(even){
+    background-color: #f8f8f8;
+}
+
 .tableRows > div {
-  border-bottom: 1px solid #eee;
   background-color: inherit;
   font-size: 2.2em;
   font-family: var(--font-noto-sans);
@@ -319,10 +328,10 @@
 
 /* Invite Button */
 .invitationEmptyState button,
-.invitationsTable > button {
+.invitationsTable > button, .cancelInvite {
   margin-bottom: 1rem;
   padding: 0.5rem 1rem;
-  background-color: #5a67d8;
+  background-color:  #5a67d8;
   color: #fff;
   font-weight: bold;
   border: none;
@@ -331,4 +340,15 @@
   font-size: 2em;
   width: 10%;
   font-family: var(--font-noto-sans);
+}
+
+.invitationsTable > button{
+    height: 90px;
+}
+
+
+.cancelInvite{
+    width: 90%;
+    height: 90%;
+    background-color: #be123c;
 }

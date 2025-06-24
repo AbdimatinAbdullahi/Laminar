@@ -5,6 +5,8 @@ import {Boxes, ReceiptText, UserCog} from 'lucide-react'
 
 import {useAdminContext} from '../context/AdminContext'
 import UserManagement from '../components/UserManagement'
+import DeleteWorkspace from '../modals/DeleteWorkspace'
+import Leaveworkspace from '../modals/Leaveworkspace'
 
 function AdminSetting() {
 
@@ -65,7 +67,8 @@ function General(){
 
   const { state } = useAdminContext()
   const {leaveWorkspace, deleteWorkspace, workspaceCreator, workspaceData} = state;
-
+  const [deleteWorskspaceModalModalOpen, setdeleteWorskspaceModalModalOpen] = useState(false)
+  const [leaveModalOpen, setleaveModalOpen] = useState(false)
   return (
     <div className={style.generalContainer}>
 
@@ -80,8 +83,11 @@ function General(){
         <div className={style.leaveWorkspace}>
           <h3>Leave Workspace</h3>
           <p>If youre are no longer part of the workspace you can leave</p>
-          <button>Leave  workspace</button>
+          <button onClick={()=> setleaveModalOpen(true)} >Leave  workspace</button>
         </div>
+
+        {leaveModalOpen && <Leaveworkspace onClose={()=> setleaveModalOpen(false)} />}
+
 
           <div className={style.name}>
               <h3>Creator Name</h3>
@@ -97,8 +103,10 @@ function General(){
           <div className={style.deleteWorkspace}>
             <h3>Delete Workspace</h3>
             <p>You can delete the workspace if it is not longer functional</p>
-            <button>Delete  workspace</button>
+            <button onClick={()=> setdeleteWorskspaceModalModalOpen(true)}>Delete  workspace</button>
         </div>
+
+        {deleteWorskspaceModalModalOpen && <DeleteWorkspace onClose={()=>setdeleteWorskspaceModalModalOpen(false)} />}
 
     </div>
   )

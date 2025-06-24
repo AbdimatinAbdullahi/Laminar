@@ -1,0 +1,333 @@
+/* General to all modal containers */
+.modalOverlay{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2); /* Dim background */
+}
+
+
+/* Delete modal container */
+.deleteModalContainer{
+    width: 30%;
+    height:20%;
+    background-color: white;
+    border-radius: 12px;
+    position: relative;
+}
+
+.Icon{
+    position: absolute;
+    top: 10px;
+    right: 1em;
+    color: red;
+    cursor: pointer;
+}
+
+
+.deleteTextContent{
+    width: 100%;
+    height: 100%;
+    /* border: 1px solid red; */
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.deleteTextContent h2{
+    font-family: var(--font-noto-sans);
+    font-weight: 800;
+    font-size: 2em;
+    color: #5a67d8;
+}
+
+.deleteTextContent p{
+    font-family: var(--font-noto-sans);
+    font-weight: 500;
+    font-size: 2.2em;
+    color: gray;
+}
+
+.deleteTextContent button{
+    height: 80px;
+    width: 60%;
+    background-color: #e11d48;
+    outline: none;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-noto-sans);
+    font-weight: 800;
+    font-size: 2em;
+    color: white;
+}
+
+
+/* Leave modal container */
+.leaveContainer{
+    width: 30%;
+    height:30%;
+    background-color: white;
+    border-radius: 12px;  
+}
+
+
+.LeaveWorskpaceTexts{
+    width: 100%;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border-radius: 12px;
+}
+
+.LeaveWorskpaceTexts h2{
+    font-family: var(--font-noto-sans);
+    color: #e11d48;
+    font-size: 2em;
+    font-weight: 800;
+}
+
+.LeaveWorskpaceTexts p{
+    font-family: var(--font-noto-sans);
+    color: black;
+    font-size: 2em;
+    font-weight: 500;
+}
+
+.LeaveWorskpaceTexts span{
+    color: gray;
+    font-family: var(--font-noto-sans);
+    font-size: 1.5em;
+    font-weight: 800;
+}
+
+.leaveButton{
+    width: 100%;
+    height: 20%;
+    margin-top: 2em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 3em;
+}
+.leaveButton button{
+    width: 40%;
+    height: 90%;
+    background-color: #e11d48;
+    color: white;
+    outline: none;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-noto-sans);
+    font-size: 2em;
+    font-weight: 800;
+}
+
+
+
+/* User Modal */
+.modalUserContainer{
+    width: 30%;
+    height: 50%;
+    background-color: white;
+    border-radius: 12px;
+    position: relative;
+}
+
+.userContent{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.userIcon{
+    width: 17%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgb(224, 224, 224);
+    margin-top: 10px;
+}
+
+.details{
+    width: 100%;
+    height: 40%;
+    margin-top: 3em;
+}
+
+.details > div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 2em;
+    height: 140px;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
+    font-size: 2em;
+}
+.details > div h4{
+    color: gray;
+}
+
+
+.actionButtons{
+    width: 100%;
+    height: 14%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 3em;
+}
+
+.role select{
+    width: 40%;
+    height: 120px;
+    border: 1px solid gray;
+    border: 12px;
+    font-family: var(--font-noto-sans);
+    color: #5a67d8;
+    font-weight: 800;
+    border: 1px solid gray;
+    border-radius: 12px;
+    box-sizing: border-box;
+    padding: 0 2em;
+    font-size: 1.2em;
+}
+
+.actionButtons button{
+    width: 30%;
+    height: 70%;
+    background-color: #5a67d8;
+    outline: none;
+    border: none;
+    font-family: var(--font-noto-sans);
+    font-weight: 800;
+    color: white;
+    border-radius: 12px;
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    &:hover{
+        cursor: pointer;
+    }
+}
+
+
+
+
+
+/* Invite Modal */
+.inviteContainer{
+    width: 30%;
+    height:40%;
+    background-color: white;
+    border-radius: 12px;
+    position: relative;
+}
+.inviteContent{
+    width: 100%;
+    height: 70%;
+    margin-top: 80px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.teamIcon{
+    color: #5a67d8;
+    background-color: inherit;  
+}
+
+.inviteText{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 5em;
+    position: relative;
+}
+
+.inviteText h3{
+    color: gray;
+    font-size: 2em;
+    font-family: var(--font-noto-sans);
+}
+
+.inputEmail{
+    border: 1px solid #5a67d8;
+    height: 100px;
+    width: 90%;
+    border-radius: 12px;
+    margin-top: 5em;
+    position: relative;
+    &:focus-within{
+        border: 5px solid #5a67d8;
+    }
+}
+
+.inputEmail select{
+    position: absolute;
+    right: 0;
+    width: 20%;
+    height: 100%;
+    font-size: 2.5em;
+    font-family: var(--font-noto-sans);
+    color: white;
+    background-color: #5a67d8;
+    border: none;
+    outline: none;
+}
+.inputEmail input{
+    width: 80%;
+    height: 100%;
+    outline: none;
+    border: none;
+    font-family: var(--font-noto-sans);
+    color: gray;
+    font-weight: 500;
+    font-size: 2em;
+    box-sizing: border-box;
+    padding-left: 2em;
+    border-radius: inherit;
+}
+
+.inviteContent button{
+    position: absolute;
+    bottom: 2em;
+    right: 1em;
+    width: 30%;
+    height: 100px;
+    background-color: #5a67d8;
+    outline: none;
+    border: none;
+    font-family: var(--font-noto-sans);
+    font-size: 2em;
+    color: white;
+    font-weight: 700;
+    border-radius: 12px;
+    &:hover{
+        cursor: pointer;
+    }
+}
