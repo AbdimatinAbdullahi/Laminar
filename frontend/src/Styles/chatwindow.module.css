@@ -1,7 +1,79 @@
+:root{
+    --font-seculr-one: "Secular One";
+    --font-noto-sans: "Noto sans";
+}
+
 .chatContainer{
     background-color: black;
     color: white;
     width: 75%;
     height: 100%;
     border: 1px solid wheat;
+    position: relative;
+}
+
+.channelHeaderContainer{
+    width: 100%;
+    height: 6%;
+    background-color: rgb(186, 186, 186);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding-right: 3em;
+}
+
+.channelNameDisplayer{
+    width: 40%;
+    height: 100%;
+    background-color: inherit;
+    padding-left: 2em;
+}
+
+.channelNameDisplayer h2{
+    font: 600;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
+    color: black;
+    font-size: 3em;
+    background-color: inherit;
+}
+
+.channelNameDisplayer p{
+    font-size: 2em;
+    font-family: var(--font-noto-sans);
+    font-weight: 500;
+    background-color: inherit;
+    color: black;
+}
+
+.convertsationContainer{
+    width: 100%;
+    height: calc(100% - 6% - 150px);
+    background-color: rgb(255, 255, 255);
+}
+
+.meetingService{
+    width: 10%;
+    height: 100%;
+    background-color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.meetingIcons{
+    background-color: inherit;
+    color: rgb(107, 107, 107);
+    cursor: pointer;
+}
+
+
+/* Composer Message */
+
+.composerContainer{
+    width: 100%;
+    height: 150px;
+    border: 1px solid black;
 }
