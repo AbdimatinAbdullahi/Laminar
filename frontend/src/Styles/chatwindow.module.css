@@ -75,5 +75,67 @@
 .composerContainer{
     width: 100%;
     height: 150px;
-    border: 1px solid black;
+    border-top: 1px solid gray;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
+.composerContainer input{
+    height: 100%;
+    width: calc(100% - 300px);
+    background-color: #fff;
+    font-size: 2.4em;
+    box-sizing: border-box;
+    padding: 0 2em;
+    outline: none;
+    border: none;
+    font-family: var(--font-noto-sans);
+    color: gray;
+    font-weight: 700;
+
+}
+
+.plusIconC, .emojiIconC, .sendIcon{
+   color: gray; 
+   width: 100px;
+   height: 100%;
+   cursor: pointer;
+}
+
+.sendIcon{
+    margin-right: 1em;
+}
+
+.emojiContainer{
+    width: fit-content;
+    height: fit-content;
+    position: absolute;
+    right: 2em;
+    bottom: 2%;
+    border: 1px solid red;
+}
+
+:global(.EmojiPickerReact) {
+  --epr-emoji-size: 36px;
+  --epr-category-label-height: 30px;
+  font-size: 1.8rem;
+}
+
+:global(.EmojiPickerReact .epr-search) {
+  height: 40px;
+}
+
+.uploadModalContainer{
+    width: 350px;
+    height: 450px;
+    border: 1px solid red;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 300;
+    left: 2em;
+    bottom: 10em;
+    border-radius: 12px;
 }
