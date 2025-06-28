@@ -11,7 +11,7 @@ function Sidebar({ data, dispatch }) {
   return (
     <div className={style.sidebarContainer} >
        <Workspaces data={data} dispatch={dispatch}/>
-       <Channels data={data} />
+       <Channels data={data} dispatch={dispatch} />
     </div>
   )
 }

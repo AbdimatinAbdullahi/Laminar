@@ -12,6 +12,24 @@
     position: relative;
 }
 
+.noChannelSelected{
+    width: 80%;
+    height: 100%;
+    background-color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.noChannelSelected h2{
+    background-color: inherit;
+    font-family: var(--font-noto-sans);
+    font-weight: 800;
+    color: #ddd;
+    font-size: 3em;
+
+}
+
 .channelHeaderContainer{
     width: 100%;
     height: 6%;
@@ -22,6 +40,7 @@
     justify-content: space-between;
     box-sizing: border-box;
     padding-right: 3em;
+    position: relative;
 }
 
 .channelNameDisplayer{
@@ -40,7 +59,7 @@
     background-color: inherit;
 }
 
-.channelNameDisplayer p{
+.channelNameDisplayer h6{
     font-size: 2em;
     font-family: var(--font-noto-sans);
     font-weight: 500;
@@ -223,4 +242,3 @@
   font-size: 1.4rem;
   cursor: pointer;
 }
-

@@ -17,7 +17,6 @@ function UserManagement() {
   const { workspaceMemebers, workspaceData, invitations } = state;
   const [modalUserOpen, setmodalUserOpen] = useState(false)
   const [selectedMember, setselectedMember] = useState(null)
-
   const [inviteModalOpen, setinviteModalOpen] = useState(false)
 
 

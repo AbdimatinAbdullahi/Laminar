@@ -6,7 +6,7 @@ import { ChevronDown, Plus, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 
-function Channels({ data }) {
+function Channels({ data, dispatch }) {
 
   const {selectedWorkspace, channels} = data
   const navigate = useNavigate()
@@ -16,6 +16,11 @@ function Channels({ data }) {
   }
 
   const filteredChannels = channels.filter((channel) => channel.workspace_id === selectedWorkspace.id)
+
+  const handleChannelClick = (channel)=>{
+    dispatch({type: "SELECT_CHANNEL", payload: channel})
+  }
+
 
   return (
     <div className={style.channelContainer}>
@@ -38,7 +43,7 @@ function Channels({ data }) {
       {/* Channels */}
       <div className={style.channels}>
         {filteredChannels.map((channel) => (
-          <div className={style.channel} >
+          <div className={style.channel} onClick={() => handleChannelClick(channel)} >
             # {channel.name}
           </div>
         ))}

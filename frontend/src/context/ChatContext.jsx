@@ -14,7 +14,8 @@ const initialState = {
     channels : [],
     loading: false,
     error: null,
-    selectedWorkspace: null
+    selectedWorkspace: null,
+    activeChannel: null
 }
 
 
@@ -37,7 +38,10 @@ const reducer = (state, action)=>{
             return {...state, loading: false, error: action.payload}
 
         case "SELECT_WORKSPACE":
-            return {...state, loading:false, selectedWorkspace:action.payload}
+            return {...state, loading:false, selectedWorkspace:action.payload, activeChannel: null}
+        
+            case "SELECT_CHANNEL":
+                return {...state, activeChannel: action.payload}
         
             default:
             return state
@@ -45,8 +49,12 @@ const reducer = (state, action)=>{
 }
 
 export const ChatProvider = ({children})=>{
+
+    
     const [state, dispatch] = useReducer(reducer, initialState)
     const navigate = useNavigate()
+
+
     useEffect(()=>{
       const fetchWorkspaceData = async () => {
         dispatch({type: "LOAD_START"})

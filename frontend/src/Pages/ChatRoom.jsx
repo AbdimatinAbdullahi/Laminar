@@ -3,8 +3,8 @@ import style from '../Styles/chatroom.module.css'
 import axios from 'axios';
 
 
-import Chatwindow from '../components/Chatwindow';
 import Sidebar from '../components/Sidebar';
+import Chatwindow from '../components/ChatWindow';
 import {useChat} from '../context/ChatContext'
 
 function ChatRoom() {
