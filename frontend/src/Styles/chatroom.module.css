@@ -1,9 +1,221 @@
-.appLayout{
+:root{
+    --font-seculr-one: "Secular One";
+    --font-noto-sans: "Noto sans";
+}
+
+.chatRoomContainer{
     width: 100%;
     height: 100vh;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.sidebarContainer{
+    width: 25%;
+    height: 100%;
     background-color: black;
     display: flex;
     flex-direction: row;
+}
+
+.workspacesContainer{
+    width: 80px;
+    height: 100%;
+    background-color: aliceblue;
+    box-sizing: border-box;
+    padding-top: 2em;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.workspace{
+    width: 90%;
+    aspect-ratio: 1/1;
+    background-color: rgb(94, 92, 97);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-noto-sans);
+    font-weight: 700;
+    font-size: 1.2em;
+    margin-bottom: 1em;
+    cursor: pointer;
+}
+
+.workspaceDetail{
+    width: calc(100% - 80px);
+    height: 100%;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+}
+
+.workspaceHeader{
+    width: 100%;
+    height: 60px;
+    background-color: black;
+    border-bottom: 1px solid gray;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 2em;
+    &:hover{
+        cursor: pointer;
+        background-color: rgb(43, 43, 43);
+    }
+}
+
+.workspaceHeader h3{
+    font-family: var(--font-noto-sans);
+    color: gray;
+    background-color: inherit;
+    font-size: 1.1em;
+    font-weight: 800;
+}
+
+.workspaceHeader .icon{
+    background-color: inherit;
+    color: gray;
+}
+
+.channelsContainer{
+    width: 100%;
+    min-height: fit-content;
+    background-color: black;
+}
+
+.channelHeader{
+    width: 100%;
+    height: 40px;
+    margin-top: 1em;
+    font-family: var(--font-noto-sans);
+    font-weight: 500;
+    color: gray;
+    background-color: black;
+    box-sizing: border-box;
+    padding: 0 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.channelHeader h4, .channelAddIcon{
+    background-color: black;
+}
+
+.channels{
+    width: 100%;
+    height: fit-content;
+    background-color: black;
+    box-sizing: border-box;
+    padding: 0 2em;
+    margin-top: 2em;
+}
+
+.channels div{
+    width: 100%;
+    height: 40px;
+    background-color: inherit;
+    color: gray;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 0.4em;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover{
+        background-color: #555;
+    }
+}
+
+
+/* Chat UI */
+.emptyChannel{
+    width: calc(100% - 25%);
+    height: 100%;
+    background-color: #fff;
+    font-family: var(--font-noto-sans);
+    font-weight: 700;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chatuiContainer{
+    width: calc(100% - 25%);
+    height: 100%;
+    background-color: #555;
+    font-family: var(--font-noto-sans);
+    color: black;
+}
+
+/* Channel Header */
+.ChannelHeader{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+    background-color: #555;
+}
+
+.channelDetail{
+    width: 20%;
+    height: 100%;
+    background-color: #555;
+    box-sizing: border-box;
+    padding: 0.4em 1em;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: space-between;
+}
+
+.channelDetail h3, .channelDetail p{
+    background-color: inherit;
+    font-family: var(--font-noto-sans);
+    color: black;
+}
+
+.channelMeeting{
+    width: 10%;
+    height: 100%;
+    background-color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.meetingIcon{
+    background-color: inherit;
+    &:hover{
+        color: gray;
+    }
+}
+
+
+.converstationWindow{
+    width: 100%;
+    height: calc(100% - 60px - 60px);
+    background-color: #fff;
+    font-family: var(--font-noto-sans);
+    color: gray;
+    display: flex;
     align-items: center;
     justify-content: center;
 }

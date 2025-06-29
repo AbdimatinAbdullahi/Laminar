@@ -128,13 +128,11 @@ function UploadModal({onClose, setSelectedFile}){
 
 
   useEffect(()=>{
-
     function handleClickOutside(e){
       if(modalRef.current && !modalRef.current.contains(e.target)){
         onClose()
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside)
     return ()=> document.removeEventListener("mousedown", handleClickOutside)
   }, [onClose])
@@ -144,15 +142,15 @@ function UploadModal({onClose, setSelectedFile}){
     <div className={style.uploadModalContainer} ref={modalRef} >
       <input type="file" style={{display: "none"}}  ref={fileInputRef} accept={fileAcceptType}  onChange={handleFileChange}  capture={fileAcceptType === "image/*" ? "environment" : undefined} />
       <div className={style.videoAndPhoto} onClick={() => handleFilePick("image/*,video/*")} >
-        <Images size={40}className={style.uploadIcons} />
+        <Images size={20}className={style.uploadIcons} />
           <div>Pic and Videos</div>
       </div>
       <div className={style.camera} onClick={() => handleFilePick("image/*")} >
-        <Camera size={40}   className={style.uploadIcons}/>
+        <Camera size={20}   className={style.uploadIcons}/>
         <div>Camera</div>
       </div>
       <div className={style.document} onClick={() => handleFilePick(".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt")} >
-        <File size={40}   className={style.uploadIcons} />
+        <File size={20}   className={style.uploadIcons} />
         <div>Document</div>  
       </div>
     </div>

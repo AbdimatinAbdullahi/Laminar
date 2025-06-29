@@ -1,99 +1,8 @@
-:root{
-    --font-seculr-one: "Secular One";
-    --font-noto-sans: "Noto sans";
-}
-
-.chatContainer{
-    background-color: black;
-    color: white;
-    width: 75%;
-    height: 100%;
-    border: 1px solid wheat;
-    position: relative;
-}
-
-.noChannelSelected{
-    width: 80%;
-    height: 100%;
-    background-color: #555;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.noChannelSelected h2{
-    background-color: inherit;
-    font-family: var(--font-noto-sans);
-    font-weight: 800;
-    color: #ddd;
-    font-size: 3em;
-
-}
-
-.channelHeaderContainer{
-    width: 100%;
-    height: 6%;
-    background-color: rgb(186, 186, 186);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    padding-right: 3em;
-    position: relative;
-}
-
-.channelNameDisplayer{
-    width: 40%;
-    height: 100%;
-    background-color: inherit;
-    padding-left: 2em;
-}
-
-.channelNameDisplayer h2{
-    font: 600;
-    font-family: var(--font-noto-sans);
-    font-weight: 600;
-    color: black;
-    font-size: 3em;
-    background-color: inherit;
-}
-
-.channelNameDisplayer h6{
-    font-size: 2em;
-    font-family: var(--font-noto-sans);
-    font-weight: 500;
-    background-color: inherit;
-    color: black;
-}
-
-.convertsationContainer{
-    width: 100%;
-    height: calc(100% - 6% - 150px);
-    background-color: rgb(255, 255, 255);
-}
-
-.meetingService{
-    width: 10%;
-    height: 100%;
-    background-color: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-}
-
-.meetingIcons{
-    background-color: inherit;
-    color: rgb(107, 107, 107);
-    cursor: pointer;
-}
-
-
 /* Composer Message */
 
 .composerContainer{
     width: 100%;
-    height: 150px;
+    height: 60px;
     border-top: 1px solid gray;
     display: flex;
     flex-direction: row;
@@ -105,7 +14,7 @@
     height: 100%;
     width: calc(100% - 300px);
     background-color: #fff;
-    font-size: 2.4em;
+    font-size: 1em;
     box-sizing: border-box;
     padding: 0 2em;
     outline: none;
@@ -147,8 +56,8 @@
 }
 
 .uploadModalContainer{
-    width: 350px;
-    height: 330px;
+    width: 200px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -171,7 +80,7 @@
     height: 100px;
     font-family: var(--font-noto-sans);
     color: gray;
-    font-size: 2em;
+    font-size: 1em;
     font-weight: 700;
     box-sizing: border-box;
     padding: 0 0.4em;
@@ -205,17 +114,17 @@
 }
 
 .previewMedia {
-  width: 90px;
-  height: 90px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
   border-radius: 6px;
   background-color: #eee;
 }
 
 .docPreview {
-  width: 90px;
-  height: 90px;
-  font-size: 3rem;
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -227,7 +136,7 @@
 .fileInfo {
   display: flex;
   flex-direction: column;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-family: var(--font-noto-sans);
   font-weight: 700;
   color: #333;
@@ -239,6 +148,6 @@
   right: 8px;
   background: transparent;
   border: none;
-  font-size: 1.4rem;
+  font-size: 0.8rem;
   cursor: pointer;
 }

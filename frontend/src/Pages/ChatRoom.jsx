@@ -1,26 +1,18 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
+// Its style I will Use it in Sidebar
 import style from '../Styles/chatroom.module.css'
-import axios from 'axios';
-
-
-import Sidebar from '../components/Sidebar';
-import Chatwindow from '../components/ChatWindow';
-import {useChat} from '../context/ChatContext'
+import { useChat } from '../context/ChatContext'
+import Sidebar from '../components/Sidebar'
+import Chat from '../components/Chat'
 
 function ChatRoom() {
 
-  const { state, dispatch } = useChat()
-    // We take the access token from user object and send it to workspace service to fetch workspace data that user belongs to. Workspace > Channels and Messages ( A lot of messages and some times millions). And be aware that there is chat Context and chat reducer that I nned to understand
+  const {state, dispatch} = useChat()
 
   return (
-    <div className={style.appLayout}>
-        {/* Left Sidebar */}
-
-        <Sidebar data={state} dispatch={dispatch} />
-
-        {/* Chat Window */}
-        <Chatwindow data={state} />
-
+    <div className={style.chatRoomContainer} >
+      <Sidebar state={state} dispatch={dispatch} />
+      <Chat />
     </div>
   )
 }
