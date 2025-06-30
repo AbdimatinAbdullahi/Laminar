@@ -211,11 +211,53 @@
 
 .converstationWindow{
     width: 100%;
-    height: calc(100% - 60px - 60px);
-    background-color: #fff;
+    height: calc(100% - 60px);
+    background-color: gray;
     font-family: var(--font-noto-sans);
     color: gray;
+    box-sizing: border-box;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    box-sizing: border-box;
+    padding: 1em 0;
+    gap: 1em;
+}
+
+.messagesView{
+    width: 100%;
+    flex-grow: 1;
+    background-color: gray;
+}
+
+.messageComposerContainer{
+    width: 98%;
+    flex-shrink: 0;
+    border: 1px solid  gray;
+    border-radius: 12px;
+    box-sizing: border-box;
+    padding: 0.2em 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+
+.formatingIcons{
+    width: 100%;
+    height: 50px;
+    background-color: red;
+    display: flex;
+    flex-direction: row;
+}
+
+.formattingIcon{
+    margin-right: 1em;
+}
+
+.messageFunctionality{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

@@ -1,8 +1,7 @@
-import React, { act, useEffect } from 'react'
+import React, { act, useEffect, useState } from 'react'
 import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
-import { Phone, Video } from 'lucide-react'
-import ChatComposer from './ChatComposer'
+import { Bold, Italic, List, ListOrdered, Phone, Video } from 'lucide-react'
 
 function Chat() {
 
@@ -15,7 +14,6 @@ function Chat() {
     <div className={style.chatuiContainer}>
       <ChannelHeader channel={activeChannel} />
       <Converstation channel={activeChannel} />
-      <ChatComposer channel={activeChannel} />
     </div>
   )
 }
@@ -44,10 +42,48 @@ function ChannelHeader({channel}){
 function Converstation({channel}){
   return (
     <div className={style.converstationWindow}>
-      <h2>Here conversation Goes for {channel.name} 🎉🙌</h2>
+      <div className={style.messagesView}>
+        <h2>Messages from {channel.name} goes here 🎉🎉🙌</h2>
+      </div>
+      <MessageComposer/>
     </div>
   )
 }
 
+
+
+function MessageComposer(){
+
+  const [selectedFile, setselectedFile] = useState(null)
+  const [message, setmessage] = useState("")
+
+  return (
+    <div className={style.messageComposerContainer}>
+        <div className={style.formatingIcons}>
+          <Bold className={style.formattingIcon}  />
+          <Italic className={style.formattingIcon}  />
+          <List className={style.formattingIcon} />
+          <ListOrdered className={style.formattingIcon}  />
+        </div>
+
+        <div className={style.messageContainer}>
+          <input type="text" value={message} onChange={(e)=>setmessage(e.target.value)} />
+        </div>
+
+        {selectedFile && 
+          (
+            <div className={style.filePreviewContainer}>
+              hello
+            </div>
+          )
+        }
+
+        <div className={style.messageFunctionality}>
+            <div className={style.messagesAdds}>Hello</div>
+            <div className={style.sendIcon}>Hello</div>
+        </div>
+    </div>
+  )
+}
 
 export default Chat
