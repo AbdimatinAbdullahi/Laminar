@@ -1,5 +1,6 @@
 import React, {useState, useRef} from "react"
 import { useAudioRecorder } from '../hooks/useAudioRecorder'
+import EmojiPicker from 'emoji-picker-react'
 import { Bold, Italic, List, ListOrdered, Mic, SendHorizonal, SmilePlus, Upload } from 'lucide-react'
 
 import style from '../Styles/chatroom.module.css'
@@ -13,7 +14,15 @@ function MessageComposer(){
   const [message, setmessage] = useState("")
   const [selectedStyle, setselectedStyle] = useState("")
   const {isRecording, audioUrl, stopRecording, startRecording} = useAudioRecorder()
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
+  const textareaRef = useRef(null) 
 
+  function handleTextareaChange(e) {
+  setmessage(e.target.value);
+  const textarea = textareaRef.current;
+  textarea.style.height = "auto"; // Reset height
+  textarea.style.height = textarea.scrollHeight + "px"; // Set to new height
+  }
 
   function handleFileSelect(e){
     const file = e.target.files[0]
@@ -27,7 +36,7 @@ function MessageComposer(){
     };
   }
 
-  const mimeToExtension = {
+    const mimeToExtension = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "Word Document",
     "application/pdf": "PDF",
     "text/plain": "Text",
@@ -35,24 +44,36 @@ function MessageComposer(){
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "Spreadsheet",
     "application/vnd.ms-powerpoint": ".ppt",
     "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx"
-    // Add more as needed
+    // Adding more
     };
-
-const ext = mimeToExtension[selectedFile?.type] || selectedFile?.type;
+    
+    const ext = mimeToExtension[selectedFile?.type] || selectedFile?.type;
 
 
 
   return (
     <div className={style.messageComposerContainer}>
         <div className={style.formatingIcons}>
-          <Bold className={`${style.formattingIcon} ${selectedStyle == "bold" ? style.activeFormat : ""}`} onClick={()=>setselectedStyle("bold")}   />
-          <Italic className={`${style.formattingIcon} ${selectedStyle == "italic" ? style.activeFormat : ""}`} onClick={()=>setselectedStyle("italic")} />
-          <List className={`${style.formattingIcon} ${selectedStyle == "list" ? style.activeFormat : ""}`}  onClick={()=>setselectedStyle("list")} />
-          <ListOrdered className={`${style.formattingIcon} ${selectedStyle == "number" ? style.activeFormat : ""}`} onClick={()=>setselectedStyle("number")} />
+          <Bold 
+            className={`${style.formattingIcon} 
+            ${selectedStyle == "bold" ? style.activeFormat : ""}`} 
+            onClick={()=>setselectedStyle(prev => prev === "bold" ? "" : "bold")}   />
+          <Italic 
+            className={`${style.formattingIcon} 
+            ${selectedStyle == "italic" ? style.activeFormat : ""}`} 
+            onClick={()=>setselectedStyle(prev => prev === "italic" ? "" : "italic")} />
+          <List 
+            className={`${style.formattingIcon} 
+            ${selectedStyle == "list" ? style.activeFormat : ""}`}  
+            onClick={()=>setselectedStyle(prev => prev === "list" ? "" : "list")} />
+          <ListOrdered 
+            className={`${style.formattingIcon} 
+            ${selectedStyle == "number" ? style.activeFormat : ""}`} 
+            onClick={()=>setselectedStyle(prev => prev === "number" ? "" : "number")} />
         </div>
 
         <div className={style.messageContainer}>
-          <textarea value={message} onChange={(e) => setmessage(e.target.value)} placeholder='Type your message here' />
+          <textarea value={message} ref={textareaRef} onChange={handleTextareaChange} placeholder='Type your message here' />
         </div>
 
         {selectedFile && 
@@ -104,10 +125,12 @@ const ext = mimeToExtension[selectedFile?.type] || selectedFile?.type;
               <Mic 
                 className={`${style.addsIcon} ${isRecording ? style.recording : ''}`}
                 onClick={isRecording ? stopRecording : startRecording} />
-              <SmilePlus className={style.addsIcon} />
+              <SmilePlus className={style.addsIcon} onClick={()=> setEmojiPickerOpen(!emojiPickerOpen)} />
             </div>
             <div className={style.sendIconC}>
-              <SendHorizonal className={style.sendIcon} />
+              <SendHorizonal 
+                className={style.sendIcon} 
+                style={message == "" ? { backgroundColor: "#3b36365b", color: "gray" } : { color: "green", backgroundColor: "#0080005d"  }} />
             </div>
         </div>
     </div>

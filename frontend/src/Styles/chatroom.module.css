@@ -241,6 +241,7 @@
     flex-direction: column;
     align-items: start;
     gap: 1em;
+    position: relative;
 }
 
 
@@ -256,15 +257,20 @@
 }
 
 .formattingIcon{
-    margin-right: 1em;
-    width: 30px;
-    height: 30px;
+    margin-right: 0.4em;
+    width: 42px;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 0.4em;
+    border-radius: 3px;
+    &:hover{
+        background-color: #3b36365b;
+    }
 }
 
 
-.activeFomart{
-    background-color:red;
-    border-radius: 12px;
+.activeFormat{
+    background-color: #3b36365b ;
 }
 
 
@@ -276,16 +282,19 @@
 
 .messageContainer textarea{
     width: 100%;
+    height: 100px;
     box-sizing: border-box;
     padding: 0.5em;
     font-family: var(--font-noto-sans);
     color: gray;
     font-size: 1em;
-    font-weight: 500;
     border: none;
     outline: none;
-    overflow: scroll;
     resize: none;
+    border: 1px solid #55555516;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
 }
 
 textarea::-webkit-scrollbar{
@@ -310,12 +319,22 @@ textarea::-webkit-scrollbar{
 }
 
 .addsIcon{
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    padding: 0.4em;
+    &:hover{
+        background-color: #3b36365b;
+    }
 }
 
 .sendIcon{
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 0.4em;
+    border-radius: 3px;
     color: green;
+    background-color: rgba(0, 128, 0, 0.363);
 }
