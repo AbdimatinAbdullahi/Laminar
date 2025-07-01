@@ -1,7 +1,10 @@
-import React, { act, useEffect, useState } from 'react'
+import React, { act, useEffect, useRef, useState } from 'react'
 import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
-import { Bold, Italic, List, ListOrdered, Phone, Video } from 'lucide-react'
+import MessageComposer from './Composer'
+
+import { Bold, Italic, List, ListOrdered, Mic, Phone, Plus, SendHorizonal, SmilePlus, Upload, Video } from 'lucide-react'
+import { useAudioRecorder } from '../hooks/useAudioRecorder'
 
 function Chat() {
 
@@ -50,40 +53,5 @@ function Converstation({channel}){
   )
 }
 
-
-
-function MessageComposer(){
-
-  const [selectedFile, setselectedFile] = useState(null)
-  const [message, setmessage] = useState("")
-
-  return (
-    <div className={style.messageComposerContainer}>
-        <div className={style.formatingIcons}>
-          <Bold className={style.formattingIcon}  />
-          <Italic className={style.formattingIcon}  />
-          <List className={style.formattingIcon} />
-          <ListOrdered className={style.formattingIcon}  />
-        </div>
-
-        <div className={style.messageContainer}>
-          <input type="text" value={message} onChange={(e)=>setmessage(e.target.value)} />
-        </div>
-
-        {selectedFile && 
-          (
-            <div className={style.filePreviewContainer}>
-              hello
-            </div>
-          )
-        }
-
-        <div className={style.messageFunctionality}>
-            <div className={style.messagesAdds}>Hello</div>
-            <div className={style.sendIcon}>Hello</div>
-        </div>
-    </div>
-  )
-}
 
 export default Chat
