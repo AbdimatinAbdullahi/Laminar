@@ -1,41 +1,50 @@
 import { useState, useRef } from "react";
 
-export const useAudioRecorder = ()=>{
+export const useAudioRecorder = () => {
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
-    const [audioUrl, setaudioUrl] = useState(null)
-    const [isRecording, setisRecording] = useState(false)
-    const mediaRecordRef = useRef(null)
-    const audioChunksRef = useRef([])
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
 
-    const startRecording = async ()=>{
-        
-        const stream = navigator.mediaDevices.getUserMedia({audio: true})
-        const mediaRecorder = new MediaRecorder(stream)
-        mediaRecordRef.current = mediaRecorder;
-        audioChunksRef.current = []
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
+        }
+      };
 
-        mediaRecorder.ondataavailable = (e) =>{
-            if(e.data.size > 0) {
-                audioChunksRef.current.push(e.data)
-            }
-        };
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setAudioUrl(audioUrl);
+        // Optional: save audioBlob or pass to callback
+      };
 
-        mediaRecorder.onstop = ()=>{
-            const audioBlob = new Blob(audioChunksRef.current, {type: "audio/webm"});
-            const audioUrl = URL.createObjectURL(audioBlob)
-            setaudioUrl(audioUrl)
-        };
-
-        mediaRecorder.start()
-        setisRecording(true)
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Microphone error:", err);
+      alert("❌ Microphone access is required. Please allow it in your browser.");
     }
+  };
 
-    const stopRecording = ()=>{
-        mediaRecordRef.current?.stop();
-        setisRecording(false)
-    }
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    setIsRecording(false);
+  };
 
-
-    return {isRecording, audioUrl, startRecording, stopRecording, }
-}
+  return {
+    isRecording,
+    audioUrl,
+    setAudioUrl,
+    startRecording,
+    stopRecording,
+  };
+};

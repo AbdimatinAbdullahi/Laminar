@@ -336,5 +336,5 @@ textarea::-webkit-scrollbar{
     padding: 0.4em;
     border-radius: 3px;
     color: green;
-    background-color: rgba(0, 128, 0, 0.363);
+    background-color: #0080005d;
 }

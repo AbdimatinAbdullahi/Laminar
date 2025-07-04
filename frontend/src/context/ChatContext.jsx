@@ -1,13 +1,9 @@
 import React, {useReducer, useContext, createContext, useEffect, useState, act} from "react";
 import axios from "axios";
 import {useNavigate} from 'react-router'
+import messages from "../utils/messageSamples";
 
 const ChatContext = createContext()
-
-// This context id used: getting user id and sending to backend
-// Response: Workspaces, Channels and Each message channels limited to 50 for pagination later implement infinit scroll as user scrolls up
-//Take default workspace as first
-
 
 const initialState = {
     workspaces : [],
@@ -15,7 +11,10 @@ const initialState = {
     loading: false,
     error: null,
     selectedWorkspace: null,
-    activeChannel: null
+    activeChannel: null,
+    messages: [],
+    messageCursor: null,
+    hasMoreMessages: true
 }
 
 
@@ -27,8 +26,7 @@ const reducer = (state, action)=>{
         case "LOAD_ENDS":
             // get the first response data which will be used to select the first workspace
             const first = action.payload.length > 0 ? action.payload[0].Workspace : null;
-            return {...state, 
-                loading:false, 
+            return {...state, loading:false, 
                 workspaces:action.payload.map(item => item.Workspace), 
                 channels:action.payload.flatMap(item => item.Channels),
                 selectedWorkspace: first
@@ -40,10 +38,13 @@ const reducer = (state, action)=>{
         case "SELECT_WORKSPACE":
             return {...state, loading:false, selectedWorkspace:action.payload, activeChannel: null}
         
-            case "SELECT_CHANNEL":
-                return {...state, activeChannel: action.payload}
+        case "SELECT_CHANNEL":
+            return {...state, activeChannel: action.payload}
         
-            default:
+        case "CLEAR_MESSAGES":
+            return {...state, messages: [] }
+        
+        default:
             return state
     }
 }
@@ -85,6 +86,17 @@ export const ChatProvider = ({children})=>{
 
       fetchWorkspaceData()
     }, [])
+
+
+    useEffect(()=>{ 
+
+        function fetchIntialMessages(){
+            if(!state.activeChannel) return;
+            dispatch({type: "CLEAR_MESSAGES"})
+
+        }
+
+    }, [state.activeChannel])
 
 
     useEffect(() => {

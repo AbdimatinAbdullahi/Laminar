@@ -14,6 +14,7 @@ function Sidebar({ state, dispatch }) {
 
   function handleActiveSelect(channel){
     dispatch({type: "SELECT_CHANNEL", payload: channel})
+    console.log(channel)
   }
 
   const filteredChannels = channels.filter((channel) => channel.workspace_id === selectedWorkspace.id)

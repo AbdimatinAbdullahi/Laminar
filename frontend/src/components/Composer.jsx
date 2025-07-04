@@ -13,7 +13,7 @@ function MessageComposer(){
   const fileInputRef = useRef(null)
   const [message, setmessage] = useState("")
   const [selectedStyle, setselectedStyle] = useState("")
-  const {isRecording, audioUrl, stopRecording, startRecording} = useAudioRecorder()
+  const {isRecording, audioUrl, stopRecording, startRecording, setAudioUrl} = useAudioRecorder()
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
   const textareaRef = useRef(null) 
 
@@ -105,6 +105,28 @@ function MessageComposer(){
                     </div>
                   </div>
               )}
+            </div>
+          )
+        }
+
+        {
+          isRecording && (
+            <div className={mediastyle.recording} >
+              <h3>Recording .... </h3>
+              <button onClick={stopRecording} > ❌ </button>
+              <button> ✅ </button>
+            </div>
+          )
+        }
+
+        {
+          audioUrl && !isRecording && (
+            <div>
+              <audio controls src={audioUrl}/>
+              <button onClick={() => {
+                URL.revokeObjectURL(audioUrl); // Clean up the blob URL
+                setAudioUrl(null);
+              }}>❌</button>
             </div>
           )
         }

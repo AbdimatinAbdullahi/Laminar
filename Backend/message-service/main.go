@@ -57,6 +57,7 @@ func main() {
 	http.Handle("/workspace-members", corsMiddleware(http.HandlerFunc(workspaceHandler.GetWorkspaceMembers)))
 	http.Handle("/leave-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.LeaveWorkspace)))
 	http.Handle("/delete-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.DeleteWorkspace)))
+	http.Handle("/chat", corsMiddleware(http.HandlerFunc(workspaceHandler.GetMessages)))
 
 	log.Println("Server running :8008")
 	http.ListenAndServe(":8008", nil)
