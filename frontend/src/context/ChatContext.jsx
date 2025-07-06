@@ -95,13 +95,14 @@ export const ChatProvider = ({children})=>{
 
       fetchWorkspaceData()
     }, [])
-    
+
     async function fetchMessages(beforeCursor = null){
         if(!state.activeChannel) return
-        const url = `http://localhost:8008/chat?chatId=${state.activeChannel.ID}&type=channel${beforeCursor ? `&before=${beforeCursor}` : ""}`
+        const url = `http://localhost:8008/chat?chatId=${state.activeChannel.id}&type=channel${beforeCursor ? `&before=${beforeCursor}` : ""}`
         try {
             const mesRes = await axios.get(url)
-            const newMessages = mesRes.data.messages || []
+            console.log("Message response: ", mesRes)
+            const newMessages = mesRes.data || []
             dispatch({
                 type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES",
                 payload: {
