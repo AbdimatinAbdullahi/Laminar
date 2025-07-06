@@ -1,12 +1,15 @@
 package workspace
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"laminar/internal/models"
+	"time"
 
 	// "go.mongodb.org/mongo-driver/internal/uuid"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
@@ -19,6 +22,7 @@ type Repository interface {
 	LeaveWorkspace(workspaceId string, userId string) error
 	DeleteWorkspace(workspaceId string) error
 	GetRole(userId string, workspaceId string) (string, error)
+	GetMessages(channelId string, cursor *time.Time, receiverType string) ([]models.Message, error)
 }
 
 type repository struct {
@@ -229,4 +233,42 @@ func (r *repository) GetRole(userId string, workspaceId string) (string, error) 
 	}
 
 	return member.Role, nil
+}
+
+func (r *repository) GetMessages(channelId string, cursor *time.Time, receiverType string) ([]models.Message, error) {
+
+	collection := r.mongo.Client().Database("laminar").Collection("messages")
+
+	parsedID, err := uuid.Parse(channelId)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{
+		"receiver_type": receiverType,
+		"receiver_id":   parsedID,
+	}
+
+	if cursor != nil {
+		filter["timestamp"] = bson.M{"$lt": *cursor}
+	}
+
+	cursorReslt, err := collection.Find(context.TODO(), filter)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursorReslt.Close(context.TODO())
+
+	var messages []models.Message
+
+	if err := cursorReslt.All(context.TODO(), &messages); err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("Cusror in repo: %s\n", cursor)
+	fmt.Printf("channel Id in repo: %s\n", channelId)
+	return messages, nil
+
 }

@@ -23,15 +23,6 @@ const reducer = (state, action)=>{
         case "LOAD_START":
             return {...state, loading: true}
         
-        case "LOAD_ENDS":
-            // get the first response data which will be used to select the first workspace
-            const first = action.payload.length > 0 ? action.payload[0].Workspace : null;
-            return {...state, loading:false, 
-                workspaces:action.payload.map(item => item.Workspace), 
-                channels:action.payload.flatMap(item => item.Channels),
-                selectedWorkspace: first
-            }
-        
         case "LOAD_ERROR":
             return {...state, loading: false, error: action.payload}
 
@@ -43,6 +34,15 @@ const reducer = (state, action)=>{
         
         case "CLEAR_MESSAGES":
             return {...state, messages: [] }
+        
+        case "LOAD_MESSAGES":
+            return {...state, messages: action.payload.messages, hasMoreMessages: action.payload.hasMoreMessages, messageCursor: action.payload.messageCursor}
+        
+        case "APPEND_MESSAGES":
+            return {...state, messages: [...action.payload.messages, ...state.messages], messageCursor: action.payload.messageCursor, hasMoreMessages: action.payload.hasMoreMessages }    
+        
+        case "LOAD_ENDS":
+            return {...state, loading:false, workspaces:action.payload.workspaces, channels:action.payload.channels, selectedWorkspace: action.payload.selectedWorkspace}
         
         default:
             return state
@@ -57,24 +57,33 @@ export const ChatProvider = ({children})=>{
 
 
     useEffect(()=>{
+
       const fetchWorkspaceData = async () => {
+
         dispatch({type: "LOAD_START"})
+
         try {
             const token = localStorage.getItem("lam")
-
             if(!token){
               navigate('/')
               return
             }
-            
             const res = await axios.get("http://localhost:8008/workspace", {
                 headers: {
                   "Authorization" : `Bearer ${token}`
                 }              
-            })
+            }) 
             if(res.status == 200){
-                dispatch({"type" : "LOAD_ENDS", payload: res.data})
-                console.log(res.data)
+
+                const data = res.data[0]
+                dispatch({
+                    "type" : "LOAD_ENDS", 
+                    payload: {
+                        workspaces: res.data.map(item => item.Workspace), 
+                        channels: res.data.flatMap(item => item.Channels),
+                        selectedWorkspace: data.Workspace
+                    }
+                })
             }
 
         } catch (error) {
@@ -86,26 +95,29 @@ export const ChatProvider = ({children})=>{
 
       fetchWorkspaceData()
     }, [])
-
-
-    useEffect(()=>{ 
-
-        function fetchIntialMessages(){
-            if(!state.activeChannel) return;
-            dispatch({type: "CLEAR_MESSAGES"})
-
+    
+    async function fetchMessages(beforeCursor = null){
+        if(!state.activeChannel) return
+        const url = `http://localhost:8008/chat?chatId=${state.activeChannel.ID}&type=channel${beforeCursor ? `&before=${beforeCursor}` : ""}`
+        try {
+            const mesRes = await axios.get(url)
+            const newMessages = mesRes.data.messages || []
+            dispatch({
+                type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES",
+                payload: {
+                    messages: newMessages,
+                    hasMoreMessages: newMessages.length >= 10, 
+                    messageCursor: newMessages.length > 0 ? newMessages[newMessages.length - 1].timestamp : null
+                }
+            })
+        } catch (error) {
+            console.log("Error reading the data from messages: ", error)
         }
-
-    }, [state.activeChannel])
-
-
-    useEffect(() => {
-        console.log("Loaded data: ", state);
-    }, [state]);
+    }
 
 
     return(
-        <ChatContext.Provider value={{ state, dispatch }} >
+        <ChatContext.Provider value={{ state, dispatch, fetchMessages }} >
             {children}
         </ChatContext.Provider>
     )

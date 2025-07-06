@@ -2,8 +2,11 @@ package workspace
 
 import (
 	"errors"
+	"fmt"
 	"laminar/internal/models"
 	"log"
+	"strings"
+	"time"
 )
 
 type Service interface {
@@ -12,6 +15,7 @@ type Service interface {
 	GetMembers(wsId string) ([]UserInfoInWorkspace, error)
 	LeaveWorkspace(wsId string, userId string) error
 	DeleteWorkspace(wsId string, userId string) error
+	GetMessage(channeId string, cursor string, receiverType string) ([]models.Message, error)
 }
 
 // One property that is called repo
@@ -98,4 +102,31 @@ func (s *service) DeleteWorkspace(wsId string, userId string) error {
 	}
 
 	return nil
+}
+
+func (s *service) GetMessage(channelId string, cursor string, receiverType string) ([]models.Message, error) {
+	if channelId == "" || receiverType == "" {
+		return nil, errors.New("channelId or receiver type is empty")
+	}
+
+	fmt.Printf("Cusror in Sevice: %s\n", cursor)
+	var parsedCursor *time.Time
+	var err error
+
+	cursor = strings.Trim(cursor, `"`)
+
+	if cursor != "" {
+		t, err := time.Parse(time.RFC3339, cursor)
+		if err != nil {
+			return nil, err
+		}
+		parsedCursor = &t
+	}
+
+	messages, err := s.repo.GetMessages(channelId, parsedCursor, receiverType)
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
 }

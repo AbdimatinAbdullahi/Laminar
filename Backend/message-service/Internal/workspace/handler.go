@@ -155,3 +155,23 @@ func (h *Handler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Workspace deleted!"))
 
 }
+
+func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
+	channelId := r.URL.Query().Get("chatId")
+	cursor := r.URL.Query().Get("before")
+	receiverType := r.URL.Query().Get("type")
+
+	fmt.Printf("Cusror in handler: %s\n", cursor)
+
+	messages, err := h.svc.GetMessage(channelId, cursor, receiverType)
+
+	if err != nil {
+		log.Println("Error from handler", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(&messages)
+}
