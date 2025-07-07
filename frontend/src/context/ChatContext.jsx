@@ -27,13 +27,13 @@ const reducer = (state, action)=>{
             return {...state, loading: false, error: action.payload}
 
         case "SELECT_WORKSPACE":
-            return {...state, loading:false, selectedWorkspace:action.payload, activeChannel: null}
+            return {...state, loading:false, selectedWorkspace:action.payload, activeChannel: null, messages: [], messageCursor: null, hasMoreMessages: true}
         
         case "SELECT_CHANNEL":
-            return {...state, activeChannel: action.payload}
+            return {...state, activeChannel: action.payload, messages: [], messageCursor: null, hasMoreMessages: true}
         
         case "CLEAR_MESSAGES":
-            return {...state, messages: [] }
+            return {...state, messages: action.payload }
         
         case "LOAD_MESSAGES":
             return {...state, messages: action.payload.messages, hasMoreMessages: action.payload.hasMoreMessages, messageCursor: action.payload.messageCursor}
@@ -102,13 +102,13 @@ export const ChatProvider = ({children})=>{
         try {
             const mesRes = await axios.get(url)
             console.log("Message response: ", mesRes)
-            const newMessages = mesRes.data || []
+            const newMessages = (mesRes.data || []).reverse()
             dispatch({
                 type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES",
                 payload: {
-                    messages: newMessages,
+                    messages: newMessages, 
                     hasMoreMessages: newMessages.length >= 10, 
-                    messageCursor: newMessages.length > 0 ? newMessages[newMessages.length - 1].timestamp : null
+                    messageCursor: newMessages.length > 0 ? newMessages[0].timestamp : null
                 }
             })
         } catch (error) {

@@ -109,7 +109,6 @@ func (s *service) GetMessage(channelId string, cursor string, receiverType strin
 		return nil, errors.New("channelId or receiver type is empty")
 	}
 
-	fmt.Printf("Cusror in Sevice: %s\n", cursor)
 	var parsedCursor *time.Time
 	var err error
 
@@ -121,6 +120,10 @@ func (s *service) GetMessage(channelId string, cursor string, receiverType strin
 			return nil, err
 		}
 		parsedCursor = &t
+	}
+
+	if parsedCursor != nil {
+		fmt.Println("Formted cursor: ", parsedCursor.Local().Format("01/02/2006, 03:05:05 PM"))
 	}
 
 	messages, err := s.repo.GetMessages(channelId, parsedCursor, receiverType)

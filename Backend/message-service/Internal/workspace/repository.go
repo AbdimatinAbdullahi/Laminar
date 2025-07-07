@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"gorm.io/gorm"
 )
 
@@ -253,7 +254,9 @@ func (r *repository) GetMessages(channelId string, cursor *time.Time, receiverTy
 		filter["timestamp"] = bson.M{"$lt": *cursor}
 	}
 
-	cursorReslt, err := collection.Find(context.TODO(), filter)
+	opts := options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}).SetLimit(20)
+
+	cursorReslt, err := collection.Find(context.TODO(), filter, opts)
 
 	if err != nil {
 		return nil, err
@@ -267,8 +270,6 @@ func (r *repository) GetMessages(channelId string, cursor *time.Time, receiverTy
 		return nil, err
 	}
 
-	fmt.Printf("Cusror in repo: %s\n", cursor)
-	fmt.Printf("channel Id in repo: %s\n", channelId)
 	return messages, nil
 
 }

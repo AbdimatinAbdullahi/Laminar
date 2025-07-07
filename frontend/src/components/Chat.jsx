@@ -3,8 +3,7 @@ import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
 
-import { Bold, Italic, List, ListOrdered, Mic, Phone, Plus, SendHorizonal, SmilePlus, Upload, Video } from 'lucide-react'
-import { useAudioRecorder } from '../hooks/useAudioRecorder'
+import {Phone, Video } from 'lucide-react'
 
 function Chat() {
 
@@ -49,21 +48,18 @@ function Converstation({channel}){
   const {activeChannel, messageCursor, hasMoreMessages, messages} = state;
 
   useEffect(()=>{
-    dispatch({type: "CLEAR_MESSAGES"})
+    console.log("Length of messages before changes: ", Array.isArray(messages) && messages.length)
     fetchMessages()
   }, [activeChannel])
 
-  useEffect(()=>{
-    console.log(`Messages for channel : ${activeChannel.name}`, messages)
-  }, [messages])
 
-  // Fetching messages from backend 
   const handleScroll = ()=>{
     const container = messageContainerRef.current;
     if(!container) return;
 
     if(container.scrollTop == 0 && hasMoreMessages){
       console.log("Logging message cursor: ", messageCursor)
+      console.log("Logging message cursor: ", new Date(messageCursor).toLocaleDateString("en-US", {month: "2-digit", day: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true}))
       fetchMessages(messageCursor)
     }
   }
@@ -71,8 +67,9 @@ function Converstation({channel}){
   return (
     <div className={style.converstationWindow}>
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
-          {messages.map((msg, index)=>(
+          { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
             <div className={style.messageBubble} key={msg.id} >
+              <div> {msg.id} </div>
               <div> {index} </div>
               <div>{msg.content.text}</div>
               <div>{new Date(msg.timestamp).toLocaleDateString("en-US", {
@@ -83,10 +80,10 @@ function Converstation({channel}){
                 minute: "2-digit",
                 second:"2-digit",
                 hour12: true,
-
-              })}</div>
+              })}
+              </div>
             </div>
-          ))}
+          )): <h2>No message</h2>}
       </div>
       <MessageComposer/>
     </div>
