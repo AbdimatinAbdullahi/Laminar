@@ -101,16 +101,15 @@ export const ChatProvider = ({children})=>{
         const url = `http://localhost:8008/chat?chatId=${state.activeChannel.id}&type=channel${beforeCursor ? `&before=${beforeCursor}` : ""}`
         try {
             const mesRes = await axios.get(url)
-            console.log("Message response: ", mesRes)
-            const newMessages = (mesRes.data || []).reverse()
+            const newMessages = (mesRes.data || []).reverse() // reverse the messages so that it can be from oldest to newest: oldest will be at index 0
             dispatch({
-                type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES",
+                type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES", // If there is cursor, dispatch "APPEND_MESSAGES"
                 payload: {
                     messages: newMessages, 
-                    hasMoreMessages: newMessages.length >= 10, 
-                    messageCursor: newMessages.length > 0 ? newMessages[0].timestamp : null
+                    hasMoreMessages: newMessages.length >= 10, // if there messages from last fetch is greater than 10 there is a possibility we have more messages from database, if the messages fetched is less that or zero, all messages have been fetched
+                    messageCursor: newMessages.length > 0 ? newMessages[0].timestamp : null // we get the cursor from the beginning of that array messages since it is the oldest 
                 }
-            })
+            });
         } catch (error) {
             console.log("Error reading the data from messages: ", error)
         }

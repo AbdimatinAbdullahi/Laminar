@@ -1,4 +1,4 @@
-import React, { act, useEffect, useRef, useState } from 'react'
+import React, { act, useEffect, useRef, useState, useLayoutEffect } from 'react'
 import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
@@ -47,19 +47,18 @@ function Converstation({channel}){
   const {state, fetchMessages, dispatch} = useChat()
   const {activeChannel, messageCursor, hasMoreMessages, messages} = state;
 
+  // On intial render, Fetch the messages from backend without the cursor
   useEffect(()=>{
-    console.log("Length of messages before changes: ", Array.isArray(messages) && messages.length)
     fetchMessages()
   }, [activeChannel])
 
 
+  // On scroll Fetch more messages depending on hasMoreMessage state
   const handleScroll = ()=>{
     const container = messageContainerRef.current;
     if(!container) return;
 
     if(container.scrollTop == 0 && hasMoreMessages){
-      console.log("Logging message cursor: ", messageCursor)
-      console.log("Logging message cursor: ", new Date(messageCursor).toLocaleDateString("en-US", {month: "2-digit", day: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true}))
       fetchMessages(messageCursor)
     }
   }
@@ -69,8 +68,6 @@ function Converstation({channel}){
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
           { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
             <div className={style.messageBubble} key={msg.id} >
-              <div> {msg.id} </div>
-              <div> {index} </div>
               <div>{msg.content.text}</div>
               <div>{new Date(msg.timestamp).toLocaleDateString("en-US", {
                 month: "2-digit",

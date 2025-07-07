@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"laminar/internal/models"
+	"log"
 	"time"
 
 	// "go.mongodb.org/mongo-driver/internal/uuid"
@@ -24,6 +25,7 @@ type Repository interface {
 	DeleteWorkspace(workspaceId string) error
 	GetRole(userId string, workspaceId string) (string, error)
 	GetMessages(channelId string, cursor *time.Time, receiverType string) ([]models.Message, error)
+	GetSenderInfo(senderId string) (*models.User, error)
 }
 
 type repository struct {
@@ -270,6 +272,35 @@ func (r *repository) GetMessages(channelId string, cursor *time.Time, receiverTy
 		return nil, err
 	}
 
+	for i := range messages {
+		sender, err := r.GetSenderInfo(messages[i].SenderID.String())
+		if err != nil {
+			log.Println("Error while getting user information: ", err)
+		}
+		messages[i].Sender = sender
+	}
+
 	return messages, nil
 
+}
+
+func (r *repository) GetSenderInfo(senderId string) (*models.User, error) {
+	userId, err := uuid.Parse(senderId)
+	if err != nil {
+		return nil, err
+	}
+
+	var user models.User
+	err = r.postgres.Table("users").
+		Select("id, fullname, email").
+		Where("id = ?", userId).
+		First(&user).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("Users for messages: \n", user)
+
+	return &user, nil
 }

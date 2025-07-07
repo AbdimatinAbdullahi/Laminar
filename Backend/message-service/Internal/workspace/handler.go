@@ -161,7 +161,7 @@ func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	cursor := r.URL.Query().Get("before")
 	receiverType := r.URL.Query().Get("type")
 
-	fmt.Printf("Cusror in handler: %s\n", cursor)
+	log.Printf("Cusror in handler: %s\n", cursor)
 
 	messages, err := h.svc.GetMessage(channelId, cursor, receiverType)
 

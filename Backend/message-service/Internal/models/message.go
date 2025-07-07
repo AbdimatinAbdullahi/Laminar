@@ -33,4 +33,5 @@ type Message struct {
 	Edited         bool                `bson:"edited" json:"edited"`
 	Reactions      []Reaction          `bson:"reactions,omitempty" json:"reactions,omitempty"`
 	ThreadParentID *primitive.ObjectID `bson:"thread_parent_id,omitempty" json:"thread_parent_id,omitempty"`
+	Sender         *User
 }
