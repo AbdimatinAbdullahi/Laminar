@@ -212,7 +212,7 @@
 .converstationWindow{
     width: 100%;
     height: calc(100% - 60px);
-    background-color: gray;
+    background-color: rgb(50, 49, 49);
     font-family: var(--font-noto-sans);
     color: gray;
     box-sizing: border-box;
@@ -227,30 +227,21 @@
 .messagesView{
     width: 98%;
     flex-grow: 1;
+    background-color: inherit;
     border-radius: 4px;
-    background-color: rgb(255, 255, 255);
     overflow-y: auto;
     box-sizing: border-box;
     padding: 1em;
-}
-
-.messageBubble{
-    width: 100%;
-    height: fit-content;
-    border: 1px solid black;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    padding: 0 1em;
+    flex-direction: column;
+    gap:30px;
 }
 
 .messageComposerContainer{
     width: 98%;
     flex-shrink: 0;
     border: 1px solid  gray;
-    border-radius: 12px;
+    border-radius: 6px;
     box-sizing: border-box;
     padding: 0.7em 1em;
     display: flex;
@@ -298,7 +289,7 @@
 
 .messageContainer textarea{
     width: 100%;
-    height: 100px;
+    height: 60px;
     box-sizing: border-box;
     padding: 0.5em;
     font-family: var(--font-noto-sans);
@@ -353,4 +344,78 @@ textarea::-webkit-scrollbar{
     border-radius: 3px;
     color: green;
     background-color: #0080005d;
+}
+
+.messageBubble{
+    width: 100%;
+    min-height: fit-content;
+    display: flex;
+    box-sizing: border-box;
+    padding: 0.4em;
+    background-color: inherit;
+    flex-direction: row;
+    align-items: start;
+    gap: 15px;
+    border-bottom: 1px solid gray;
+    &:hover{
+        background-color: rgb(85, 85, 85, 0.3);
+        cursor: pointer;
+        border-radius: 8px;
+    }
+}
+.avatarURL{
+    width: 40px;
+    aspect-ratio: 1/1;
+    background-color: rgb(105, 100, 194);
+    border-radius: 2px;
+    font-family: var(--font-seculr-one);
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: white;
+}
+
+.messageContent{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: inherit;
+    background-color: transparent;
+}
+
+.senderItems{
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    background-color: inherit;
+    background-color: transparent;
+}
+
+.senderName{
+    margin-right: 16px;
+    font-family: var(--font-noto-sans);
+    font-weight: 700;
+    font-size: 1em;
+    color: white;
+    background-color: inherit;
+    background-color: transparent;
+}
+.sendTimestamp{
+    margin-right: 16px;
+    font-family: var(--font-noto-sans);
+    font-weight: 500;
+    font-size: 0.7em;
+    color: gray;
+    display: flex;
+    align-items: end;
+    background-color: inherit;
+    justify-content: baseline;
+}
+
+.messageText{
+    min-height: 80px;
+    background-color: inherit;
+    color: rgb(195, 193, 193);
 }

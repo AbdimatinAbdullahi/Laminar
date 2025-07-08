@@ -53,25 +53,6 @@ function MessageComposer(){
 
   return (
     <div className={style.messageComposerContainer}>
-        <div className={style.formatingIcons}>
-          <Bold 
-            className={`${style.formattingIcon} 
-            ${selectedStyle == "bold" ? style.activeFormat : ""}`} 
-            onClick={()=>setselectedStyle(prev => prev === "bold" ? "" : "bold")}   />
-          <Italic 
-            className={`${style.formattingIcon} 
-            ${selectedStyle == "italic" ? style.activeFormat : ""}`} 
-            onClick={()=>setselectedStyle(prev => prev === "italic" ? "" : "italic")} />
-          <List 
-            className={`${style.formattingIcon} 
-            ${selectedStyle == "list" ? style.activeFormat : ""}`}  
-            onClick={()=>setselectedStyle(prev => prev === "list" ? "" : "list")} />
-          <ListOrdered 
-            className={`${style.formattingIcon} 
-            ${selectedStyle == "number" ? style.activeFormat : ""}`} 
-            onClick={()=>setselectedStyle(prev => prev === "number" ? "" : "number")} />
-        </div>
-
         <div className={style.messageContainer}>
           <textarea value={message} ref={textareaRef} onChange={handleTextareaChange} placeholder='Type your message here' />
         </div>

@@ -4,6 +4,7 @@ import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
 
 import {Phone, Video } from 'lucide-react'
+import MessageBubble from './MessageBubble'
 
 function Chat() {
 
@@ -67,25 +68,14 @@ function Converstation({channel}){
     <div className={style.converstationWindow}>
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
           { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
-            <div className={style.messageBubble} key={msg.id} >
-              <div>{msg.content.text}</div>
-              <div>{new Date(msg.timestamp).toLocaleDateString("en-US", {
-                month: "2-digit",
-                day: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second:"2-digit",
-                hour12: true,
-              })}
-              </div>
-            </div>
+              <MessageBubble message={msg} />
           )): <h2>No message</h2>}
       </div>
       <MessageComposer/>
     </div>
   )
 }
+
 
 
 export default Chat

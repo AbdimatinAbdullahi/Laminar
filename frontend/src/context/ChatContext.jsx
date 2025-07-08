@@ -102,6 +102,7 @@ export const ChatProvider = ({children})=>{
         try {
             const mesRes = await axios.get(url)
             const newMessages = (mesRes.data || []).reverse() // reverse the messages so that it can be from oldest to newest: oldest will be at index 0
+            console.log("Messag response: ", mesRes.data)
             dispatch({
                 type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES", // If there is cursor, dispatch "APPEND_MESSAGES"
                 payload: {
