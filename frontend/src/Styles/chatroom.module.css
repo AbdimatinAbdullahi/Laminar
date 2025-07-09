@@ -357,10 +357,11 @@ textarea::-webkit-scrollbar{
     align-items: start;
     gap: 15px;
     border-bottom: 1px solid gray;
+    position: relative;
     &:hover{
         background-color: rgb(85, 85, 85, 0.3);
         cursor: pointer;
-        border-radius: 8px;
+        border-radius: 4px;
     }
 }
 .avatarURL{
@@ -418,4 +419,39 @@ textarea::-webkit-scrollbar{
     min-height: 80px;
     background-color: inherit;
     color: rgb(195, 193, 193);
+}
+
+.reactionPicker{
+    position: absolute;
+    top: 4px;
+    right: 0;
+    min-width: 140px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 40px;
+    background-color: transparent;
+    border: 1px solid gray;
+    border-radius: 6px;
+    box-shadow: -4px 5px 12px 0px rgba(0,0,0,0.5);
+    -webkit-box-shadow: -4px 5px 12px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: -4px 5px 12px 0px rgba(0,0,0,0.5);
+}
+
+.reactionPicker button, .reactionPicker .messageReply, .reactionPicker .openReactionPicker{
+    background-color: inherit;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+.emojiPicker{
+    position: absolute;
+    top: 100px;
+    left: 0;
+    z-index: 100;
+    width: 300px;
+    aspect-ratio: 1/1;
+    border-radius: 12px;
 }
