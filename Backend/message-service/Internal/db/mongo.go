@@ -88,6 +88,7 @@ func SeedMessages(ctx context.Context) error {
 	}
 
 	coll := MongoDatabase.Collection("messages")
+	var insertedMessages []primitive.ObjectID
 
 	for i := 0; i < 20; i++ {
 		sender := users[rand.Intn(len(users))]
@@ -107,13 +108,24 @@ func SeedMessages(ctx context.Context) error {
 			}
 		}
 
+		// Randomly decide if the message is edited
+		isEdited := rand.Intn(4) == 0 // ~25% chance
+
+		// Randomly reply to an earlier message
+		var threadParentID *primitive.ObjectID
+		if i > 2 && rand.Intn(3) == 0 { // ~33% chance of being a reply
+			parentID := insertedMessages[rand.Intn(len(insertedMessages))]
+			threadParentID = &parentID
+		}
+
 		message := models.Message{
-			ID:           primitive.NewObjectID(),
-			SenderID:     sender,
-			ReceiverType: receiverType,
-			ReceiverID:   receiver,
-			Timestamp:    time.Now(),
-			Edited:       false,
+			ID:             primitive.NewObjectID(),
+			SenderID:       sender,
+			ReceiverType:   receiverType,
+			ReceiverID:     receiver,
+			Timestamp:      time.Now(),
+			Edited:         isEdited,
+			ThreadParentID: threadParentID,
 			Content: models.MessageContent{
 				Text: textSamples[rand.Intn(len(textSamples))],
 			},
@@ -122,8 +134,10 @@ func SeedMessages(ctx context.Context) error {
 		if _, err := coll.InsertOne(ctx, message); err != nil {
 			return fmt.Errorf("failed to insert message %d: %w", i+1, err)
 		}
+
+		insertedMessages = append(insertedMessages, message.ID)
 	}
 
-	fmt.Println("✅ Seeded 20 messages into MongoDB")
+	fmt.Println("✅ Seeded 20 messages into MongoDB with replies and edited flags")
 	return nil
 }

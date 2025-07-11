@@ -1,10 +1,11 @@
-import React, {useState, useRef} from "react"
+import React, {useState, useRef, useEffect} from "react"
 import { useAudioRecorder } from '../hooks/useAudioRecorder'
 import EmojiPicker from 'emoji-picker-react'
 import { Bold, Italic, List, ListOrdered, Mic, SendHorizonal, SmilePlus, Upload } from 'lucide-react'
 
 import style from '../Styles/chatroom.module.css'
 import mediastyle from '../Styles/mediastyle.module.css'
+import { useChat } from "../context/ChatContext"
 
 
 function MessageComposer(){
@@ -12,16 +13,33 @@ function MessageComposer(){
   const [selectedFile, setselectedFile] = useState(null)
   const fileInputRef = useRef(null)
   const [message, setmessage] = useState("")
-  const [selectedStyle, setselectedStyle] = useState("")
   const {isRecording, audioUrl, stopRecording, startRecording, setAudioUrl} = useAudioRecorder()
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
   const textareaRef = useRef(null) 
+  const emojiPicker = useRef(null)
+  const { sendMessage } = useChat()
 
+
+
+  // Function to handle Text Change
   function handleTextareaChange(e) {
   setmessage(e.target.value);
   const textarea = textareaRef.current;
   textarea.style.height = "auto"; // Reset height
   textarea.style.height = textarea.scrollHeight + "px"; // Set to new height
+  }
+
+  // Function to handle emoji pick
+  const handleEmojiClick = (emojiData, event) =>{
+    setEmojiPickerOpen(false)
+    setmessage((prev) => prev + emojiData.emoji)
+  }
+
+
+  const handleSendMesssage = (e) =>{
+    if(message == "") return
+    sendMessage(message)
+    setmessage("")
   }
 
   function handleFileSelect(e){
@@ -35,6 +53,21 @@ function MessageComposer(){
       e.target.value = null;
     };
   }
+
+
+  useEffect(()=>{
+    const handleOutsideClick = (e)=>{
+      if(emojiPicker.current && !emojiPicker.current.contains(e.target)){
+        setEmojiPickerOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick)
+    return () => document.removeEventListener("mousedown", handleOutsideClick)
+  }, [])
+
+
+
 
     const mimeToExtension = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "Word Document",
@@ -53,6 +86,7 @@ function MessageComposer(){
 
   return (
     <div className={style.messageComposerContainer}>
+      {emojiPickerOpen && <div ref={emojiPicker} className={style.emojiPickerForMessage}> <EmojiPicker onEmojiClick={handleEmojiClick} /> </div>}
         <div className={style.messageContainer}>
           <textarea value={message} ref={textareaRef} onChange={handleTextareaChange} placeholder='Type your message here' />
         </div>
@@ -132,6 +166,7 @@ function MessageComposer(){
             </div>
             <div className={style.sendIconC}>
               <SendHorizonal 
+                onClick={handleSendMesssage}
                 className={style.sendIcon} 
                 style={message == "" ? { backgroundColor: "#3b36365b", color: "gray" } : { color: "green", backgroundColor: "#0080005d"  }} />
             </div>

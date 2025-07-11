@@ -455,3 +455,11 @@ textarea::-webkit-scrollbar{
     aspect-ratio: 1/1;
     border-radius: 12px;
 }
+
+.emojiPickerForMessage{
+    width: 200px;
+    aspect-ratio: 1/1;
+    position: absolute;
+    bottom: 200px;
+    border-radius: 12px;
+}

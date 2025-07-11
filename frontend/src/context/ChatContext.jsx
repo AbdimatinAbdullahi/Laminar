@@ -68,6 +68,7 @@ export const ChatProvider = ({children})=>{
               navigate('/')
               return
             }
+            const onlineRes = await axios.post("http://localhost/online", {token})
             const res = await axios.get("http://localhost:8008/workspace", {
                 headers: {
                   "Authorization" : `Bearer ${token}`
@@ -94,6 +95,10 @@ export const ChatProvider = ({children})=>{
       }
 
       fetchWorkspaceData()
+
+
+      return () => await axios.post("http://locahost/offline")
+
     }, [])
 
     async function fetchMessages(beforeCursor = null){
@@ -117,8 +122,13 @@ export const ChatProvider = ({children})=>{
     }
 
 
+    async function sendMessage(data){
+        console.log(data)
+    }
+
+
     return(
-        <ChatContext.Provider value={{ state, dispatch, fetchMessages }} >
+        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage }} >
             {children}
         </ChatContext.Provider>
     )
