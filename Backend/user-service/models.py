@@ -13,6 +13,7 @@ class User(db.Model):
     email = db.Column(db.String(200), nullable=False)
     is_verified = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(10), default="offline", nullable=False)
     password = db.Column(db.String(512), nullable=False)
 
     def set_hashed_password(self, password):

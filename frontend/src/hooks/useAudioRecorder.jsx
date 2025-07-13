@@ -46,5 +46,6 @@ export const useAudioRecorder = () => {
     setAudioUrl,
     startRecording,
     stopRecording,
+    setIsRecording
   };
 };

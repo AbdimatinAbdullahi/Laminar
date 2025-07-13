@@ -50,7 +50,7 @@ def login():
         token = jwt.encode(payload, secret_key, "HS256")
 
 
-        return jsonify({"message" : "Login success!", "token" : token, "fullname": user.fullname, "email" : user.email})
+        return jsonify({"message" : "Login success!", "token" : token, "fullname": user.fullname, "email" : user.email, id: user.id})
 
     except Exception as e:
         print("Failed login!", str(e))
@@ -68,8 +68,67 @@ def on_app_load():
         secret_key = current_app.config["SECRTE_KEY"]
         decoded_user = jwt.decode(auth_token, secret_key, algorithms="HS256")
         print("Decoded user: ", decoded_user)
-        return jsonify({"message" : "Load success", "email": decoded_user.get("email"), "id" : decoded_user.get("sub"), "fullname" : decoded_user.get("fullname"), "token" : auth_token}), 200
+        return jsonify({"message" : "Load success", "email" : decoded_user.get("email"), "id" : decoded_user.get("sub"), "fullname" : decoded_user.get("fullname"), "token" : auth_token}), 200
 
     except Exception as e:
         print("Error ", str(e))
         return jsonify({"error" : "Internal server error"}), 500
+    
+
+
+def decoder_helper(token):
+    try:
+        secret_key = current_app.config["SECRTE_KEY"]
+        return jwt.decode(token, secret_key, algorithms="HS256")
+    except Exception as e:
+        print("Failed to decode the user: ", str(e))
+        return None
+
+
+@auth_bp.route('/setOnline', methods=["POST"])
+def set_online():
+    try:
+        data = request.get_json()
+        token = data.get("token")
+        print("Token when decoding: ", token)
+        decoded_user = decoder_helper(token=token)
+        if not decoded_user:
+            return jsonify({"error" : "Server Error"}), 500
+        
+        user = User.query.filter_by(id=decoded_user.get("sub")).first()
+        if not user:
+            return jsonify({"error" : "Internal Server error"}), 500
+
+        user.status = "online"
+        db.session.commit()
+
+        print("User setted online")
+        return jsonify({"message" : "user setted online"}), 200
+
+    except Exception as e:
+        print("Server Error: ", str(e))
+        return jsonify({"error" : "Internal Server Error"}), 500
+
+
+
+@auth_bp.route("/removeOnline", methods=["POST"])
+def remove_online():
+    try:
+        data = request.get_json()
+        token = data["token"]
+        decoded_user = decoder_helper(token=token)
+        if not decoded_user:
+            return jsonify({"error" : "Internal Server error"}), 401
+        
+        user = User.query.filter_by(id=decoded_user.get("sub")).first()
+        if not user:
+            return jsonify({"error" : "Internal server error"}), 404
+        user.status = "offline"
+        db.session.commit()
+        print("User setted offline")
+        return jsonify({"message" : "setted offline"}), 200
+
+    except Exception as e:
+        print("User removing online failed: ", str(e))
+        return jsonify({"error" : "Failed removing user online"}), 500
+    

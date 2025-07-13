@@ -37,10 +37,11 @@ export const AuthProvider = ({children})=>{
 
             // If Server returns 200
             if(authResponse.status == 200){
+                console.log("Auth response: ", authResponse.data)
                 setUser({
                     fullname: authResponse.data.fullname,
                     email: authResponse.data.email,
-                    id: authResponse.data.user,
+                    id: authResponse.data.id,
                     token: authResponse.data.token
                 })
                 //navigate to where user belongs or send it to message or workspace service
@@ -63,7 +64,7 @@ export const AuthProvider = ({children})=>{
                     fullname: authLoginResponse.data.fullname,
                     email: authLoginResponse.data.email,
                     token: authLoginResponse.data.token,
-                    id: authLoginResponse.data.user
+                    id: authLoginResponse.data.id
                 })
                 navigate('/@me')
                 //navigate to where user belongs or send it to message or workspace service

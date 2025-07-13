@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 // Its style I will Use it in Sidebar
 import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
@@ -8,6 +8,7 @@ import Chat from '../components/Chat'
 function ChatRoom() {
 
   const {state, dispatch} = useChat()
+
 
   return (
     <div className={style.chatRoomContainer} >

@@ -1,46 +1,119 @@
-import React, {useState, useRef, useEffect} from "react"
-import { useAudioRecorder } from '../hooks/useAudioRecorder'
 import EmojiPicker from 'emoji-picker-react'
-import { Bold, Italic, List, ListOrdered, Mic, SendHorizonal, SmilePlus, Upload } from 'lucide-react'
+import React, {useState, useRef, useEffect, use} from "react"
+import { Mic, SendHorizonal, SmilePlus, Upload } from 'lucide-react'
 
 import style from '../Styles/chatroom.module.css'
 import mediastyle from '../Styles/mediastyle.module.css'
+
 import { useChat } from "../context/ChatContext"
+import { useAuth } from "../context/AuthContext"
+import { useAudioRecorder } from '../hooks/useAudioRecorder'
+
+
+import { mimeToExtension } from '../utils/filesRename'
+import { uploadTOS3 } from '../utils/uploadTOS3'
 
 
 function MessageComposer(){
 
-  const [selectedFile, setselectedFile] = useState(null)
-  const fileInputRef = useRef(null)
   const [message, setmessage] = useState("")
-  const {isRecording, audioUrl, stopRecording, startRecording, setAudioUrl} = useAudioRecorder()
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
-  const textareaRef = useRef(null) 
-  const emojiPicker = useRef(null)
-  const { sendMessage } = useChat()
 
+
+  const { user } = useAuth()
+  const { sendMessage, state } = useChat()
+  const { isRecording, audioUrl, stopRecording, startRecording, setAudioUrl, setIsRecording} = useAudioRecorder()
+
+
+  const emojiPicker = useRef(null)
+  const textareaRef = useRef(null)
+  const fileInputRef = useRef(null)
+  const [selectedFile, setselectedFile] = useState(null)
+
+  const ext = mimeToExtension[selectedFile?.type] || selectedFile?.type;
+
+
+  useEffect(()=>{
+    console.log("The user is this: ", user)
+  }, [user])
 
 
   // Function to handle Text Change
   function handleTextareaChange(e) {
-  setmessage(e.target.value);
-  const textarea = textareaRef.current;
-  textarea.style.height = "auto"; // Reset height
-  textarea.style.height = textarea.scrollHeight + "px"; // Set to new height
+    setmessage(e.target.value);
+    const textarea = textareaRef.current;
+    textarea.style.height = "auto"; // Reset height
+    textarea.style.height = textarea.scrollHeight + "px"; // Set to new height
   }
 
   // Function to handle emoji pick
   const handleEmojiClick = (emojiData, event) =>{
-    setEmojiPickerOpen(false)
     setmessage((prev) => prev + emojiData.emoji)
   }
 
 
-  const handleSendMesssage = (e) =>{
-    if(message == "") return
-    sendMessage(message)
+  const handleSendMesssage = async (e) =>{
+    if(!message && !audioUrl && !selectedFile) return
+
+    if(message && !audioUrl && !selectedFile){
+      sendMessage({ 
+        type: "text", 
+        payload: {
+          message: message,
+          timestamp: new Date().toISOString(),
+          senderID: user.id,
+          channelID: state.activeChannel.id
+        }
+      });
+    }
+
+    if(selectedFile){
+      const fileURL = uploadTOS3(selectedFile.file)
+      const fileMessage = {
+        type: selectedFile.type.startsWith("image/") ? "image" : selectedFile.type.startsWith("video/") ? "video" : "file",
+        payload: {
+          url: fileURL,
+          message:  message !== "" ? message : "",
+          filename: selectedFile.name,
+          filetype: selectedFile.type,
+          filesize: selectedFile.size,
+          timestamp: new Date().toISOString(),
+          senderID: user.id,
+          channelID: state.activeChannel.id
+
+        } 
+      }
+      sendMessage(fileMessage);
+      setselectedFile(null)
+    }
+
+    if(audioUrl && !isRecording){
+      const blob = await fetch(audioUrl).then(res => res.blob())
+      const file = new File([blob], `audio-${new Date()}.webm`,{
+        type: "audio/webm"
+      })
+
+      const uploadAudioURL = uploadTOS3(file)
+      const audioMessage = {
+        type: "audio",
+        payload : {
+          url: uploadAudioURL,
+          message: message !== "" ? message : "",
+          filename: file.name,
+          filesize: file.size,
+          filetype: file.type,
+          timestamp: new Date().toISOString(),
+          senderID: user.id,
+          channelID: state.activeChannel.id
+        }
+      }
+      sendMessage(audioMessage)
+      URL.revokeObjectURL(audioUrl)
+      setAudioUrl(null)
+    }
     setmessage("")
   }
+
 
   function handleFileSelect(e){
     const file = e.target.files[0]
@@ -56,6 +129,7 @@ function MessageComposer(){
 
 
   useEffect(()=>{
+
     const handleOutsideClick = (e)=>{
       if(emojiPicker.current && !emojiPicker.current.contains(e.target)){
         setEmojiPickerOpen(false)
@@ -65,23 +139,6 @@ function MessageComposer(){
     document.addEventListener("mousedown", handleOutsideClick)
     return () => document.removeEventListener("mousedown", handleOutsideClick)
   }, [])
-
-
-
-
-    const mimeToExtension = {
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "Word Document",
-    "application/pdf": "PDF",
-    "text/plain": "Text",
-    "application/vnd.ms-excel": "Excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "Spreadsheet",
-    "application/vnd.ms-powerpoint": ".ppt",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx"
-    // Adding more
-    };
-    
-    const ext = mimeToExtension[selectedFile?.type] || selectedFile?.type;
-
 
 
   return (
@@ -129,14 +186,14 @@ function MessageComposer(){
             <div className={mediastyle.recording} >
               <h3>Recording .... </h3>
               <button onClick={stopRecording} > ❌ </button>
-              <button> ✅ </button>
+              <button onClick={()=> setIsRecording(false)} > ✅ </button>
             </div>
           )
         }
 
         {
           audioUrl && !isRecording && (
-            <div>
+            <div className={mediastyle.audioReco} > 
               <audio controls src={audioUrl}/>
               <button onClick={() => {
                 URL.revokeObjectURL(audioUrl); // Clean up the blob URL

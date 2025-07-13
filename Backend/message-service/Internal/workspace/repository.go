@@ -300,7 +300,5 @@ func (r *repository) GetSenderInfo(senderId string) (*models.User, error) {
 		return nil, err
 	}
 
-	log.Println("Users for messages: \n", user)
-
 	return &user, nil
 }
