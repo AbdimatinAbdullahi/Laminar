@@ -143,7 +143,7 @@ function MessageComposer(){
 
   return (
     <div className={style.messageComposerContainer}>
-      {emojiPickerOpen && <div ref={emojiPicker} className={style.emojiPickerForMessage}> <EmojiPicker onEmojiClick={handleEmojiClick} /> </div>}
+      {emojiPickerOpen && <div ref={emojiPicker} className={style.emojiPickerForMessage}> <EmojiPicker onEmojiClick={handleEmojiClick} lazyLoadEmojis={true} /> </div>}
         <div className={style.messageContainer}>
           <textarea value={message} ref={textareaRef} onChange={handleTextareaChange} placeholder='Type your message here' />
         </div>

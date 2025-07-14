@@ -50,7 +50,7 @@ def login():
         token = jwt.encode(payload, secret_key, "HS256")
 
 
-        return jsonify({"message" : "Login success!", "token" : token, "fullname": user.fullname, "email" : user.email, id: user.id})
+        return jsonify({"message" : "Login success!", "token" : token, "fullname": user.fullname, "email" : user.email, "id": user.id})
 
     except Exception as e:
         print("Failed login!", str(e))

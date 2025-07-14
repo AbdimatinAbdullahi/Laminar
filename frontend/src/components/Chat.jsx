@@ -63,7 +63,6 @@ function Converstation({channel}){
       fetchMessages(messageCursor)
     }
   }
-
   return (
     <div className={style.converstationWindow}>
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
