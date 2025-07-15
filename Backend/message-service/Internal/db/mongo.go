@@ -10,6 +10,7 @@ import (
 	"laminar/internal/models"
 
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -139,5 +140,62 @@ func SeedMessages(ctx context.Context) error {
 	}
 
 	fmt.Println("✅ Seeded 20 messages into MongoDB with replies and edited flags")
+	return nil
+}
+
+func AddReactionsToLastMessages(ctx context.Context) error {
+	coll := MongoDatabase.Collection("messages")
+
+	users := []string{
+		"4261498a-7b23-4bf1-bf16-46d4f3deb513",
+		"a0000001-0000-0000-0000-000000000001",
+		"a0000002-0000-0000-0000-000000000002",
+		"a0000003-0000-0000-0000-000000000003",
+		"a0000004-0000-0000-0000-000000000004",
+		"a0000005-0000-0000-0000-000000000005",
+		"a0000020-0000-0000-0000-000000000020",
+	}
+
+	emojis := []string{"👍", "❤️", "😂", "😮", "🎉"}
+
+	// Step 1: Fetch last 500 messages
+	cursor, err := coll.Find(ctx, bson.M{}, options.Find().SetSort(bson.D{{Key: "timestamp", Value: -1}}).SetLimit(500))
+	if err != nil {
+		return fmt.Errorf("failed to fetch messages: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var messages []models.Message
+	if err := cursor.All(ctx, &messages); err != nil {
+		return fmt.Errorf("failed to decode messages: %w", err)
+	}
+
+	// Step 2: Loop and update each message with reactions
+	for _, msg := range messages {
+		reactions := make(map[string][]string)
+
+		// Randomly pick 1–3 emojis
+		emojiCount := rand.Intn(3) + 1
+		rand.Shuffle(len(emojis), func(i, j int) { emojis[i], emojis[j] = emojis[j], emojis[i] })
+		selectedEmojis := emojis[:emojiCount]
+
+		for _, emoji := range selectedEmojis {
+			// Randomly pick 1–3 users per emoji
+			userCount := rand.Intn(3) + 1
+			rand.Shuffle(len(users), func(i, j int) { users[i], users[j] = users[j], users[i] })
+			reactions[emoji] = users[:userCount]
+		}
+
+		// Step 3: Update the message
+		_, err := coll.UpdateOne(ctx,
+			bson.M{"_id": msg.ID},
+			bson.M{"$set": bson.M{"reactions": reactions}},
+		)
+		if err != nil {
+			return fmt.Errorf("failed to update message %s: %w", msg.ID.Hex(), err)
+		}
+	}
+
+	fmt.Println("✅ Added reactions to last 500 messages.")
 	return nil
 }

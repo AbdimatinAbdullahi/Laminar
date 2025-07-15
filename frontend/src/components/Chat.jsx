@@ -3,10 +3,10 @@ import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
 
-import {Phone, Video } from 'lucide-react'
+import {Phone, Users, Video } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 
-function Chat() {
+function Chat({handelUserBarActive}) {
 
     const { state } = useChat()
     const {activeChannel} = state
@@ -15,7 +15,7 @@ function Chat() {
 
   return (
     <div className={style.chatuiContainer}>
-      <ChannelHeader channel={activeChannel} />
+      <ChannelHeader channel={activeChannel} handelUserBarActive={handelUserBarActive} />
       <Converstation channel={activeChannel} />
     </div>
   )
@@ -23,7 +23,7 @@ function Chat() {
 
 
 
-function ChannelHeader({channel}){
+function ChannelHeader({channel, handelUserBarActive}){
   return (
     <div className={style.ChannelHeader}>
         {/* Name and Type of channel */}
@@ -36,6 +36,7 @@ function ChannelHeader({channel}){
         <div className={style.channelMeeting}>
           <Video className={style.meetingIcon} size={30} />
           <Phone className={style.meetingIcon}  size={30} />
+          <Users onClick={()=>handelUserBarActive()} />
         </div>
     </div>
   )

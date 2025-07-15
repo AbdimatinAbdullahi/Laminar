@@ -125,7 +125,7 @@ export const ChatProvider = ({children})=>{
         dispatch({ type: "APPEND_FROM_SOCKET", payload: message.message })
     }
 
-    const { sendMessage } = useWebsocket(handleIncomingMessage)
+    const { sendMessage } = useWebsocket(user.id, handleIncomingMessage)
 
 
 

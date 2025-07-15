@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 
-export const useWebsocket = (onMessage) =>{
+export const useWebsocket = (userID, onMessage) =>{
     const socketRef = useRef(null)
 
     useEffect(()=>{
-        const socket = new WebSocket("ws://localhost:8008/ws")
+        
+        const socket = new WebSocket(`ws://localhost:8008/ws?userId=${userID}`)
+        
         socketRef.current = socket
 
         socket.onmessage = (event) =>{
@@ -18,7 +20,7 @@ export const useWebsocket = (onMessage) =>{
             }
         };
 
-    }, [])
+    }, [userID])
 
 
     const sendMessage = (message) =>{

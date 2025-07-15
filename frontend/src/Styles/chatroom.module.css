@@ -20,6 +20,12 @@
     flex-direction: row;
 }
 
+
+.usersBarContainer{
+    width: 20%;
+    height: 100%;
+}
+
 .workspacesContainer{
     width: 80px;
     height: 100%;
@@ -155,7 +161,8 @@
 }
 
 .chatuiContainer{
-    width: calc(100% - 25%);
+    /* width: calc(100% - 25%); */
+    flex-grow: 1;
     height: 100%;
     background-color: #555;
     font-family: var(--font-noto-sans);

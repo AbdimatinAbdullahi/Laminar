@@ -13,11 +13,6 @@ type Attachment struct {
 	Name string `bson:"name" json:"name"`
 }
 
-type Reaction struct {
-	UserID   uuid.UUID `bson:"user_id" json:"user_id"`
-	Reaction string    `bson:"reaction" json:"reaction"`
-}
-
 type MessageContent struct {
 	Text       string       `bson:"text" json:"text"`
 	Attachment []Attachment `bson:"attachment,omitempty" json:"attachments,omitempty"`
@@ -31,7 +26,7 @@ type Message struct {
 	Content        MessageContent      `bson:"content" json:"content"`
 	Timestamp      time.Time           `bson:"timestamp" json:"timestamp"`
 	Edited         bool                `bson:"edited" json:"edited"`
-	Reactions      []Reaction          `bson:"reactions,omitempty" json:"reactions,omitempty"`
+	Reactions      map[string][]string `bson:"reactions,omitempty" json:"reactions,omitempty"` // The key Will be the Reactions and the users Ids that reacted with it
 	ThreadParentID *primitive.ObjectID `bson:"thread_parent_id,omitempty" json:"thread_parent_id,omitempty"`
 	Sender         *User
 }
