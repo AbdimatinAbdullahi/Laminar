@@ -44,6 +44,7 @@ func main() {
 
 	// db.AutoMigrateTables()
 	// db.SeedMessages(context.Background())
+	db.AddReactionsToLastMessages(context.Background())
 	gormDB := db.GetPostgresDB()
 	mongoDB := db.GetMongo()
 

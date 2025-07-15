@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { Plus, Reply, SmilePlus } from 'lucide-react'
+import EmojiPicker from 'emoji-picker-react'
+
 import style from '../Styles/chatroom.module.css'
-import { Plus, Reply } from 'lucide-react'
-import EmojiPicker, { Emoji } from 'emoji-picker-react'
+
+
 import {useChat} from '../context/ChatContext'
 
 
 
-function MessageBubble({message}) {
+function MessageBubble({message, handleReply}) {
   
   const {state} = useChat()
   const { messages } = state
@@ -30,17 +33,6 @@ function MessageBubble({message}) {
   }, [])
 
 
-  useEffect(()=>{
-    if(message.thread_parent_id){
-       console.log("Looking for parent ID:", message.thread_parent_id);
-      console.log("Messages currently loaded:", messages.map(m => m.id));
-      const parent = messages.find((msg) => msg.id === message.thread_parent_id)
-      console.log("Parent message", parent)
-    }
-  }, [message, messages])
-
-
-
 
 
   return (
@@ -53,7 +45,7 @@ function MessageBubble({message}) {
                     <button>👀</button>  
                     <button>👍</button>
                     <Plus className={style.openReactionPicker} onClick={()=>setshowPicker(true)}  />  
-                    <Reply className={style.messageReply} />
+                    <Reply className={style.messageReply} onClick={()=>handleReply(message)} />
                     </div>}
 
        <div className={style.avatarURL}>{message?.Sender.fullname.slice(0, 1).toUpperCase()}</div>
@@ -70,6 +62,18 @@ function MessageBubble({message}) {
         </div>
         {message.edited  && <div className={style.edited}> {message.edited && "Edited"} </div>}
        </div>
+
+      {
+        message.reactions && (
+          <div className={style.reactions}>
+            {Object.entries(message.reactions).map(([emoji, users])=>(
+              <div className={style.reaction}> {emoji} {users.length}  </div>
+            ))}
+          <SmilePlus size={18} style={{backgroundColor: "inherit", cursor: "pointer"}} />
+          </div>
+        )
+      }
+
 
     </div>
   )

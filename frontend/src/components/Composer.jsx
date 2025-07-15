@@ -1,6 +1,6 @@
 import EmojiPicker from 'emoji-picker-react'
 import React, {useState, useRef, useEffect, use} from "react"
-import { Mic, SendHorizonal, SmilePlus, Upload } from 'lucide-react'
+import { Mic, SendHorizonal, SmilePlus, Upload, X } from 'lucide-react'
 
 import style from '../Styles/chatroom.module.css'
 import mediastyle from '../Styles/mediastyle.module.css'
@@ -14,7 +14,7 @@ import { mimeToExtension } from '../utils/filesRename'
 import { uploadTOS3 } from '../utils/uploadTOS3'
 
 
-function MessageComposer(){
+function MessageComposer({replyTo, handleReply}){
 
   const [message, setmessage] = useState("")
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
@@ -143,6 +143,20 @@ function MessageComposer(){
 
   return (
     <div className={style.messageComposerContainer}>
+
+    {replyTo && ( <div className={style.replyToContainer} > 
+                    <span className={style.replyIndicator}></span>
+                      <div className={style.replyMessage}>
+                        <div className={style.replySender}>
+                          {replyTo?.Sender.fullname}
+                        </div>
+                        <div className={style.messageReplyContent}>
+                            {replyTo.content.text}
+                        </div>
+                      </div>
+                    <X className={style.removeReply} size={30} onClick={()=>handleReply(null)} />
+                </div> )}
+
       {emojiPickerOpen && <div ref={emojiPicker} className={style.emojiPickerForMessage}> <EmojiPicker onEmojiClick={handleEmojiClick} lazyLoadEmojis={true} /> </div>}
         <div className={style.messageContainer}>
           <textarea value={message} ref={textareaRef} onChange={handleTextareaChange} placeholder='Type your message here' />

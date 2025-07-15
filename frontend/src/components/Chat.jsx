@@ -1,4 +1,4 @@
-import React, { act, useEffect, useRef, useState, useLayoutEffect } from 'react'
+import React, { act, useEffect, useRef, useState, useLayoutEffect, useCallback } from 'react'
 import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
@@ -45,8 +45,10 @@ function ChannelHeader({channel}){
 function Converstation({channel}){
 
   const messageContainerRef = useRef(null)
-  const {state, fetchMessages, dispatch} = useChat()
+  const { state, fetchMessages } = useChat()
   const {activeChannel, messageCursor, hasMoreMessages, messages} = state;
+  const [replyTo, setReplyTo] = useState(null)
+  const handleReply = useCallback((message) => setReplyTo(message), [])
 
   // On intial render, Fetch the messages from backend without the cursor
   useEffect(()=>{
@@ -63,14 +65,16 @@ function Converstation({channel}){
       fetchMessages(messageCursor)
     }
   }
+ 
+  
   return (
     <div className={style.converstationWindow}>
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
-          { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
-              <MessageBubble message={msg} />
+          { Array.isArray(messages) && messages.length > 0 ? messages.map((msg)=>(
+              <MessageBubble message={msg} handleReply={handleReply} />
           )): <h2>No message</h2>}
       </div>
-      <MessageComposer/>
+      <MessageComposer replyTo={replyTo} handleReply={handleReply} />
     </div>
   )
 }
