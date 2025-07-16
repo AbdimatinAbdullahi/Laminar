@@ -21,10 +21,7 @@
 }
 
 
-.usersBarContainer{
-    width: 20%;
-    height: 100%;
-}
+
 
 .workspacesContainer{
     width: 80px;
@@ -219,7 +216,7 @@
 .converstationWindow{
     width: 100%;
     height: calc(100% - 60px);
-    background-color: rgb(50, 49, 49);
+    background-color: #323131;
     font-family: var(--font-noto-sans);
     color: gray;
     box-sizing: border-box;

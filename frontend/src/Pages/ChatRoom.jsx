@@ -12,6 +12,7 @@ function ChatRoom() {
   const [userbarActive, setUserbarActive] = useState(false)
 
   const handleUserBarActive = ()=>{
+    console.log("Users bar clicked!")
     setUserbarActive(!userbarActive)
   }
 

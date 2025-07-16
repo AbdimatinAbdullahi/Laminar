@@ -36,7 +36,7 @@ function ChannelHeader({channel, handelUserBarActive}){
         <div className={style.channelMeeting}>
           <Video className={style.meetingIcon} size={30} />
           <Phone className={style.meetingIcon}  size={30} />
-          <Users onClick={()=>handelUserBarActive()} />
+          <Users className={style.meetingIcon} size={30}  onClick={()=>handelUserBarActive()} />
         </div>
     </div>
   )

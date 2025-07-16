@@ -1,0 +1,11 @@
+:root{
+    --font-seculr-one: "Secular One";
+    --main-backgroud-color: #323131;
+    --font-noto-sans: "Noto sans";
+}
+
+.usersBarContainer{
+    width: 20%;
+    height: 100%;
+    background-color: #323131;
+}

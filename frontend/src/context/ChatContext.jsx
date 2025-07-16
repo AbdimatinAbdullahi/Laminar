@@ -15,7 +15,8 @@ const initialState = {
     activeChannel: null,
     messages: [],
     messageCursor: null,
-    hasMoreMessages: true
+    hasMoreMessages: true,
+    activeRoomUsers: []
 }
 
 
@@ -48,7 +49,10 @@ const reducer = (state, action)=>{
         case "LOAD_ENDS":
             return {...state, loading:false, workspaces:action.payload.workspaces, channels:action.payload.channels, selectedWorkspace: action.payload.selectedWorkspace}
         
-        default:
+        case "SET_USERS":
+            return {...state, loading: false, channelUsersRes: action.payload}
+        
+            default:
             return state
     }
 }
@@ -101,6 +105,8 @@ export const ChatProvider = ({children})=>{
       
     }, []);
 
+
+
     async function fetchMessages(beforeCursor = null){
         if(!state.activeChannel) return
         const url = `http://localhost:8008/chat?chatId=${state.activeChannel.id}&type=channel${beforeCursor ? `&before=${beforeCursor}` : ""}`
@@ -119,7 +125,21 @@ export const ChatProvider = ({children})=>{
         } catch (error) {
             console.log("Error reading the data from messages: ", error)
         }
+    };
+
+
+    const fetchChannelUsers = async (roomId, isPrivate) => {
+        try {
+            const channelUsersRes = await axios.get(`http://localhost:8008/users/room?roomId=${roomId}&isPrivate=${isPrivate}`);
+            if(channelUsersRes.status == 200){
+                dispatch({type: "SET_USERS", payload:channelUsersRes.data.users})
+            }
+        } catch (error) {
+            console.log("Error while loading users", error)
+        }
     }
+
+
 
     const handleIncomingMessage = (message) =>{
         dispatch({ type: "APPEND_FROM_SOCKET", payload: message.message })
@@ -131,7 +151,7 @@ export const ChatProvider = ({children})=>{
 
 
     return(
-        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage }} >
+        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers }} >
             {children}
         </ChatContext.Provider>
     )
