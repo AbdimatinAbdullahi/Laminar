@@ -3,7 +3,7 @@ import style from '../Styles/chatroom.module.css'
 import { Plus, Settings } from 'lucide-react'
 
 
-function Sidebar({ state, dispatch }) {
+function Sidebar({ state, dispatch, setUserbarActive }) {
 
   const {workspaces, channels, loading, selectedWorkspace, activeChannel} = state
 
@@ -13,6 +13,7 @@ function Sidebar({ state, dispatch }) {
   }
 
   function handleActiveSelect(channel){
+    setUserbarActive(false)
     dispatch({type: "SELECT_CHANNEL", payload: channel})
     console.log(channel)
   }

@@ -52,7 +52,7 @@ const reducer = (state, action)=>{
         case "SET_USERS":
             return {...state, loading: false, channelUsersRes: action.payload}
         
-            default:
+        default:
             return state
     }
 }
@@ -128,10 +128,11 @@ export const ChatProvider = ({children})=>{
     };
 
 
-    const fetchChannelUsers = async (roomId, isPrivate) => {
+    const fetchChannelUsers = async (roomId, isPrivate, selectedWorkspaceID) => {
         try {
-            const channelUsersRes = await axios.get(`http://localhost:8008/users/room?roomId=${roomId}&isPrivate=${isPrivate}`);
+            const channelUsersRes = await axios.get(`http://localhost:8008/users/workspace?spaceId=${selectedWorkspaceID}&${isPrivate ? `channelId=${roomId}`: ""}`);
             if(channelUsersRes.status == 200){
+                console.log(channelUsersRes.data)
                 dispatch({type: "SET_USERS", payload:channelUsersRes.data.users})
             }
         } catch (error) {

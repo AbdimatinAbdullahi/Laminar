@@ -5,10 +5,11 @@ import {useChat} from '../context/ChatContext'
 function UserBar({handleUserBarActive}) {
 
   const { fetchChannelUsers, state } = useChat()
-  const { activeRoomUsers, activeChannel } = state
+  const { activeRoomUsers, activeChannel, selectedWorkspace} = state
 
   useEffect(()=>{
-    fetchChannelUsers(activeChannel.id)
+    console.log("Selected workspace: ", selectedWorkspace)
+    fetchChannelUsers(activeChannel.id, activeChannel.is_private, selectedWorkspace.id)
   }, [])
 
   return (

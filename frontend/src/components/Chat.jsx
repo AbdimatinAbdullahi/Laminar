@@ -9,7 +9,7 @@ import MessageBubble from './MessageBubble'
 function Chat({handelUserBarActive}) {
 
     const { state } = useChat()
-    const {activeChannel} = state
+    const { activeChannel } = state
 
     if(!activeChannel) return <div className={style.emptyChannel}>  <h4>Select Channel</h4> </div>
 

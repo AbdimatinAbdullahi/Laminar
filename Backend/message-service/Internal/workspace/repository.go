@@ -26,6 +26,8 @@ type Repository interface {
 	GetRole(userId string, workspaceId string) (string, error)
 	GetMessages(channelId string, cursor *time.Time, receiverType string) ([]models.Message, error)
 	GetSenderInfo(senderId string) (*models.User, error)
+	GetChannelUsers(channelId string) ([]models.User, error)
+	GetWorkspaceUsers(workspaceId string) ([]models.User, error)
 }
 
 type repository struct {
@@ -301,4 +303,67 @@ func (r *repository) GetSenderInfo(senderId string) (*models.User, error) {
 	}
 
 	return &user, nil
+}
+
+func (r *repository) GetChannelUsers(channelId string) ([]models.User, error) {
+	parsedChannelId, err := uuid.Parse(channelId)
+	if err != nil {
+		return nil, err
+	}
+
+	var memberIds []string
+	err = r.postgres.
+		Table("channel_memberships").
+		Where("channel_id = ?", parsedChannelId).
+		Pluck("user_id", &memberIds).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(memberIds) == 0 {
+		return []models.User{}, nil
+	}
+
+	var users []models.User
+	err = r.postgres.
+		Table("users").
+		Select("id, fullname, email").
+		Where("id IN ?", memberIds).
+		Scan(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+
+}
+
+func (r *repository) GetWorkspaceUsers(workspaceId string) ([]models.User, error) {
+	parsedWorkspaceId, err := uuid.Parse(workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var membersId []string
+	err = r.postgres.
+		Table("workspace_memberships").
+		Where("workspace_id = ?", parsedWorkspaceId).
+		Pluck("user_id", &membersId).Error
+	if err != nil {
+		log.Println("Error occuring in fetching the members id users: ", err)
+		return nil, err
+	}
+
+	var users []models.User
+	err = r.postgres.
+		Table("users").
+		Select("id, fullname, email").
+		Where("id IN ?", membersId).
+		Scan(&users).Error
+	if err != nil {
+		log.Println("Error occuring in fetching the workspace users: ", err)
+		return nil, err
+	}
+	return users, nil
 }

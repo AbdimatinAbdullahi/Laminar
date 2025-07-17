@@ -18,7 +18,7 @@ function ChatRoom() {
 
   return (
     <div className={style.chatRoomContainer} >
-      <Sidebar state={state} dispatch={dispatch} />
+      <Sidebar state={state} dispatch={dispatch} setUserbarActive={setUserbarActive} />
       <Chat handelUserBarActive={handleUserBarActive} />
       {userbarActive && <UserBar handleUserBarActive={handleUserBarActive}/>}
     </div>
