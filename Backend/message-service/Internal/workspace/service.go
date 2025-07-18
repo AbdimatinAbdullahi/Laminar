@@ -16,6 +16,7 @@ type Service interface {
 	LeaveWorkspace(wsId string, userId string) error
 	DeleteWorkspace(wsId string, userId string) error
 	GetMessage(channeId string, cursor string, receiverType string) ([]models.Message, error)
+	GetUsers(channelId string, workspaceId string) ([]models.User, error)
 }
 
 // One property that is called repo
@@ -132,4 +133,25 @@ func (s *service) GetMessage(channelId string, cursor string, receiverType strin
 	}
 
 	return messages, nil
+}
+
+func (s *service) GetUsers(channelId string, workspaceId string) ([]models.User, error) {
+	if channelId != "" {
+		users, err := s.repo.GetChannelUsers(channelId)
+		if err != nil {
+			return nil, err
+		}
+		return users, nil
+	}
+
+	if workspaceId != "" {
+		users, err := s.repo.GetWorkspaceUsers(workspaceId)
+		if err != nil {
+			log.Println("Error occuring while fetching public users: ", err)
+			return nil, err
+		}
+		return users, nil
+	}
+
+	return nil, errors.New("provide channel id or workspace id")
 }

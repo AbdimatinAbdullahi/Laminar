@@ -175,3 +175,17 @@ func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&messages)
 }
+
+func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	channelId := r.URL.Query().Get("channelId")
+	workspaceId := r.URL.Query().Get("spaceId")
+
+	users, err := h.svc.GetUsers(channelId, workspaceId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(&users)
+
+}
