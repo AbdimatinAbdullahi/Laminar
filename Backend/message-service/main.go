@@ -4,6 +4,7 @@ import (
 	"context"
 	"laminar/Internal/db"
 	"laminar/Internal/workspace"
+	"laminar/internal/message"
 	"log"
 	"net/http"
 	"os"
@@ -53,6 +54,12 @@ func main() {
 	workspaceSvc := workspace.NewService(workspaceRepo)
 	workspaceHandler := workspace.NewHandler(workspaceSvc)
 
+	// Message service initialization
+	messageRepo := message.NewRepository(gormDB, mongoDB)
+	messageSVC := message.NewService(messageRepo)
+	messageHandler := message.NewHandler(messageSVC)
+
+	// Workspace services
 	http.Handle("/workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.GetWorkspaceAndChannels)))
 	http.Handle("/workspace-data", corsMiddleware(http.HandlerFunc(workspaceHandler.GetWorkspaceDetailsHandler)))
 	http.Handle("/workspace-members", corsMiddleware(http.HandlerFunc(workspaceHandler.GetWorkspaceMembers)))
@@ -60,6 +67,10 @@ func main() {
 	http.Handle("/delete-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.DeleteWorkspace)))
 	http.Handle("/chat", corsMiddleware(http.HandlerFunc(workspaceHandler.GetMessages)))
 	http.Handle("/users/workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.GetUsers)))
+
+	// Messaging service now
+	http.Handle("/ws", corsMiddleware(http.HandlerFunc(messageHandler.HandleWebsocketConnection)))
+
 	log.Println("Server running :8008")
 	http.ListenAndServe(":8008", nil)
 

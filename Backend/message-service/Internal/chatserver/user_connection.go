@@ -1,7 +1,8 @@
-package websocket
+package chatserver
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/gorilla/websocket"
 )
@@ -44,7 +45,7 @@ func (u *UserConnection) ReadMessage() {
 		case "message":
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
 			if room != nil {
-				room.Broadcast <- msg
+				room.BroadcastMessage <- msg
 			}
 
 		case "typing":
@@ -55,6 +56,27 @@ func (u *UserConnection) ReadMessage() {
 				room.TypingEvent <- typing
 			}
 
+		case "edit_message":
+			room := u.Server.GetChannelRoom(u.CurrentChannel)
+			if room != nil {
+				room.BroadcastMessage <- msg
+			}
 		}
 	}
+}
+
+func (u *UserConnection) WriteMessage() {
+
+	defer func() {
+		u.Conn.Close()
+	}()
+
+	for msg := range u.Send {
+		err := u.Conn.WriteMessage(websocket.TextMessage, msg)
+		if err != nil {
+			log.Println("Error occuring while writing: ", err)
+			return
+		}
+	}
+
 }

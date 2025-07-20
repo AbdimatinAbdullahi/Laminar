@@ -1,7 +1,13 @@
-package websocket
+package chatserver
 
 type ChatServer struct {
 	Channels map[string]*ChannelRoom // channelID => room
+}
+
+func NewChatServer() *ChatServer {
+	return &ChatServer{
+		Channels: make(map[string]*ChannelRoom),
+	}
 }
 
 func (s *ChatServer) JoinChannel(channelID string, user *UserConnection) {
@@ -13,14 +19,16 @@ func (s *ChatServer) JoinChannel(channelID string, user *UserConnection) {
 	room, exists := s.Channels[channelID]
 	if !exists {
 		room = &ChannelRoom{
-			ChannelID:   channelID,
-			Members:     map[*UserConnection]bool{},
-			Join:        make(chan *UserConnection),
-			Leave:       make(chan *UserConnection),
-			Broadcast:   make(chan []byte),
-			TypingEvent: make(chan TypingStatus),
+			ChannelID:            channelID,
+			Members:              map[*UserConnection]bool{},
+			Join:                 make(chan *UserConnection),
+			Leave:                make(chan *UserConnection),
+			BroadcastMessage:     make(chan []byte),
+			BroadcastMessageEdit: make(chan []byte),
+			BroadcastReaction:    make(chan []byte),
+			TypingEvent:          make(chan TypingStatus),
 		}
-		s.Channels[channelID] = room
+		s.Channels[channelID] = room // Adding new room to the server
 		go room.Run()
 	}
 
