@@ -56,6 +56,7 @@ func GetMongo() *mongo.Database {
 func SeedMessages(ctx context.Context) error {
 	users := []uuid.UUID{
 		uuid.MustParse("4261498a-7b23-4bf1-bf16-46d4f3deb513"),
+		uuid.MustParse("4261498a-7b23-4bf1-bf16-46d4f3deb513"),
 		uuid.MustParse("a0000001-0000-0000-0000-000000000001"),
 		uuid.MustParse("a0000002-0000-0000-0000-000000000002"),
 		uuid.MustParse("a0000003-0000-0000-0000-000000000003"),

@@ -1,7 +1,6 @@
 package message
 
 import (
-	"laminar/internal/chatserver"
 	"log"
 	"net/http"
 
@@ -16,7 +15,7 @@ func NewHandler(service Service) *Handler {
 	return &Handler{scv: service}
 }
 
-var NewChatServer = chatserver.NewChatServer()
+var NewServer = NewChatServer()
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -33,14 +32,15 @@ func (h *Handler) HandleWebsocketConnection(w http.ResponseWriter, r *http.Reque
 
 	userId := r.URL.Query().Get("userId")
 	log.Println("User id: ", userId)
-	log.Println("Connection successfull:")
+	log.Println("Connection successfu,ll:")
 
-	user := &chatserver.UserConnection{
+	user := &UserConnection{
 		UserID:         userId,
 		Conn:           conn,
-		Server:         NewChatServer,
+		Server:         NewServer,
 		CurrentChannel: "",
 		Send:           make(chan []byte),
+		Services:       h.scv,
 	}
 
 	go user.ReadMessage()

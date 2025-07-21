@@ -1,4 +1,4 @@
-package chatserver
+package message
 
 import (
 	"encoding/json"
@@ -13,6 +13,7 @@ type UserConnection struct {
 	CurrentChannel string
 	Send           chan []byte
 	Server         *ChatServer
+	Services       Service
 }
 
 func (u *UserConnection) ReadMessage() {
@@ -42,12 +43,11 @@ func (u *UserConnection) ReadMessage() {
 				UserID    string
 			}
 			json.Unmarshal(incoming.Data, &payload)
-			log.Println("The incoming message: ", incoming)
 			u.Server.JoinChannel(payload.ChannelID, u)
 
 		case "message":
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
-			log.Println(room)
+
 			if room != nil {
 				room.BroadcastMessage <- msg
 			}
@@ -65,6 +65,23 @@ func (u *UserConnection) ReadMessage() {
 			if room != nil {
 				room.BroadcastMessage <- msg
 			}
+
+		case "reaction":
+			room := u.Server.GetChannelRoom(u.CurrentChannel)
+			var payload struct {
+				MessageId string
+				ReactorId string
+				Emoji     string
+			}
+			json.Unmarshal(incoming.Data, &payload)
+			log.Println("The incoming data for reaction: ", payload)
+			err := u.Services.NewReaction(payload.MessageId, payload.ReactorId, payload.Emoji)
+			if err != nil {
+				log.Fatalln("Failed to save to db the reaction: ", err)
+			}
+			if room != nil {
+				room.BroadcastReaction <- msg
+			}
 		}
 	}
 }
@@ -76,7 +93,6 @@ func (u *UserConnection) WriteMessage() {
 	}()
 
 	for msg := range u.Send {
-		log.Println("Writing the message in connection: ", msg)
 		err := u.Conn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
 			log.Println("Error occuring while writing: ", err)

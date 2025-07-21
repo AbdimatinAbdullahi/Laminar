@@ -1,23 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Plus, Reply, SmilePlus } from 'lucide-react'
+import { PencilLine, Plus, Reply, SmilePlus, Trash } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 
 import style from '../Styles/chatroom.module.css'
 
 
 import {useChat} from '../context/ChatContext'
+import { useAuth } from '../context/AuthContext'
 
 
 
 function MessageBubble({message, handleReply}) {
   
-  const {state} = useChat()
+  const {state, sendReaction} = useChat()
   const { messages } = state
   const [hoverOver, sethoverOver] = useState(false)
   const [showPicker, setshowPicker] = useState(false)
   const pickerRef = useRef(null)
-
-
+  const {user} = useAuth()
   
 
   useEffect(()=>{
@@ -33,12 +33,17 @@ function MessageBubble({message, handleReply}) {
   }, [])
 
 
+  function handleReactionClick(emeojidata, event){
+    setshowPicker(false)
+    sendReaction(emeojidata.emoji, user.id, message.id)
+  }
+
 
 
   return (
-    <div className={style.messageBubble} onMouseEnter={()=>sethoverOver(true)} onMouseLeave={()=>sethoverOver(false)} >
+    <div className={style.messageBubble} key={message.id}  onMouseEnter={()=>sethoverOver(true)} onMouseLeave={()=>sethoverOver(false)} >
        
-       {showPicker && <div className={style.emojiPicker} ref={pickerRef} > <EmojiPicker onEmojiClick={()=>setshowPicker(false)}  /> </div>}
+       {showPicker && <div className={style.emojiPicker} ref={pickerRef} > <EmojiPicker onEmojiClick={handleReactionClick}  /> </div>}
 
        {hoverOver && <div className={style.reactionPicker}> 
                     <button>✅</button> 
@@ -46,6 +51,8 @@ function MessageBubble({message, handleReply}) {
                     <button>👍</button>
                     <Plus className={style.openReactionPicker} onClick={()=>setshowPicker(true)}  />  
                     <Reply className={style.messageReply} onClick={()=>handleReply(message)} />
+                      {message.sender_id == user.id  && <Trash className={style.messageReply} />} 
+                      {message.sender_id == user.id  && <PencilLine className={style.messageReply} />} 
                     </div>}
 
        <div className={style.avatarURL}>{message?.Sender.fullname.slice(0, 1).toUpperCase()}</div>
@@ -69,7 +76,7 @@ function MessageBubble({message, handleReply}) {
             {Object.entries(message.reactions).map(([emoji, users])=>(
               <div className={style.reaction}> {emoji} {users.length}  </div>
             ))}
-          <SmilePlus size={18} style={{backgroundColor: "inherit", cursor: "pointer"}} />
+          <SmilePlus size={18} style={{backgroundColor: "inherit", cursor: "pointer"}} onClick={()=>setshowPicker(true)} />
           </div>
         )
       }

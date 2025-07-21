@@ -52,6 +52,9 @@ const reducer = (state, action)=>{
         case "SET_USERS":
             return {...state, loading: false, channelUsersRes: action.payload}
         
+        case "REACTION":
+            return {...state, }
+
         default:
             return state
     }
@@ -113,6 +116,7 @@ export const ChatProvider = ({children})=>{
         try {
             const mesRes = await axios.get(url)
             const newMessages = (mesRes.data || []).reverse() // reverse the messages so that it can be from oldest to newest: oldest will be at index 0
+            console.log(newMessages)
             dispatch({
                 type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES", // If there is cursor, dispatch "APPEND_MESSAGES"
                 payload: {
@@ -144,13 +148,17 @@ export const ChatProvider = ({children})=>{
         dispatch({ type: "APPEND_FROM_SOCKET", payload: message.message })
     }
 
-    const { sendMessage } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage)
+    const handleIncomingReaction = (data)=>{
+        dispatch({type: "REACTION"})
+    }
+
+    const { sendMessage, sendReaction } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage, handleIncomingReaction)
 
 
 
 
     return(
-        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers }} >
+        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction }} >
             {children}
         </ChatContext.Provider>
     )

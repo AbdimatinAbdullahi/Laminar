@@ -1,4 +1,4 @@
-package chatserver
+package message
 
 type ChatServer struct {
 	Channels map[string]*ChannelRoom // channelID => room

@@ -1,6 +1,6 @@
 import { act, useEffect, useRef } from "react";
 
-export const useWebsocket = (userID, activeChannelID, onMessage) =>{
+export const useWebsocket = (userID, activeChannelID, onMessage, onReaction) =>{
     const socketRef = useRef(null)
 
     useEffect(()=>{
@@ -16,10 +16,17 @@ export const useWebsocket = (userID, activeChannelID, onMessage) =>{
 
         socket.onmessage = (event) =>{
             const data = JSON.parse(event.data)
+            console.log("Data from websocket: ", data)
             switch(data.type){
                 case "message":
+                    console.log("Incoming message data: ", data)
                     onMessage(data)
                     break
+                case "reaction":
+                    console.log("Incoming reaction data: ", data)
+                    onReaction(data)
+                    break
+
             }
         }
 
@@ -56,7 +63,6 @@ export const useWebsocket = (userID, activeChannelID, onMessage) =>{
 
     const sendMessage = (message) =>{
         console.log(message)
-        console.log(socketRef.current.readyState)
         if(socketRef.current && socketRef.current.readyState == WebSocket.OPEN){
             socketRef.current.send(JSON.stringify(message))
         } else{
@@ -65,6 +71,23 @@ export const useWebsocket = (userID, activeChannelID, onMessage) =>{
     }
 
 
-    return {sendMessage}
+    const sendReaction = (reactionEmoji, reactorId, msgId) =>{
+        console.log(`Reaction details: ${reactionEmoji}, ${reactorId} and ${msgId}`)
+        if(socketRef.current && socketRef.current.readyState == WebSocket.OPEN){
+            socketRef.current.send(JSON.stringify({
+                type: "reaction",
+                data:{
+                    "messageId": msgId,
+                    "reactorId" : reactorId,
+                    "emoji" : reactionEmoji
+                }
+            }))
+        } else{
+            console.warn("Reaction is not!")
+        }
+    }
+
+
+    return {sendMessage, sendReaction}
 
 }

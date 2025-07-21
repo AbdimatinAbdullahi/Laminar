@@ -1,8 +1,7 @@
-package chatserver
+package message
 
 import (
 	"encoding/json"
-	"log"
 )
 
 type ChannelRoom struct {
@@ -26,13 +25,9 @@ func (room *ChannelRoom) Run() {
 	for {
 		select {
 		case user := <-room.Join:
-			log.Println("User joined: ", user.UserID)
-			log.Println("User joined room: ", room.ChannelID)
 			room.Members[user] = true
 
 		case user := <-room.Leave:
-			log.Println("User left the channel: ", user.UserID)
-			log.Println("User left the room: ", room.ChannelID)
 			delete(room.Members, user)
 
 		case message := <-room.BroadcastMessage: // getting the message from the BroadcastMessage Channel
@@ -43,6 +38,7 @@ func (room *ChannelRoom) Run() {
 
 		case edit_message := <-room.BroadcastMessageEdit:
 			room.broadcastEdit(edit_message)
+
 		case typing := <-room.TypingEvent:
 			payload, _ := json.Marshal(struct {
 				Type string       `json:"type"`

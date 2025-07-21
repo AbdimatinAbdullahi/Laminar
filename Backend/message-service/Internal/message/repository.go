@@ -2,6 +2,7 @@ package message
 
 import (
 	"context"
+	"fmt"
 	"laminar/internal/models"
 	"log"
 
@@ -15,6 +16,7 @@ type Repository interface {
 	SaveMessageToDb(ctx context.Context, msg *models.Message) error
 	EditMessage(ctx context.Context, msgId string, newContent string) error
 	DeleteMessage(ctx context.Context, msgid string) error
+	NewReaction(ctx context.Context, msgId string, reactorId string, emoji string) error
 }
 
 type repository struct {
@@ -69,5 +71,53 @@ func (r *repository) DeleteMessage(ctx context.Context, msgId string) error {
 }
 
 func (r *repository) EditMessage(ctx context.Context, msgId string, newContent string) error {
+	colllection := r.monngo.Client().Database("laminar").Collection("messages")
+	objectMsgId, err := primitive.ObjectIDFromHex(msgId)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{
+		"_id": objectMsgId,
+	}
+	update := bson.M{
+		"content.text": newContent,
+	}
+
+	result, err := colllection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Fatal("Error occurred while editing the message: ", err)
+		return err
+	}
+	log.Println("The number of messages editted: ", result)
+	return nil
+
+}
+
+func (r *repository) NewReaction(ctx context.Context, msgId string, reactorId string, emoji string) error {
+	collection := r.monngo.Client().Database("laminar").Collection("messages")
+	objectMsgId, err := primitive.ObjectIDFromHex(msgId)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{
+		"_id": objectMsgId,
+	}
+
+	update := bson.M{
+		"$addToSet": bson.M{
+			fmt.Sprintf("reactions.%s", emoji): reactorId,
+		},
+	}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
+	log.Println("Success inserting new reaction: ", result)
+	return nil
+
+}
+
+func (r *repository) Removereaction(ctx context.Context, msgId string, reactorId string) error {
 	return nil
 }
