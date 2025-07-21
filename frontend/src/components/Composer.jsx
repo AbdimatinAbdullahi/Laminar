@@ -32,12 +32,6 @@ function MessageComposer({replyTo, handleReply}){
 
   const ext = mimeToExtension[selectedFile?.type] || selectedFile?.type;
 
-
-  useEffect(()=>{
-    console.log("The user is this: ", user)
-  }, [user])
-
-
   // Function to handle Text Change
   function handleTextareaChange(e) {
     setmessage(e.target.value);
@@ -57,7 +51,7 @@ function MessageComposer({replyTo, handleReply}){
 
     if(message && !audioUrl && !selectedFile){
       sendMessage({ 
-        type: "text", 
+        type: "message", 
         payload: {
           message: message,
           timestamp: new Date().toISOString(),

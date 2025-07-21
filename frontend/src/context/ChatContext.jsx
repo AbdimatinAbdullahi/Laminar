@@ -75,7 +75,6 @@ export const ChatProvider = ({children})=>{
             dispatch({type: "LOAD_START"})
 
             try {
-                console.log("Token sending: ", token)
                 const res = await axios.get("http://localhost:8008/workspace", {
                     headers: {
                     "Authorization" : `Bearer ${token}`
@@ -113,7 +112,6 @@ export const ChatProvider = ({children})=>{
         try {
             const mesRes = await axios.get(url)
             const newMessages = (mesRes.data || []).reverse() // reverse the messages so that it can be from oldest to newest: oldest will be at index 0
-            console.log("Messag response: ", mesRes.data)
             dispatch({
                 type: beforeCursor ? "APPEND_MESSAGES" : "LOAD_MESSAGES", // If there is cursor, dispatch "APPEND_MESSAGES"
                 payload: {
@@ -132,7 +130,6 @@ export const ChatProvider = ({children})=>{
         try {
             const channelUsersRes = await axios.get(`http://localhost:8008/users/workspace?spaceId=${selectedWorkspaceID}&${isPrivate ? `channelId=${roomId}`: ""}`);
             if(channelUsersRes.status == 200){
-                console.log(channelUsersRes.data)
                 dispatch({type: "SET_USERS", payload:channelUsersRes.data.users})
             }
         } catch (error) {
@@ -146,7 +143,7 @@ export const ChatProvider = ({children})=>{
         dispatch({ type: "APPEND_FROM_SOCKET", payload: message.message })
     }
 
-    const { sendMessage } = useWebsocket(user.id, handleIncomingMessage)
+    const { sendMessage } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage)
 
 
 

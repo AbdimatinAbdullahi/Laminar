@@ -35,8 +35,6 @@ func getUserFromToken(r *http.Request) (string, error) {
 
 	tokenStr := parts[1]
 
-	log.Println("Token", tokenStr)
-
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing methods")
@@ -160,8 +158,6 @@ func (h *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	channelId := r.URL.Query().Get("chatId")
 	cursor := r.URL.Query().Get("before")
 	receiverType := r.URL.Query().Get("type")
-
-	log.Printf("Cusror in handler: %s\n", cursor)
 
 	messages, err := h.svc.GetMessage(channelId, cursor, receiverType)
 

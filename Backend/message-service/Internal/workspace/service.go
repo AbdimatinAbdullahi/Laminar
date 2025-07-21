@@ -2,7 +2,6 @@ package workspace
 
 import (
 	"errors"
-	"fmt"
 	"laminar/internal/models"
 	"log"
 	"strings"
@@ -121,10 +120,6 @@ func (s *service) GetMessage(channelId string, cursor string, receiverType strin
 			return nil, err
 		}
 		parsedCursor = &t
-	}
-
-	if parsedCursor != nil {
-		fmt.Println("Formted cursor: ", parsedCursor.Local().Format("01/02/2006, 03:05:05 PM"))
 	}
 
 	messages, err := s.repo.GetMessages(channelId, parsedCursor, receiverType)

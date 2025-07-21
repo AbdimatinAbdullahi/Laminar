@@ -37,7 +37,6 @@ export const AuthProvider = ({children})=>{
 
             // If Server returns 200
             if(authResponse.status == 200){
-                console.log("Auth response: ", authResponse.data)
                 setUser({
                     fullname: authResponse.data.fullname,
                     email: authResponse.data.email,
