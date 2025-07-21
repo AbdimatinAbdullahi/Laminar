@@ -27,12 +27,12 @@ func (room *ChannelRoom) Run() {
 		select {
 		case user := <-room.Join:
 			log.Println("User joined: ", user.UserID)
-			log.Println("User joined: ", room.ChannelID)
+			log.Println("User joined room: ", room.ChannelID)
 			room.Members[user] = true
 
 		case user := <-room.Leave:
 			log.Println("User left the channel: ", user.UserID)
-			log.Println("User left the channel: ", room.ChannelID)
+			log.Println("User left the room: ", room.ChannelID)
 			delete(room.Members, user)
 
 		case message := <-room.BroadcastMessage: // getting the message from the BroadcastMessage Channel

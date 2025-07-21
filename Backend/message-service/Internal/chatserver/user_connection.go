@@ -23,6 +23,7 @@ func (u *UserConnection) ReadMessage() {
 
 	for {
 		_, msg, err := u.Conn.ReadMessage()
+		log.Println("Reading the message from connection: ", string(msg))
 		if err != nil {
 			break
 		}
@@ -37,13 +38,16 @@ func (u *UserConnection) ReadMessage() {
 		switch incoming.Type {
 		case "join":
 			var payload struct {
-				ChannelId string
+				ChannelID string
+				UserID    string
 			}
 			json.Unmarshal(incoming.Data, &payload)
-			u.Server.JoinChannel(payload.ChannelId, u)
+			log.Println("The incoming message: ", incoming)
+			u.Server.JoinChannel(payload.ChannelID, u)
 
 		case "message":
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
+			log.Println(room)
 			if room != nil {
 				room.BroadcastMessage <- msg
 			}
@@ -72,6 +76,7 @@ func (u *UserConnection) WriteMessage() {
 	}()
 
 	for msg := range u.Send {
+		log.Println("Writing the message in connection: ", msg)
 		err := u.Conn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
 			log.Println("Error occuring while writing: ", err)
