@@ -18,7 +18,7 @@ function Signup() {
     if(userCredintials.email === "" || userCredintials.password === ""){
       return
     }
-    signup(userCredintials.email, userCredintials.password)
+    signup(userCredintials.fullname, userCredintials.email, userCredintials.password)
   }
 
 
@@ -40,12 +40,12 @@ function Signup() {
 
         <div className={style.passwordInput}>
           <input type={typePassword} value={userCredintials.password} placeholder='Create password' onChange={(e) => setUserCredintials({...userCredintials, password: e.target.value})}/>
-          {typePassword === "text" ? <EyeOff onClick={()=>settypePassword("password")} size={40}/> : <Eye size={40} onClick={()=>settypePassword("text")}/>}
+          {typePassword === "text" ? <EyeOff onClick={()=>settypePassword("password")} size={30}/> : <Eye size={30} onClick={()=>settypePassword("text")}/>}
         </div>
 
         <div className={style.confirmPasswordInput}>
           <input type={typeConfirmPassword} value={userCredintials.confirmPassword} placeholder='Confirm password' onChange={(e) => setUserCredintials({...userCredintials, confirmPassword: e.target.value})}/>
-          {typeConfirmPassword === "text" ? <EyeOff onClick={()=>setTypeConfirmPassword("password")} size={40}/> : <Eye size={40} onClick={()=>setTypeConfirmPassword("text")}/>}
+          {typeConfirmPassword === "text" ? <EyeOff  onClick={()=>setTypeConfirmPassword("password")} size={30}/> : <Eye size={30} onClick={()=>setTypeConfirmPassword("text")}/>}
         </div>
 
         <div className={style.submitBut}>

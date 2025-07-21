@@ -34,7 +34,7 @@
     font-size: 1.4em;
 }
 
-.emailInput, .passwordInput{
+.emailInput, .passwordInput, .fullnameInput, .confirmPasswordInput{
     width: 95%;
     height: 70px;
     display: flex;
@@ -43,7 +43,7 @@
     align-items: center;
     border-radius: 4px;
 }
-.emailInput input, .passwordInput input{
+.emailInput input, .passwordInput input, .fullnameInput input, .confirmPasswordInput input{
     width: 100%;
     height: 100%;
     border: none;

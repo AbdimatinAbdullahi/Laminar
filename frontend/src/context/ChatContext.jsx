@@ -83,6 +83,7 @@ export const ChatProvider = ({children})=>{
                 if(res.status == 200){
 
                     const data = res.data[0]
+                    console.log("Response data: ", res.data)
                     dispatch({
                         "type" : "LOAD_ENDS", 
                         payload: {

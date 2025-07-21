@@ -57,6 +57,7 @@
     background-color: black;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .workspaceHeader{
@@ -142,6 +143,74 @@
         background-color: #555;
     }
 }
+
+.userProfile{
+    position: absolute;
+    bottom: 2%;
+    width: 98%;
+    height:68px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 1%;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 0 0.6em;
+    background-color: #9A4A9F;
+    gap: 4px;
+}
+
+.profileIcon{
+    width: 52px;
+    aspect-ratio: 1/1;
+    background-color: #FF00C8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-family: var(--font-seculr-one);
+    font-size: 2em;
+    color: white;
+    font-weight: 700;
+}
+
+.userNameAndEmail{
+    height: 52px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background: transparent;
+    box-sizing: border-box;
+    padding-left: 1em;
+}
+
+.spanWithFullname{
+    font-family: var(--font-seculr-one);
+    font-family: 1.4em;
+    color: white;
+    background: transparent;
+}
+.spanWithStatus{
+    font-family: var(--font-seculr-one);
+    font-weight: 700;
+    font-family: 1em;
+    color: rgb(81, 133, 81);
+    background: transparent;
+}
+
+.settingIconButton{
+    width: 52px;
+    aspect-ratio: 1/1;
+    background-color: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 
 
 /* Chat UI */

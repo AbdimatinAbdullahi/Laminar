@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { use } from 'react'
 import style from '../Styles/chatroom.module.css'
 import { Plus, Settings } from 'lucide-react'
+import {useAuth} from '../context/AuthContext'
 
 
 function Sidebar({ state, dispatch, setUserbarActive }) {
 
   const {workspaces, channels, loading, selectedWorkspace, activeChannel} = state
-
+  const {user, logout} = useAuth()
 
   function handleWorkspaceSelect(ws){
     dispatch({type: "SELECT_WORKSPACE", payload: ws})
@@ -25,7 +26,7 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
 
       <div className={style.workspacesContainer}>
           {workspaces.map((workspace)=>(
-            <div className={style.workspace} onClick={()=> handleWorkspaceSelect(workspace)} >
+            <div className={style.workspace} key={workspace.id} onClick={()=> handleWorkspaceSelect(workspace)} >
               {workspace.name.charAt().slice(0, 3)}
             </div>
           ))}
@@ -46,9 +47,24 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
 
           <div className={style.channels}>
             {filteredChannels.map((channel)=>(
-              <div onClick={()=> handleActiveSelect(channel)} >{channel.name}</div>
+              <div key={channel.id} onClick={()=> handleActiveSelect(channel)} >{channel.name}</div>
             ))}
           </div>
+        </div>
+
+        <div className={style.userProfile}>
+              <div className={style.profileIcon}>
+                  {user.fullname.slice(0,1)}
+              </div>
+
+              <div className={style.userNameAndEmail}>
+                  <span className={style.spanWithFullname} >{user.fullname}</span>
+                  <span className={style.spanWithStatus} >Online</span>
+              </div>
+
+              <div className={style.settingIconButton} onClick={logout} >
+                  <Settings color='#FF00C8' />
+              </div>
         </div>
       </div>
 

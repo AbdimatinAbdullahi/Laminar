@@ -11,7 +11,7 @@ function Login() {
 
   const {login} = useAuth()
   const [typePassword, settypePassword] = useState("password")
-  const [userCredintials, setUserCredintials] = useState({ password: "Abdi2156", email: "abdimatinhassan@gmail.com"})
+  const [userCredintials, setUserCredintials] = useState({ password: "", email: ""})
 
 
   const handleLogin = (e)=>{
@@ -37,7 +37,7 @@ function Login() {
 
         <div className={style.passwordInput}>
           <input type={typePassword} placeholder='Password' onChange={(e) => setUserCredintials({...userCredintials, password: e.target.value})}/>
-          {typePassword === "text" ? <EyeOff onClick={()=>settypePassword("password")} size={40}/> : <Eye size={40} onClick={()=>settypePassword("text")}/>}
+          {typePassword === "text" ? <EyeOff onClick={()=>settypePassword("password")} size={20}/> : <Eye size={20} onClick={()=>settypePassword("text")}/>}
         </div>
 
         <div className={style.submitBut}>

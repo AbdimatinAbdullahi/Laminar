@@ -22,8 +22,9 @@ export const AuthProvider = ({children})=>{
         // On rendering of application we get the access token from local storage and send it to server to authenticate the user
         const authenticateUser = async ()=>{
 
-            const accessToken = localStorage.getItem("lam")
+            const accessToken = localStorage.getItem("")
             if(!accessToken){
+                navigate("/")
                 return
             }
 
@@ -48,7 +49,6 @@ export const AuthProvider = ({children})=>{
             }
         }
         authenticateUser()
-        
     }, [])
 
 
@@ -78,8 +78,8 @@ export const AuthProvider = ({children})=>{
     //Signup => Automaticaly logins in user when signup complete
     const signup = async (fullname, email, password)=>{
         try {
-            const authSignupResponse = await axios.post(`http://127.0.0.1:5000/api/login`,
-                {fullname, password, email}
+            const authSignupResponse = await axios.post(`http://127.0.0.1:5000/api/register`,
+                {fullname, email, password}
             )
 
             if(authSignupResponse.status == 200){
