@@ -23,7 +23,6 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction) =>{
                     onMessage(data)
                     break
                 case "reaction":
-                    console.log("Incoming reaction data: ", data)
                     onReaction(data)
                     break
 

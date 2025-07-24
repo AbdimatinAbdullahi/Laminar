@@ -76,7 +76,7 @@ function MessageBubble({message, handleReply}) {
             {Object.entries(message.reactions).map(([emoji, users])=>(
               <div className={style.reaction}> {emoji} {users.length}  </div>
             ))}
-          <SmilePlus size={18} style={{backgroundColor: "inherit", cursor: "pointer"}} onClick={()=>setshowPicker(true)} />
+          <SmilePlus size={18} style={{backgroundColor: "inherit", cursor: "pointer"}} onClick={()=>setshowPicker(!showPicker)} />
           </div>
         )
       }

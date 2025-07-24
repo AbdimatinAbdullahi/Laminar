@@ -44,7 +44,8 @@ const reducer = (state, action)=>{
             return {...state, messages: [...action.payload.messages, ...state.messages], messageCursor: action.payload.messageCursor, hasMoreMessages: action.payload.hasMoreMessages }    
         
         case "APPEND_FROM_SOCKET":
-            return {...state, messages: [...state.messages, action.payload]}    
+            console.log("Add message state: ", action.payload.payload)
+            return {...state, messages: [...state.messages, ...action.payload.payload.message]}    
 
         case "LOAD_ENDS":
             return {...state, loading:false, workspaces:action.payload.workspaces, channels:action.payload.channels, selectedWorkspace: action.payload.selectedWorkspace}
@@ -52,8 +53,33 @@ const reducer = (state, action)=>{
         case "SET_USERS":
             return {...state, loading: false, channelUsersRes: action.payload}
         
-        case "REACTION":
-            return {...state, }
+        case "REACTION":{
+            const {messageId, reactorId, emoji} = action.payload.data;
+            const messageIndex = state.messages.findIndex(msg => msg.id === messageId); // the message index
+            console.log(messageIndex)
+            if(messageIndex === -1) return state
+
+
+            const message = state.messages[messageIndex];
+            const existingReactions = message.reactions || {} // find the reactions that exist, if there is no reaction, append reactions property to message
+            const emojiReactors = existingReactions[emoji] || [] // find the emoji reactors of that emoji, if the is none create new reactors
+            if(emojiReactors.includes(reactorId)) return state // reactor already there
+            const updatedMessage = {
+                ...message,
+                reactions: {
+                    ...existingReactions,
+                    [emoji] : [...emojiReactors, reactorId]
+                }
+            }
+
+
+            const updatedMessages = [...state.messages]
+            updatedMessages[messageIndex] = updatedMessage;
+            return {
+                ...state,
+                messages: updatedMessages
+            };
+        }
 
         default:
             return state
@@ -61,7 +87,6 @@ const reducer = (state, action)=>{
 }
 
 export const ChatProvider = ({children})=>{
-
     
     const [state, dispatch] = useReducer(reducer, initialState)
     const navigate = useNavigate()
@@ -145,11 +170,13 @@ export const ChatProvider = ({children})=>{
 
 
     const handleIncomingMessage = (message) =>{
-        dispatch({ type: "APPEND_FROM_SOCKET", payload: message.message })
+        console.log("Message Incoming: ", message)
+        dispatch({ type: "APPEND_FROM_SOCKET", payload: message})
     }
 
     const handleIncomingReaction = (data)=>{
-        dispatch({type: "REACTION"})
+        console.log("Incomig reaction: ", data)
+        dispatch({type: "REACTION", payload: data})
     }
 
     const { sendMessage, sendReaction } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage, handleIncomingReaction)

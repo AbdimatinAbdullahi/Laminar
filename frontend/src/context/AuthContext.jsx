@@ -22,7 +22,7 @@ export const AuthProvider = ({children})=>{
         // On rendering of application we get the access token from local storage and send it to server to authenticate the user
         const authenticateUser = async ()=>{
 
-            const accessToken = localStorage.getItem("")
+            const accessToken = localStorage.getItem("lam")
             if(!accessToken){
                 navigate("/")
                 return
