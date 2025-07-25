@@ -171,7 +171,7 @@ export const ChatProvider = ({children})=>{
 
     const handleIncomingMessage = (message) =>{
         console.log("Message Incoming: ", message)
-        dispatch({ type: "APPEND_FROM_SOCKET", payload: message})
+        // dispatch({ type: "APPEND_FROM_SOCKET", payload: message})
     }
 
     const handleIncomingReaction = (data)=>{

@@ -53,10 +53,16 @@ function MessageComposer({replyTo, handleReply}){
       sendMessage({ 
         type: "message", 
         payload: {
-          message: message,
+          text: message,
           timestamp: new Date().toISOString(),
-          senderID: user.id,
-          channelID: state.activeChannel.id
+          sender_id: user.id,
+          receiver_id: state.activeChannel.id,
+          receiver_type: state.activeChannel ? "channel" : "user",
+          Sender: {
+            id: user.id,
+            fullname: user.fullname,
+            email: user.email
+          }
         }
       });
     }

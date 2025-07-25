@@ -111,6 +111,7 @@ func (r *repository) NewReaction(ctx context.Context, msgId string, reactorId st
 
 	result, err := collection.UpdateOne(ctx, filter, update)
 	if err != nil {
+		log.Println("Error inserting into db: ", err)
 		return err
 	}
 	log.Println("Success inserting new reaction: ", result)
