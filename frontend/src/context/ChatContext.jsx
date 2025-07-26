@@ -45,7 +45,7 @@ const reducer = (state, action)=>{
         
         case "APPEND_FROM_SOCKET":
             console.log("Add message state: ", action.payload.payload)
-            return {...state, messages: [...state.messages, ...action.payload.payload.message]}    
+            return {...state, messages: [...state.messages, ...action.payload.payload]}    
 
         case "LOAD_ENDS":
             return {...state, loading:false, workspaces:action.payload.workspaces, channels:action.payload.channels, selectedWorkspace: action.payload.selectedWorkspace}
@@ -171,7 +171,7 @@ export const ChatProvider = ({children})=>{
 
     const handleIncomingMessage = (message) =>{
         console.log("Message Incoming: ", message)
-        // dispatch({ type: "APPEND_FROM_SOCKET", payload: message})
+        dispatch({ type: "APPEND_FROM_SOCKET", payload: message})
     }
 
     const handleIncomingReaction = (data)=>{
