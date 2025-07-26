@@ -51,7 +51,7 @@ function MessageComposer({replyTo, handleReply}){
 
     if(message && !audioUrl && !selectedFile){
       sendMessage({ 
-        type: "message", 
+        type: "message",
         payload: {
           content: {
             text: message

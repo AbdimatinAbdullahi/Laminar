@@ -1,7 +1,9 @@
 package message
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/gorilla/websocket"
@@ -11,7 +13,7 @@ type UserConnection struct {
 	UserID         string
 	Conn           *websocket.Conn
 	CurrentChannel string
-	Send           chan []byte
+	Send           chan interface{}
 	Server         *ChatServer
 	Services       Service
 }
@@ -24,7 +26,6 @@ func (u *UserConnection) ReadMessage() {
 
 	for {
 		_, msg, err := u.Conn.ReadMessage()
-		log.Println("Reading the message from connection: ", string(msg))
 		if err != nil {
 			break
 		}
@@ -47,8 +48,15 @@ func (u *UserConnection) ReadMessage() {
 
 		case "message":
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
+			payload, err := u.Services.SaveMessage(context.Background(), incoming)
+			if err != nil {
+				fmt.Println("Error while saving data", err)
+			}
+
+			log.Println("The data is sent to message service")
+
 			if room != nil {
-				room.BroadcastMessage <- msg
+				room.BroadcastMessage <- payload
 			}
 
 		case "typing":
@@ -73,7 +81,6 @@ func (u *UserConnection) ReadMessage() {
 				Emoji     string
 			}
 			json.Unmarshal(incoming.Data, &payload)
-			log.Println("The incoming data for reaction: ", payload)
 			err := u.Services.NewReaction(payload.MessageId, payload.ReactorId, payload.Emoji)
 			if err != nil {
 				log.Fatalln("Failed to save to db the reaction: ", err)
@@ -92,7 +99,6 @@ func (u *UserConnection) WriteMessage() {
 	}()
 
 	for msg := range u.Send {
-		log.Println("The incoming message: ", string(msg))
 		err := u.Conn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
 			log.Println("Error occuring while writing: ", err)

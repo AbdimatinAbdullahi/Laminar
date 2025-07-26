@@ -2,7 +2,6 @@ package message
 
 import (
 	"encoding/json"
-	"log"
 )
 
 type ChannelRoom struct {
@@ -10,7 +9,7 @@ type ChannelRoom struct {
 	Members              map[*UserConnection]bool
 	Join                 chan *UserConnection
 	Leave                chan *UserConnection
-	BroadcastMessage     chan []byte
+	BroadcastMessage     chan interface{}
 	BroadcastReaction    chan []byte
 	BroadcastMessageEdit chan []byte
 	TypingEvent          chan TypingStatus
@@ -54,8 +53,7 @@ func (room *ChannelRoom) Run() {
 	}
 }
 
-func (room *ChannelRoom) broadcastMessage(msg []byte) {
-	log.Println("With the message type, the incoming message is: ", string(msg))
+func (room *ChannelRoom) broadcastMessage(msg interface{}) {
 
 	for user := range room.Members {
 		user.Send <- msg
