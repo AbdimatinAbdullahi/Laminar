@@ -47,7 +47,6 @@ func (u *UserConnection) ReadMessage() {
 
 		case "message":
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
-
 			if room != nil {
 				room.BroadcastMessage <- msg
 			}
@@ -93,6 +92,7 @@ func (u *UserConnection) WriteMessage() {
 	}()
 
 	for msg := range u.Send {
+		log.Println("The incoming message: ", string(msg))
 		err := u.Conn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
 			log.Println("Error occuring while writing: ", err)

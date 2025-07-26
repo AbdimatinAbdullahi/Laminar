@@ -2,6 +2,7 @@ package message
 
 import (
 	"encoding/json"
+	"log"
 )
 
 type ChannelRoom struct {
@@ -54,6 +55,8 @@ func (room *ChannelRoom) Run() {
 }
 
 func (room *ChannelRoom) broadcastMessage(msg []byte) {
+	log.Println("With the message type, the incoming message is: ", string(msg))
+
 	for user := range room.Members {
 		user.Send <- msg
 	}
