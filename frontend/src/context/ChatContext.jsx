@@ -46,6 +46,21 @@ const reducer = (state, action)=>{
         case "APPEND_FROM_SOCKET":
             console.log("Add message state: ", action.payload.payload)
             return {...state, messages: [...state.messages, action.payload.payload]}
+        case "EDIT_MESSAGE":
+            console.log("Message data reaching the state:", action.payload)
+            const { messageId, newContent } = action.payload.Data
+            const messageIndex = state.messages.findIndex(msg => msg.id === messageId);
+            console.log("Message index", messageIndex)
+            if(messageIndex == -1) return state
+
+            const message = state.messages[messageIndex]
+            message.content.text = newContent;
+            message.edited = true
+
+            const updatedMessages = [...state.messages]
+            updatedMessages[messageIndex] = message
+            return {...state, messages: updatedMessages}
+            
 
         case "LOAD_ENDS":
             return {...state, loading:false, workspaces:action.payload.workspaces, channels:action.payload.channels, selectedWorkspace: action.payload.selectedWorkspace}
@@ -166,12 +181,6 @@ export const ChatProvider = ({children})=>{
         }
     }
 
-    const editMessage = (newData) =>{
-
-    }
-
-
-
     const handleIncomingMessage = (message) =>{
         console.log("Message Incoming: ", message)
         dispatch({ type: "APPEND_FROM_SOCKET", payload: message})
@@ -184,6 +193,7 @@ export const ChatProvider = ({children})=>{
 
     const handleEditMessage = (newData)=>{
         console.log("Incoming edit data: ", newData)
+        dispatch({type: "EDIT_MESSAGE", payload: newData})
     }
 
     const { sendMessage, sendReaction, sendEditMessage } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage, handleIncomingReaction, handleEditMessage)
