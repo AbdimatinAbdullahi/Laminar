@@ -23,7 +23,7 @@ func (s *ChatServer) JoinChannel(channelID string, user *UserConnection) {
 			Members:              map[*UserConnection]bool{},
 			Join:                 make(chan *UserConnection),
 			Leave:                make(chan *UserConnection),
-			BroadcastMessage:     make(chan []byte),
+			BroadcastMessage:     make(chan interface{}),
 			BroadcastMessageEdit: make(chan []byte),
 			BroadcastReaction:    make(chan []byte),
 			TypingEvent:          make(chan TypingStatus),

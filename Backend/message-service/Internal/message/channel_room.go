@@ -54,7 +54,6 @@ func (room *ChannelRoom) Run() {
 }
 
 func (room *ChannelRoom) broadcastMessage(msg interface{}) {
-
 	for user := range room.Members {
 		user.Send <- msg
 	}

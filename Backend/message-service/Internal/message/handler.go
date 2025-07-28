@@ -39,7 +39,7 @@ func (h *Handler) HandleWebsocketConnection(w http.ResponseWriter, r *http.Reque
 		Conn:           conn,
 		Server:         NewServer,
 		CurrentChannel: "",
-		Send:           make(chan []byte),
+		Send:           make(chan interface{}),
 		Services:       h.scv,
 	}
 

@@ -3,9 +3,10 @@ package message
 import (
 	"context"
 	"fmt"
-	"laminar/internal/models"
 	"log"
+	"time"
 
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,7 +14,7 @@ import (
 )
 
 type Repository interface {
-	SaveMessageToDb(ctx context.Context, msg *models.Message) error
+	SaveMessageToDb(ctx context.Context, msg MessagePayload) error
 	EditMessage(ctx context.Context, msgId string, newContent string) error
 	DeleteMessage(ctx context.Context, msgid string) error
 	NewReaction(ctx context.Context, msgId string, reactorId string, emoji string) error
@@ -31,22 +32,34 @@ func NewRepository(db *gorm.DB, mongo *mongo.Database) Repository {
 	}
 }
 
-func (r *repository) SaveMessageToDb(ctx context.Context, msg *models.Message) error {
+func (r *repository) SaveMessageToDb(ctx context.Context, msg MessagePayload) error {
 	collection := r.monngo.Client().Database("laminar").Collection("messages")
+
+	// receiverUUID := uuid.MustParse(msg.ReceiverID)
+	// senderUUID := uuid.MustParse(msg.SenderID)
+
 	message := bson.M{
-		"sender_id":     msg.SenderID,
-		"receiver_type": "channel",
-		"receiver_id":   msg.ReceiverID,
+		"receiver_type": msg.ReceiverType,
+		"receiver_id":   uuid.UUID(uuid.MustParse(msg.ReceiverID)),
 		"content":       msg.Content,
-		"timestamp":     msg.Timestamp,
-		"edited":        false,
+		"timestamp":     time.Now(),
+		"edited":        msg.Edited,
+		"sender_id":     uuid.UUID(uuid.MustParse(msg.SenderID)),
 	}
-	reslult, err := collection.InsertOne(ctx, message)
+
+	log.Println("Message inserting into db")
+	result, err := collection.InsertOne(ctx, message)
 	if err != nil {
 		log.Printf("Error while inserting message into db: %v", err)
 		return err
 	}
-	log.Println(reslult)
+
+	oid, ok := result.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return fmt.Errorf("unexpected error")
+	}
+
+	log.Println("✅ Message inserted with ID:", oid.Hex())
 	return nil
 }
 
@@ -114,6 +127,7 @@ func (r *repository) NewReaction(ctx context.Context, msgId string, reactorId st
 		log.Println("Error inserting into db: ", err)
 		return err
 	}
+	println("The modification happened: ", result.ModifiedCount)
 	log.Println("Success inserting new reaction: ", result)
 	return nil
 

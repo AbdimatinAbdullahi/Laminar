@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -48,12 +49,13 @@ func (u *UserConnection) ReadMessage() {
 
 		case "message":
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
-			payload, err := u.Services.SaveMessage(context.Background(), incoming)
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			payload, err := u.Services.SaveMessage(ctx, msg)
 			if err != nil {
 				fmt.Println("Error while saving data", err)
+				return
 			}
-
-			log.Println("The data is sent to message service")
 
 			if room != nil {
 				room.BroadcastMessage <- payload
@@ -84,6 +86,7 @@ func (u *UserConnection) ReadMessage() {
 			err := u.Services.NewReaction(payload.MessageId, payload.ReactorId, payload.Emoji)
 			if err != nil {
 				log.Fatalln("Failed to save to db the reaction: ", err)
+				return
 			}
 			if room != nil {
 				room.BroadcastReaction <- msg
@@ -99,7 +102,13 @@ func (u *UserConnection) WriteMessage() {
 	}()
 
 	for msg := range u.Send {
-		err := u.Conn.WriteMessage(websocket.TextMessage, msg)
+		var data []byte
+		var err error
+		data, err = json.Marshal(msg)
+		if err != nil {
+			log.Println("Something went wrong while decoding the data into byte: ", err)
+		}
+		err = u.Conn.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
 			log.Println("Error occuring while writing: ", err)
 			return
