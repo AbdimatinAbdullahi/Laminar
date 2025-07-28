@@ -55,7 +55,7 @@ function MessageBubble({message, handleReply}) {
                       {message.sender_id == user.id  && <PencilLine className={style.messageReply} />} 
                     </div>}
 
-       <div className={style.avatarURL}>{message?.Sender.fullname.slice(0, 1).toUpperCase()}</div>
+       <div className={style.avatarURL}>{message?.Sender?.fullname.slice(0, 1).toUpperCase() || "?"}</div>
        
        {/* Message Content => Sender Name => Message Timestamp => message Reaction */}
        <div className={style.messageContent}>
