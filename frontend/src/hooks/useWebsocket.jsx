@@ -17,7 +17,9 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction) =>{
         socket.onmessage = (event) =>{
             const data = JSON.parse(event.data)
             console.log("Data from websocket: ", data)
-            switch(data.type){
+            const messageType = (data.type || data.Type || '').toLowerCase();
+            console.log("Message Type: ", messageType)
+            switch(messageType){
                 case "message":
                     console.log("Incoming message data: ", data)
                     onMessage(data)

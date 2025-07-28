@@ -54,9 +54,8 @@ const reducer = (state, action)=>{
             return {...state, loading: false, channelUsersRes: action.payload}
         
         case "REACTION":{
-            const {messageId, reactorId, emoji} = action.payload.data;
+            const {messageId, reactorId, emoji} = action.payload.Data;
             const messageIndex = state.messages.findIndex(msg => msg.id === messageId); // the message index
-            console.log(messageIndex)
             if(messageIndex === -1) return state
 
 
