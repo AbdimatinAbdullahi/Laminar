@@ -71,8 +71,8 @@ function Converstation({channel}){
   return (
     <div className={style.converstationWindow}>
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
-          { Array.isArray(messages) && messages.length > 0 ? messages.map((msg)=>(
-              <MessageBubble message={msg} handleReply={handleReply} />
+          { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
+              <MessageBubble message={msg} handleReply={handleReply} key={index} />
           )): <h2>No message</h2>}
       </div>
       <MessageComposer replyTo={replyTo} handleReply={handleReply} />

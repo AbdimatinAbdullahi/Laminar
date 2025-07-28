@@ -506,13 +506,13 @@ textarea::-webkit-scrollbar{
     position: absolute;
     top: 4px;
     right: 0;
-    min-width: 140px;
+    min-width: 200px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
     height: 40px;
-    background-color: transparent;
+    background-color: #555;
     border: 1px solid gray;
     border-radius: 6px;
     box-shadow: -4px 5px 12px 0px rgba(0,0,0,0.5);
