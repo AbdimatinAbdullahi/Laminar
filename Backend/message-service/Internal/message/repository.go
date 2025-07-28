@@ -93,7 +93,10 @@ func (r *repository) EditMessage(ctx context.Context, msgId string, newContent s
 		"_id": objectMsgId,
 	}
 	update := bson.M{
-		"content.text": newContent,
+		"$set": bson.M{
+			"content.text": newContent,
+			"edit":         true,
+		},
 	}
 
 	result, err := colllection.UpdateOne(ctx, filter, update)
@@ -101,7 +104,7 @@ func (r *repository) EditMessage(ctx context.Context, msgId string, newContent s
 		log.Fatal("Error occurred while editing the message: ", err)
 		return err
 	}
-	log.Println("The number of messages editted: ", result)
+	log.Println("Success editing message: ", result.ModifiedCount)
 	return nil
 
 }
@@ -127,8 +130,7 @@ func (r *repository) NewReaction(ctx context.Context, msgId string, reactorId st
 		log.Println("Error inserting into db: ", err)
 		return err
 	}
-	println("The modification happened: ", result.ModifiedCount)
-	log.Println("Success inserting new reaction: ", result)
+	log.Println(result.ModifiedCount)
 	return nil
 
 }

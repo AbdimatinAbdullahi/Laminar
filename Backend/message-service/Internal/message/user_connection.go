@@ -44,14 +44,20 @@ func (u *UserConnection) ReadMessage() {
 				ChannelID string
 				UserID    string
 			}
+
 			json.Unmarshal(incoming.Data, &payload)
+
 			u.Server.JoinChannel(payload.ChannelID, u)
 
 		case "message":
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
+
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
 			defer cancel()
+
 			payload, err := u.Services.SaveMessage(ctx, msg)
+
 			if err != nil {
 				fmt.Println("Error while saving data", err)
 				return
@@ -63,16 +69,37 @@ func (u *UserConnection) ReadMessage() {
 
 		case "typing":
 			var typing TypingStatus
+
 			json.Unmarshal(incoming.Data, &typing)
+
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
+
 			if room != nil {
 				room.TypingEvent <- typing
 			}
 
 		case "edit_message":
+
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
+
+			var EditContent struct {
+				MessageId  string
+				NewContent string
+				ChannelId  string
+			}
+			json.Unmarshal(incoming.Data, &EditContent)
+
+			log.Println("Printing the edit content: ", EditContent)
+
+			err := u.Services.EditMessage(EditContent.MessageId, EditContent.NewContent)
+
+			if err != nil {
+				log.Fatalln("Eror while editing message: ", err)
+				return
+			}
+
 			if room != nil {
-				room.BroadcastMessage <- msg
+				room.BroadcastMessage <- incoming
 			}
 
 		case "reaction":
@@ -89,7 +116,7 @@ func (u *UserConnection) ReadMessage() {
 				return
 			}
 			if room != nil {
-				room.BroadcastReaction <- msg
+				room.BroadcastReaction <- incoming
 			}
 		}
 	}

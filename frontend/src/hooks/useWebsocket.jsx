@@ -1,6 +1,6 @@
 import { act, useEffect, useRef } from "react";
 
-export const useWebsocket = (userID, activeChannelID, onMessage, onReaction) =>{
+export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onEdit) =>{
     const socketRef = useRef(null)
 
     useEffect(()=>{
@@ -27,6 +27,8 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction) =>{
                 case "reaction":
                     onReaction(data)
                     break
+                case "edit_message":
+                    onEdit(data)
 
             }
         }
@@ -88,7 +90,16 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction) =>{
         }
     }
 
+    const sendEditMessage = (newData) =>{
+        console.log("The content of new message: ", newData);
+        if(socketRef.current && socketRef.current.readyState === WebSocket.OPEN){
+            socketRef.current.send(JSON.stringify(newData))
+        } else{
+            console.warn("Problem sending the new data to backend")
+        }
+    }
 
-    return {sendMessage, sendReaction}
+
+    return {sendMessage, sendReaction, sendEditMessage}
 
 }

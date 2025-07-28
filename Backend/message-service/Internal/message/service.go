@@ -3,8 +3,8 @@ package message
 import (
 	"context"
 	"encoding/json"
-	"laminar/internal/models"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -12,7 +12,7 @@ import (
 type Service interface {
 	SaveMessage(ctx context.Context, msg []byte) (Message, error)
 	NewReaction(msgId string, reactorId string, emoji string) error
-	LogTheMessageFormat(msg []byte) (*models.Message, error)
+	EditMessage(msgId string, newContent string) error
 }
 
 type service struct {
@@ -89,6 +89,14 @@ func (s *service) NewReaction(msgid string, reactorId string, emoji string) erro
 	return nil
 }
 
-func (s *service) LogTheMessageFormat(msg []byte) (*models.Message, error) {
-	return nil, nil
+func (s *service) EditMessage(msgId string, newContent string) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	log.Println("Editing message on db")
+	err := s.repo.EditMessage(ctx, msgId, newContent)
+	if err != nil {
+		return err
+	}
+	return nil
 }

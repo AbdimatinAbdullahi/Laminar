@@ -24,8 +24,8 @@ func (s *ChatServer) JoinChannel(channelID string, user *UserConnection) {
 			Join:                 make(chan *UserConnection),
 			Leave:                make(chan *UserConnection),
 			BroadcastMessage:     make(chan interface{}),
-			BroadcastMessageEdit: make(chan []byte),
-			BroadcastReaction:    make(chan []byte),
+			BroadcastMessageEdit: make(chan interface{}),
+			BroadcastReaction:    make(chan interface{}),
 			TypingEvent:          make(chan TypingStatus),
 		}
 		s.Channels[channelID] = room // Adding new room to the server

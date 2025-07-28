@@ -166,6 +166,10 @@ export const ChatProvider = ({children})=>{
         }
     }
 
+    const editMessage = (newData) =>{
+
+    }
+
 
 
     const handleIncomingMessage = (message) =>{
@@ -178,13 +182,17 @@ export const ChatProvider = ({children})=>{
         dispatch({type: "REACTION", payload: data})
     }
 
-    const { sendMessage, sendReaction } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage, handleIncomingReaction)
+    const handleEditMessage = (newData)=>{
+        console.log("Incoming edit data: ", newData)
+    }
+
+    const { sendMessage, sendReaction, sendEditMessage } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage, handleIncomingReaction, handleEditMessage)
 
 
 
 
     return(
-        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction }} >
+        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction, sendEditMessage }} >
             {children}
         </ChatContext.Provider>
     )

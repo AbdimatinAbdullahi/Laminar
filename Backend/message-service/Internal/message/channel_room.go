@@ -2,6 +2,7 @@ package message
 
 import (
 	"encoding/json"
+	"log"
 )
 
 type ChannelRoom struct {
@@ -10,8 +11,8 @@ type ChannelRoom struct {
 	Join                 chan *UserConnection
 	Leave                chan *UserConnection
 	BroadcastMessage     chan interface{}
-	BroadcastReaction    chan []byte
-	BroadcastMessageEdit chan []byte
+	BroadcastReaction    chan interface{}
+	BroadcastMessageEdit chan interface{}
 	TypingEvent          chan TypingStatus
 }
 
@@ -59,13 +60,14 @@ func (room *ChannelRoom) broadcastMessage(msg interface{}) {
 	}
 }
 
-func (room *ChannelRoom) broadcastReaction(reaction []byte) {
+func (room *ChannelRoom) broadcastReaction(reaction interface{}) {
+	log.Println("Reaction: ", reaction)
 	for user := range room.Members {
 		user.Send <- reaction
 	}
 }
 
-func (room *ChannelRoom) broadcastEdit(msg []byte) {
+func (room *ChannelRoom) broadcastEdit(msg interface{}) {
 	for user := range room.Members {
 		user.Send <- msg
 	}

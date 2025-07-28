@@ -1,12 +1,24 @@
 import React, {useState} from 'react'
 import style from '../Styles/editmessagemodal.module.css'
+import { useChat } from '../context/ChatContext'
 
 function EditMessageModal({message, onClose}) {
 
+    const { sendEditMessage, state } = useChat()
     const [newContent, setNewContent] = useState(message.content.text) // initial value of message
+    
+    
     const handleEdit = ()=>{
         if(newContent === message.content.text) return
-        
+        const newData = {
+            type:"edit_message",
+            data:{
+                newContent: newContent,
+                messageId : message.id,
+                channelId: state.activeChannel.id || null
+            }
+        }
+        sendEditMessage(newData)
     }
 
   return (
@@ -23,6 +35,7 @@ function EditMessageModal({message, onClose}) {
                 <button 
                 className={newContent === message.content.text ? style.disableButton : style.buttAct}
                 disabled={newContent === message.content.text} 
+                onClick={handleEdit}
                 >Save edit</button>
             </div>
         </div>
