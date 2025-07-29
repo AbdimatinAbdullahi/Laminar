@@ -1,6 +1,6 @@
 import { act, useEffect, useRef } from "react";
 
-export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onEdit) =>{
+export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onEdit, onDelete) =>{
     const socketRef = useRef(null)
 
     useEffect(()=>{
@@ -21,7 +21,6 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onE
             console.log("Message Type: ", messageType)
             switch(messageType){
                 case "message":
-                    console.log("Incoming message data: ", data)
                     onMessage(data)
                     break
                 case "reaction":
@@ -29,6 +28,9 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onE
                     break
                 case "edit_message":
                     onEdit(data)
+                case "delete_message":
+                    console.log("Received the delete data", data)
+                    onDelete(data)
 
             }
         }
@@ -99,7 +101,16 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onE
         }
     }
 
+    const sendDeleteMessage = (data) =>{
+        console.log("Sending the delete data: ", data)
+        if(socketRef.current && socketRef.current.readyState == WebSocket.OPEN){
+            socketRef.current.send(JSON.stringify(data))
+        } else {
+            console.warn("Delete data not sent")
+        }
+    }
 
-    return {sendMessage, sendReaction, sendEditMessage}
+
+    return {sendMessage, sendReaction, sendEditMessage, sendDeleteMessage}
 
 }

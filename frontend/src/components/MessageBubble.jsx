@@ -15,7 +15,7 @@ function MessageBubble({message, handleReply}) {
   
   const {user} = useAuth()
   const pickerRef = useRef(null)
-  const {state, sendReaction} = useChat()
+  const {state, sendReaction, sendDeleteMessage} = useChat()
 
   const [hoverOver, sethoverOver] = useState(false)
   const [showPicker, setshowPicker] = useState(false)
@@ -40,6 +40,16 @@ function MessageBubble({message, handleReply}) {
     sendReaction(emeojidata.emoji, user.id, message.id)
   }
 
+  function handleDeleteMessage(){
+    const data = {
+      type: "delete_message",
+      data : {
+        "delId" : message.id
+      }
+    }
+    sendDeleteMessage(data)
+  }
+
 
 
   return (
@@ -54,7 +64,7 @@ function MessageBubble({message, handleReply}) {
                     <button>👍</button>
                     <Plus className={style.openReactionPicker} onClick={()=>setshowPicker(true)}  />  
                     <Reply className={style.messageReply} onClick={()=>handleReply(message)} />
-                      {message.sender_id == user.id  && <Trash className={style.messageReply} />} 
+                      {message.sender_id == user.id  && <Trash className={style.messageReply} onClick={handleDeleteMessage} />} 
                       {message.sender_id == user.id  && <PencilLine className={style.messageReply} onClick={()=>setShowMessageEditModal(true)} />} 
                     </div>}
 

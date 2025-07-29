@@ -95,6 +95,12 @@ const reducer = (state, action)=>{
             };
         }
 
+        case "DELETE_MESSAGE":
+            console.log("Deleted data received in state: ", action.payload.Data)
+            const { delId } = action.payload.Data
+            const updatedMessagesDel = state.messages.filter(msg => msg.id !== delId)
+            return {...state, messages: updatedMessagesDel}
+
         default:
             return state
     }
@@ -196,13 +202,18 @@ export const ChatProvider = ({children})=>{
         dispatch({type: "EDIT_MESSAGE", payload: newData})
     }
 
-    const { sendMessage, sendReaction, sendEditMessage } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage, handleIncomingReaction, handleEditMessage)
+    const handleDelete = (data) =>{
+        console.log("Deleting info", data)
+        dispatch({type: "DELETE_MESSAGE", payload: data})
+    }
+
+    const { sendMessage, sendReaction, sendEditMessage, sendDeleteMessage } = useWebsocket(user.id, state.activeChannel?.id, handleIncomingMessage, handleIncomingReaction, handleEditMessage, handleDelete)
 
 
 
 
     return(
-        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction, sendEditMessage }} >
+        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction, sendEditMessage, sendDeleteMessage }} >
             {children}
         </ChatContext.Provider>
     )
