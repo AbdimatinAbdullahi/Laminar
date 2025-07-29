@@ -38,6 +38,8 @@ func (u *UserConnection) ReadMessage() {
 
 		json.Unmarshal(msg, &incoming)
 
+		log.Println("The incoming request: ", string(incoming.Data))
+
 		switch incoming.Type {
 		case "join":
 			var payload struct {
@@ -118,6 +120,29 @@ func (u *UserConnection) ReadMessage() {
 			if room != nil {
 				room.BroadcastReaction <- incoming
 			}
+
+		case "delete_message":
+
+			room := u.Server.GetChannelRoom(u.CurrentChannel)
+
+			var payload struct {
+				DelId string
+			}
+
+			json.Unmarshal(incoming.Data, &payload)
+
+			log.Println("Delete message data received: ", incoming)
+
+			err := u.Services.DeleteMessage(payload.DelId)
+			if err != nil {
+				log.Println("Error while deleting message: ", err)
+				return
+			}
+
+			if room != nil {
+				room.BroadCastDeleteMessage <- incoming
+			}
+
 		}
 	}
 }
@@ -129,6 +154,9 @@ func (u *UserConnection) WriteMessage() {
 	}()
 
 	for msg := range u.Send {
+
+		log.Println("Message to send received: ", msg)
+
 		var data []byte
 		var err error
 		data, err = json.Marshal(msg)

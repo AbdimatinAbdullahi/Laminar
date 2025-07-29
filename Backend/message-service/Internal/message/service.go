@@ -3,16 +3,26 @@ package message
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+var (
+	Bucket     = "my-laminar-bucket"
+	cloudfront = "https://dun1ggowjxx1h.cloudfront.net"
 )
 
 type Service interface {
 	SaveMessage(ctx context.Context, msg []byte) (Message, error)
 	NewReaction(msgId string, reactorId string, emoji string) error
 	EditMessage(msgId string, newContent string) error
+	DeleteMessage(msgId string) error
+	GeneratePresignedURLL(filename string, filetype string, contentType string) (s3url string, key string, cloufrontURL string, err error)
 }
 
 type service struct {
@@ -99,4 +109,52 @@ func (s *service) EditMessage(msgId string, newContent string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *service) DeleteMessage(msgId string) error {
+	objectMsgId, err := primitive.ObjectIDFromHex(msgId)
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = s.repo.DeleteMessage(ctx, objectMsgId)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (s *service) GeneratePresignedURLL(filename string, filetype string, contentType string) (s3url string, key string, cloudfront string, err error) {
+
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+
+	if err != nil {
+		return "", "", "", err
+	}
+
+	s3Client := s3.NewFromConfig(cfg) // initializes authenticated s3 client that talks to s3 service
+
+	key = fmt.Sprintf("uploads/%d_%s", time.Now().Unix(), filename)
+
+	presigner := s3.NewPresignClient(s3Client)
+
+	presignedReq, err := presigner.PresignPutObject(
+		context.TODO(),
+		&s3.PutObjectInput{
+			Key:         &key,
+			Bucket:      &Bucket,
+			ContentType: &contentType,
+		}, s3.WithPresignExpires(15*time.Minute))
+
+	if err != nil {
+		return "", "", "", err
+	}
+
+	cloudfronturl := fmt.Sprintf("%s/%s", cloudfront, key)
+
+	return presignedReq.URL, key, cloudfronturl, nil
 }

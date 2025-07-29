@@ -19,14 +19,15 @@ func (s *ChatServer) JoinChannel(channelID string, user *UserConnection) {
 	room, exists := s.Channels[channelID]
 	if !exists {
 		room = &ChannelRoom{
-			ChannelID:            channelID,
-			Members:              map[*UserConnection]bool{},
-			Join:                 make(chan *UserConnection),
-			Leave:                make(chan *UserConnection),
-			BroadcastMessage:     make(chan interface{}),
-			BroadcastMessageEdit: make(chan interface{}),
-			BroadcastReaction:    make(chan interface{}),
-			TypingEvent:          make(chan TypingStatus),
+			ChannelID:              channelID,
+			Members:                map[*UserConnection]bool{},
+			Join:                   make(chan *UserConnection),
+			Leave:                  make(chan *UserConnection),
+			BroadcastMessage:       make(chan interface{}),
+			BroadcastMessageEdit:   make(chan interface{}),
+			BroadcastReaction:      make(chan interface{}),
+			BroadCastDeleteMessage: make(chan interface{}),
+			TypingEvent:            make(chan TypingStatus),
 		}
 		s.Channels[channelID] = room // Adding new room to the server
 		go room.Run()

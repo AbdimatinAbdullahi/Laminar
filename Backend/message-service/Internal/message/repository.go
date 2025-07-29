@@ -16,7 +16,7 @@ import (
 type Repository interface {
 	SaveMessageToDb(ctx context.Context, msg MessagePayload) error
 	EditMessage(ctx context.Context, msgId string, newContent string) error
-	DeleteMessage(ctx context.Context, msgid string) error
+	DeleteMessage(ctx context.Context, msgid primitive.ObjectID) error
 	NewReaction(ctx context.Context, msgId string, reactorId string, emoji string) error
 }
 
@@ -63,15 +63,10 @@ func (r *repository) SaveMessageToDb(ctx context.Context, msg MessagePayload) er
 	return nil
 }
 
-func (r *repository) DeleteMessage(ctx context.Context, msgId string) error {
-	collection := r.monngo.Client().Database("laminar").Collection("message")
-	objectId, err := primitive.ObjectIDFromHex(msgId)
-	if err != nil {
-		log.Println("Invalid message ID format:", err)
-		return err
-	}
+func (r *repository) DeleteMessage(ctx context.Context, msgId primitive.ObjectID) error {
+	collection := r.monngo.Client().Database("laminar").Collection("messages")
 	filter := bson.M{
-		"_id": objectId,
+		"_id": msgId,
 	}
 
 	result, err := collection.DeleteOne(ctx, filter)
@@ -79,7 +74,7 @@ func (r *repository) DeleteMessage(ctx context.Context, msgId string) error {
 		log.Fatal("Error while deleting the message: ", err)
 		return err
 	}
-	log.Println(result)
+	log.Println(result.DeletedCount)
 	return nil
 }
 

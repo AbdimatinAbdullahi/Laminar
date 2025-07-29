@@ -6,14 +6,15 @@ import (
 )
 
 type ChannelRoom struct {
-	ChannelID            string
-	Members              map[*UserConnection]bool
-	Join                 chan *UserConnection
-	Leave                chan *UserConnection
-	BroadcastMessage     chan interface{}
-	BroadcastReaction    chan interface{}
-	BroadcastMessageEdit chan interface{}
-	TypingEvent          chan TypingStatus
+	ChannelID              string
+	Members                map[*UserConnection]bool
+	Join                   chan *UserConnection
+	Leave                  chan *UserConnection
+	BroadcastMessage       chan interface{}
+	BroadcastReaction      chan interface{}
+	BroadcastMessageEdit   chan interface{}
+	BroadCastDeleteMessage chan interface{}
+	TypingEvent            chan TypingStatus
 }
 
 type TypingStatus struct {
@@ -39,6 +40,9 @@ func (room *ChannelRoom) Run() {
 
 		case edit_message := <-room.BroadcastMessageEdit:
 			room.broadcastEdit(edit_message)
+
+		case delete_message := <-room.BroadCastDeleteMessage:
+			room.broadcastDelete(delete_message)
 
 		case typing := <-room.TypingEvent:
 			payload, _ := json.Marshal(struct {
@@ -68,6 +72,13 @@ func (room *ChannelRoom) broadcastReaction(reaction interface{}) {
 }
 
 func (room *ChannelRoom) broadcastEdit(msg interface{}) {
+	for user := range room.Members {
+		user.Send <- msg
+	}
+}
+
+func (room *ChannelRoom) broadcastDelete(msg interface{}) {
+	log.Println("Delete message: ", msg)
 	for user := range room.Members {
 		user.Send <- msg
 	}

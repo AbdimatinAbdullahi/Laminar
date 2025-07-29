@@ -97,7 +97,7 @@ function MessageComposer({replyTo, handleReply}){
 
       const uploadAudioURL = uploadTOS3(file)
       const audioMessage = {
-        type: "audio",
+        type: "message",
         payload : {
           url: uploadAudioURL,
           message: message !== "" ? message : "",
