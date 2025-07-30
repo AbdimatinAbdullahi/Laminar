@@ -70,50 +70,34 @@ function MessageComposer({replyTo, handleReply}){
     }
 
     if(selectedFile){
-      const fileURL = uploadTOS3(selectedFile.file)
-      const fileMessage = {
-        type: selectedFile.type.startsWith("image/") ? "image" : selectedFile.type.startsWith("video/") ? "video" : "file",
-        payload: {
-          url: fileURL,
-          message:  message !== "" ? message : "",
-          filename: selectedFile.name,
-          filetype: selectedFile.type,
-          filesize: selectedFile.size,
-          timestamp: new Date().toISOString(),
-          senderID: user.id,
-          channelID: state.activeChannel.id
+      const {upload_url, cfrURL} = await uploadTOS3(selectedFile.file)
+      if(cfrURL == ""){
+        console.log("Error no url is received: ", cfrURL)
+        return
+      } 
 
+      const fileMessage = {
+        type: "message",
+        payload: {
+            content: {
+              text : message ==! "" ? message : "",
+              attachment: [{type: selectedFile.type, url: cfrURL, name: selectedFile.name }]
+            },
+            timestamp: new Date().toISOString(),
+            sender_id: user.id,
+            receiver_id: state.activeChannel.id,
+            Sender: {
+              id: user.id,
+              fullname: user.fullname,
+              email: user.email
+            }
         } 
       }
+
+      console.log("Sending the data: ", fileMessage)
       sendMessage(fileMessage);
       setselectedFile(null)
     }
-
-    if(audioUrl && !isRecording){
-      const blob = await fetch(audioUrl).then(res => res.blob())
-      const file = new File([blob], `audio-${new Date()}.webm`,{
-        type: "audio/webm"
-      })
-
-      const uploadAudioURL = uploadTOS3(file)
-      const audioMessage = {
-        type: "message",
-        payload : {
-          url: uploadAudioURL,
-          message: message !== "" ? message : "",
-          filename: file.name,
-          filesize: file.size,
-          filetype: file.type,
-          timestamp: new Date().toISOString(),
-          senderID: user.id,
-          channelID: state.activeChannel.id
-        }
-      }
-      sendMessage(audioMessage)
-      URL.revokeObjectURL(audioUrl)
-      setAudioUrl(null)
-    }
-    setmessage("")
   }
 
 
@@ -197,28 +181,6 @@ function MessageComposer({replyTo, handleReply}){
           )
         }
 
-        {
-          isRecording && (
-            <div className={mediastyle.recording} >
-              <h3>Recording .... </h3>
-              <button onClick={stopRecording} > ❌ </button>
-              <button onClick={()=> setIsRecording(false)} > ✅ </button>
-            </div>
-          )
-        }
-
-        {
-          audioUrl && !isRecording && (
-            <div className={mediastyle.audioReco} > 
-              <audio controls src={audioUrl}/>
-              <button onClick={() => {
-                URL.revokeObjectURL(audioUrl); // Clean up the blob URL
-                setAudioUrl(null);
-              }}>❌</button>
-            </div>
-          )
-        }
-
 
         <div className={style.messageFunctionality}>
             <div className={style.messagesAdds}>
@@ -232,9 +194,6 @@ function MessageComposer({replyTo, handleReply}){
                     style={{display: "none"}} 
                     onChange={handleFileSelect} 
                     />
-              <Mic 
-                className={`${style.addsIcon} ${isRecording ? style.recording : ''}`}
-                onClick={isRecording ? stopRecording : startRecording} />
               <SmilePlus className={style.addsIcon} onClick={()=> setEmojiPickerOpen(!emojiPickerOpen)} />
             </div>
             <div className={style.sendIconC}>

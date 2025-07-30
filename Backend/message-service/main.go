@@ -67,6 +67,7 @@ func main() {
 	http.Handle("/delete-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.DeleteWorkspace)))
 	http.Handle("/chat", corsMiddleware(http.HandlerFunc(workspaceHandler.GetMessages)))
 	http.Handle("/users/workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.GetUsers)))
+	http.Handle("/generate-presigned-url", corsMiddleware(http.HandlerFunc(messageHandler.GetPresgnedURL)))
 
 	// Messaging service now
 	http.Handle("/ws", corsMiddleware(http.HandlerFunc(messageHandler.HandleWebsocketConnection)))
