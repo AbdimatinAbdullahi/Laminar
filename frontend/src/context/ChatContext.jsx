@@ -107,10 +107,25 @@ const reducer = (state, action)=>{
 }
 
 export const ChatProvider = ({children})=>{
-    
-    const [state, dispatch] = useReducer(reducer, initialState)
-    const navigate = useNavigate()
+
+
+    const [fileModalOpen, setFileModalOpen] = useState(false)
+    const [fileModalContent, setfileModalContent] = useState({type: "", url: ""})
+
+    const OpenFileModal = ({type, url})=>{
+        console.log("Opening the modal")
+        setfileModalContent({type: type, url: url})
+        setFileModalOpen(true)
+    }
+
+    const closeModal = ()=>{
+        setfileModalContent({url: "", type: ""})
+        setFileModalOpen(false)
+    }
+
     const { user } = useAuth()
+    const navigate = useNavigate()
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     useEffect(()=>{
 
@@ -213,7 +228,7 @@ export const ChatProvider = ({children})=>{
 
 
     return(
-        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction, sendEditMessage, sendDeleteMessage }} >
+        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction, sendEditMessage, sendDeleteMessage, fileModalOpen, fileModalContent, OpenFileModal, closeModal }} >
             {children}
         </ChatContext.Provider>
     )

@@ -5,10 +5,11 @@ import { useChat } from '../context/ChatContext'
 import Sidebar from '../components/Sidebar'
 import Chat from '../components/Chat'
 import UserBar from '../components/UserBar'
+import FileModal from '../modals/FileModal'
 
 function ChatRoom() {
 
-  const {state, dispatch} = useChat()
+  const {state, dispatch, fileModalOpen } = useChat()
   const [userbarActive, setUserbarActive] = useState(false)
 
   const handleUserBarActive = ()=>{
@@ -18,6 +19,7 @@ function ChatRoom() {
 
   return (
     <div className={style.chatRoomContainer} >
+      {fileModalOpen && <FileModal/>}
       <Sidebar state={state} dispatch={dispatch} setUserbarActive={setUserbarActive} />
       <Chat handelUserBarActive={handleUserBarActive} />
       {userbarActive && <UserBar handleUserBarActive={handleUserBarActive}/>}

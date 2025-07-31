@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { PencilLine, Plus, Reply, SmilePlus, Trash } from 'lucide-react'
+import { PencilLine, Plus, Reply, SmilePlus, Trash, Maximize2 } from 'lucide-react'
 import EmojiPicker from 'emoji-picker-react'
 
 import style from '../Styles/chatroom.module.css'
@@ -15,7 +15,7 @@ function MessageBubble({message, handleReply}) {
   
   const {user} = useAuth()
   const pickerRef = useRef(null)
-  const {state, sendReaction, sendDeleteMessage} = useChat()
+  const {state, sendReaction, sendDeleteMessage, OpenFileModal} = useChat()
 
   const [hoverOver, sethoverOver] = useState(false)
   const [showPicker, setshowPicker] = useState(false)
@@ -81,6 +81,7 @@ function MessageBubble({message, handleReply}) {
           <div className={style.attachemtContent}>
             {message.content.attachments[0].type.startsWith('image/') && (
               <div className={style.imageCon}>
+                <Maximize2 onClick={()=> OpenFileModal({url : message.content.attachments[0].url, type: message.content.attachments[0].type})}  className={style.Maximize2Icon}/>
                 <img
                   src={message.content.attachments[0].url}
                   alt={message.content.attachments[0].name}
@@ -90,6 +91,7 @@ function MessageBubble({message, handleReply}) {
 
             {message.content.attachments[0].type.startsWith('video/') && (
               <div className={style.videoCont}>
+                <Maximize2 onClick={()=> OpenFileModal({url : message.content.attachments[0].url, type: message.content.attachments[0].type})}  className={style.Maximize2Icon}/>
                 <video controls>
                   <source
                     src={message.content.attachments[0].url}
@@ -99,9 +101,20 @@ function MessageBubble({message, handleReply}) {
                 </video>
               </div>
             )}
+
+            {message.content.attachments[0].type.startsWith("application/") && 
+            
+              <div className={style.fileContent}>
+                <div className={style.fileIcon}>📃</div>
+                <div className={style.fileIcon}> 
+                  <a href={message.content.attachments[0].url} download={message.content.attachments[0].name}>
+                    {message.content.attachments[0].name}
+                  </a>
+                </div>
+              </div>
+            }
           </div>
         )}
-
 
         <div className={style.messageText}>
           {message.content.text}
