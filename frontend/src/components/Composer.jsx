@@ -67,12 +67,13 @@ function MessageComposer({replyTo, handleReply}){
           }
         }
       });
+      setmessage("")
     }
 
     if(selectedFile){
-      const {upload_url, cfrURL} = await uploadTOS3(selectedFile.file)
+      const { cfrURL} = await uploadTOS3(selectedFile.file)
       if(cfrURL == ""){
-        console.log("Error no url is received: ", cfrURL)
+        console.error("Error no url is received: ", cfrURL)
         return
       } 
 
@@ -80,12 +81,13 @@ function MessageComposer({replyTo, handleReply}){
         type: "message",
         payload: {
             content: {
-              text : message ==! "" ? message : "",
-              attachment: [{type: selectedFile.type, url: cfrURL, name: selectedFile.name }]
+              text : message,
+              attachment: [{type: selectedFile.type, url: cfrURL, name: selectedFile.file.name }]
             },
             timestamp: new Date().toISOString(),
             sender_id: user.id,
             receiver_id: state.activeChannel.id,
+            receiver_type: state.activeChannel ? "channel" : "user",
             Sender: {
               id: user.id,
               fullname: user.fullname,
@@ -96,6 +98,7 @@ function MessageComposer({replyTo, handleReply}){
 
       console.log("Sending the data: ", fileMessage)
       sendMessage(fileMessage);
+      setmessage("")
       setselectedFile(null)
     }
   }

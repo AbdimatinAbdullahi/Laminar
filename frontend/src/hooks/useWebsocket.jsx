@@ -67,7 +67,6 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onE
 
 
     const sendMessage = (message) =>{
-        console.log(message)
         if(socketRef.current && socketRef.current.readyState == WebSocket.OPEN){
             socketRef.current.send(JSON.stringify(message))
         } else{

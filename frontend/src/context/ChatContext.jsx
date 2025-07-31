@@ -48,7 +48,7 @@ const reducer = (state, action)=>{
             return {...state, messages: [...state.messages, action.payload.payload]}
         case "EDIT_MESSAGE":
             console.log("Message data reaching the state:", action.payload)
-            const { messageId, newContent } = action.payload.Data
+            const { messageId, newContent } = action.payload.Payload
             const messageIndex = state.messages.findIndex(msg => msg.id === messageId);
             console.log("Message index", messageIndex)
             if(messageIndex == -1) return state
@@ -69,7 +69,7 @@ const reducer = (state, action)=>{
             return {...state, loading: false, channelUsersRes: action.payload}
         
         case "REACTION":{
-            const {messageId, reactorId, emoji} = action.payload.Data;
+            const {messageId, reactorId, emoji} = action.payload.Payload;
             const messageIndex = state.messages.findIndex(msg => msg.id === messageId); // the message index
             if(messageIndex === -1) return state
 
