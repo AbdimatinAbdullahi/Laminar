@@ -493,6 +493,26 @@ textarea::-webkit-scrollbar{
     color: rgb(195, 193, 193);
 }
 
+.attachemtContent{
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    background-color: inherit;
+}
+
+.imageCon{
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+}
+
+.imageCon img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
 .edited{
     position: absolute;
     bottom: 12px;

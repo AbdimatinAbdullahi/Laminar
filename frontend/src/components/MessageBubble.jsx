@@ -77,6 +77,32 @@ function MessageBubble({message, handleReply}) {
           <div className={style.sendTimestamp}>{new Date(message?.timestamp).toLocaleDateString("en-US", {day: "2-digit", month:"2-digit", year:"numeric", hour: "2-digit", minute:"2-digit", hour12: true})}</div>
         </div>
 
+       {message.content.attachments && message.content.attachments.length > 0 && (
+          <div className={style.attachemtContent}>
+            {message.content.attachments[0].type.startsWith('image/') && (
+              <div className={style.imageCon}>
+                <img
+                  src={message.content.attachments[0].url}
+                  alt={message.content.attachments[0].name}
+                />
+              </div>
+            )}
+
+            {message.content.attachments[0].type.startsWith('video/') && (
+              <div className={style.videoCont}>
+                <video controls>
+                  <source
+                    src={message.content.attachments[0].url}
+                    type={message.content.attachments[0].type}
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            )}
+          </div>
+        )}
+
+
         <div className={style.messageText}>
           {message.content.text}
         </div>
