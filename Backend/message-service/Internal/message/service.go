@@ -13,8 +13,7 @@ import (
 )
 
 var (
-	Bucket     = "my-laminar-bucket"
-	cloudfront = "https://dun1ggowjxx1h.cloudfront.net"
+	Bucket = "my-laminar-bucket"
 )
 
 type Service interface {
@@ -22,7 +21,7 @@ type Service interface {
 	NewReaction(msgId string, reactorId string, emoji string) error
 	EditMessage(msgId string, newContent string) error
 	DeleteMessage(msgId string) error
-	GeneratePresignedURLL(filename string, filetype string, contentType string) (s3url string, key string, cloufrontURL string, err error)
+	GeneratePresignedURLL(filename string, contentType string) (s3url string, cloufrontURL string, err error)
 }
 
 type service struct {
@@ -67,6 +66,7 @@ func NewService(repo Repository) Service {
 }
 
 func NewMessagePayload(input Message) Message {
+	input.Payload.ID = primitive.NewObjectID()
 	input.Payload.Edited = false
 	return input
 }
@@ -86,6 +86,7 @@ func (s *service) SaveMessage(ctx context.Context, msg []byte) (Message, error) 
 		log.Println("Somethinig went wrong while saving the data to db", err)
 		return Message{}, err
 	}
+
 	return newPayload, nil
 }
 
@@ -128,19 +129,20 @@ func (s *service) DeleteMessage(msgId string) error {
 
 }
 
-func (s *service) GeneratePresignedURLL(filename string, filetype string, contentType string) (s3url string, key string, cloudfront string, err error) {
+func (s *service) GeneratePresignedURLL(filename string, contentType string) (s3url string, cloudfront string, err error) {
 
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-north-1"))
 
 	if err != nil {
-		return "", "", "", err
+		return "", "", err
 	}
 
 	s3Client := s3.NewFromConfig(cfg) // initializes authenticated s3 client that talks to s3 service
 
-	key = fmt.Sprintf("uploads/%d_%s", time.Now().Unix(), filename)
+	key := fmt.Sprintf("uploads/%d_%s", time.Now().Unix(), filename)
+	// fmt.Println("The key printed is: ", key)
 
-	presigner := s3.NewPresignClient(s3Client)
+	presigner := s3.NewPresignClient(s3Client) //special client to generate presigned urls
 
 	presignedReq, err := presigner.PresignPutObject(
 		context.TODO(),
@@ -151,10 +153,15 @@ func (s *service) GeneratePresignedURLL(filename string, filetype string, conten
 		}, s3.WithPresignExpires(15*time.Minute))
 
 	if err != nil {
-		return "", "", "", err
+		fmt.Println("The error while getting the load url: ", err)
+		return "", "", err
 	}
 
-	cloudfronturl := fmt.Sprintf("%s/%s", cloudfront, key)
+	// fmt.Println("The upload url is this: ", presignedReq.URL)
 
-	return presignedReq.URL, key, cloudfronturl, nil
+	cloudfronturl := fmt.Sprintf("%s/%s", "https://dun1ggowjxx1h.cloudfront.net", key)
+	fmt.Println("S3 key:", key)
+	fmt.Println("Full CloudFront URL:", cloudfronturl)
+
+	return presignedReq.URL, cloudfronturl, nil
 }

@@ -32,13 +32,14 @@ func (u *UserConnection) ReadMessage() {
 		}
 		// Temp storage to decode the outer layer of incoming json and that is msg
 		var incoming struct {
-			Type string
-			Data json.RawMessage
+			Type    string
+			Payload json.RawMessage
 		}
 
 		json.Unmarshal(msg, &incoming)
 
-		log.Println("The incoming request: ", string(incoming.Data))
+		log.Println("The incoming request: ", string(msg))
+		log.Println("The incoming request: ", string(incoming.Payload))
 
 		switch incoming.Type {
 		case "join":
@@ -47,7 +48,7 @@ func (u *UserConnection) ReadMessage() {
 				UserID    string
 			}
 
-			json.Unmarshal(incoming.Data, &payload)
+			json.Unmarshal(incoming.Payload, &payload)
 
 			u.Server.JoinChannel(payload.ChannelID, u)
 
@@ -72,7 +73,7 @@ func (u *UserConnection) ReadMessage() {
 		case "typing":
 			var typing TypingStatus
 
-			json.Unmarshal(incoming.Data, &typing)
+			json.Unmarshal(incoming.Payload, &typing)
 
 			room := u.Server.GetChannelRoom(u.CurrentChannel)
 
@@ -89,7 +90,7 @@ func (u *UserConnection) ReadMessage() {
 				NewContent string
 				ChannelId  string
 			}
-			json.Unmarshal(incoming.Data, &EditContent)
+			json.Unmarshal(incoming.Payload, &EditContent)
 
 			log.Println("Printing the edit content: ", EditContent)
 
@@ -111,7 +112,7 @@ func (u *UserConnection) ReadMessage() {
 				ReactorId string
 				Emoji     string
 			}
-			json.Unmarshal(incoming.Data, &payload)
+			json.Unmarshal(incoming.Payload, &payload)
 			err := u.Services.NewReaction(payload.MessageId, payload.ReactorId, payload.Emoji)
 			if err != nil {
 				log.Fatalln("Failed to save to db the reaction: ", err)
@@ -129,7 +130,7 @@ func (u *UserConnection) ReadMessage() {
 				DelId string
 			}
 
-			json.Unmarshal(incoming.Data, &payload)
+			json.Unmarshal(incoming.Payload, &payload)
 
 			log.Println("Delete message data received: ", incoming)
 

@@ -39,6 +39,7 @@ func (r *repository) SaveMessageToDb(ctx context.Context, msg MessagePayload) er
 	// senderUUID := uuid.MustParse(msg.SenderID)
 
 	message := bson.M{
+		"_id":           msg.ID,
 		"receiver_type": msg.ReceiverType,
 		"receiver_id":   uuid.UUID(uuid.MustParse(msg.ReceiverID)),
 		"content":       msg.Content,
@@ -90,7 +91,7 @@ func (r *repository) EditMessage(ctx context.Context, msgId string, newContent s
 	update := bson.M{
 		"$set": bson.M{
 			"content.text": newContent,
-			"edit":         true,
+			"edited":       true,
 		},
 	}
 
@@ -106,6 +107,7 @@ func (r *repository) EditMessage(ctx context.Context, msgId string, newContent s
 
 func (r *repository) NewReaction(ctx context.Context, msgId string, reactorId string, emoji string) error {
 	collection := r.monngo.Client().Database("laminar").Collection("messages")
+	log.Println("Messaged id", msgId)
 	objectMsgId, err := primitive.ObjectIDFromHex(msgId)
 	if err != nil {
 		return err

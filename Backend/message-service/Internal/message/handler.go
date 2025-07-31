@@ -1,6 +1,8 @@
 package message
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -45,4 +47,28 @@ func (h *Handler) HandleWebsocketConnection(w http.ResponseWriter, r *http.Reque
 
 	go user.ReadMessage()
 	go user.WriteMessage()
+}
+
+func (h *Handler) GetPresgnedURL(w http.ResponseWriter, r *http.Request) {
+	fileName := r.URL.Query().Get("filename")
+	contentType := r.URL.Query().Get("filetype")
+
+	fmt.Println("This methods is", r.Method)
+	fmt.Println("The file content type: ", contentType)
+
+	if fileName == "" || contentType == "" {
+		http.Error(w, "filename and content type cannot be empty", http.StatusInternalServerError)
+		return
+	}
+
+	uploadUrl, cloudfronturl, err := h.scv.GeneratePresignedURLL(fileName, contentType)
+	if err != nil {
+		http.Error(w, "error while genrating s3 key", http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{
+		"upload_url": uploadUrl,
+		"cfrURL":     cloudfronturl,
+	})
+
 }
