@@ -18,7 +18,7 @@ function EditMessageModal({message, onClose}) {
 
         const newData = {
         type: "edit_message",
-        data: {
+        payload: {
             newContent: newContent,
             messageId: message.id,
             channelId: state.activeChannel.id || null,
@@ -39,7 +39,38 @@ function EditMessageModal({message, onClose}) {
             </div>
             <div className={style.messageEdit}>
                 <textarea type="text" value={newContent} onChange={(e)=>setNewContent(e.target.value)} />
+                {
+                    message.content.attachments && message.content.attachments.length > 0 && <div className={style.attachment} >
+                        {
+                            message.content.attachments[0].type.startsWith("image/") && 
+                            <div className={style.imageAttach}>
+                                <img src={message.content.attachments[0].url} />     
+                            </div>
+                        }    
+
+                        {
+                            message.content.attachments[0].type.startsWith("video/") && 
+                            <div className={style.videoAttach}> 
+                                <video controls src={message.content.attachments[0].url} />
+                            </div> 
+                        }
+
+                        {
+                            message.content.attachments[0].type.startsWith("application/") && 
+                                <div className={style.docs}>
+                                    <div>
+                                        📃
+                                    </div>
+                                    <a href={message.content.attachments[0].url} download={message.content.attachments[0].name}> {message.content.attachments[0].name} </a>
+
+                                </div>
+                        }
+
+                </div>
+                }
             </div>
+
+
             <div className={style.actionButtons}>
                 <button onClick={onClose} className={loading ? style.disableButton : style.buttAct} >Discard</button>
                 <button 

@@ -298,7 +298,7 @@
 }
 
 .messagesView{
-    width: 98%;
+    width:98%;
     flex-grow: 1;
     background-color: inherit;
     border-radius: 4px;
@@ -420,7 +420,7 @@ textarea::-webkit-scrollbar{
 }
 
 .messageBubble{
-    width: 100%;
+    max-width: 1500px;
     min-height: fit-content;
     display: flex;
     box-sizing: border-box;
@@ -488,6 +488,7 @@ textarea::-webkit-scrollbar{
 }
 
 .messageText{
+    max-width: 90%;
     min-height: 80px;
     background-color: inherit;
     color: rgb(195, 193, 193);

@@ -16,9 +16,7 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onE
 
         socket.onmessage = (event) =>{
             const data = JSON.parse(event.data)
-            console.log("Data from websocket: ", data)
             const messageType = (data.type || data.Type || '').toLowerCase();
-            console.log("Message Type: ", messageType)
             switch(messageType){
                 case "message":
                     onMessage(data)
@@ -29,7 +27,6 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onE
                 case "edit_message":
                     onEdit(data)
                 case "delete_message":
-                    console.log("Received the delete data", data)
                     onDelete(data)
 
             }
@@ -80,7 +77,7 @@ export const useWebsocket = (userID, activeChannelID, onMessage, onReaction, onE
         if(socketRef.current && socketRef.current.readyState == WebSocket.OPEN){
             socketRef.current.send(JSON.stringify({
                 type: "reaction",
-                data:{
+                payload:{
                     "messageId": msgId,
                     "reactorId" : reactorId,
                     "emoji" : reactionEmoji

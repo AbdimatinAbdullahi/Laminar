@@ -73,7 +73,6 @@ func NewMessagePayload(input Message) Message {
 
 func (s *service) SaveMessage(ctx context.Context, msg []byte) (Message, error) {
 	var message Message
-	log.Println("The message is received")
 	if err := json.Unmarshal(msg, &message); err != nil {
 		log.Println("Error while unmarshaling the json data: ", err)
 		return Message{}, err
@@ -91,6 +90,7 @@ func (s *service) SaveMessage(ctx context.Context, msg []byte) (Message, error) 
 }
 
 func (s *service) NewReaction(msgid string, reactorId string, emoji string) error {
+	log.Println("Message Id: ", msgid)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	err := s.repo.NewReaction(ctx, msgid, reactorId, emoji)

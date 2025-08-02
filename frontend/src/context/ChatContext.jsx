@@ -97,7 +97,7 @@ const reducer = (state, action)=>{
 
         case "DELETE_MESSAGE":
             console.log("Deleted data received in state: ", action.payload.Data)
-            const { delId } = action.payload.Data
+            const { delId } = action.payload.Payload
             const updatedMessagesDel = state.messages.filter(msg => msg.id !== delId)
             return {...state, messages: updatedMessagesDel}
 

@@ -15,7 +15,7 @@ function MessageBubble({message, handleReply}) {
   
   const {user} = useAuth()
   const pickerRef = useRef(null)
-  const {state, sendReaction, sendDeleteMessage, OpenFileModal} = useChat()
+  const { sendReaction, sendDeleteMessage, OpenFileModal} = useChat()
 
   const [hoverOver, sethoverOver] = useState(false)
   const [showPicker, setshowPicker] = useState(false)
@@ -43,7 +43,7 @@ function MessageBubble({message, handleReply}) {
   function handleDeleteMessage(){
     const data = {
       type: "delete_message",
-      data : {
+      payload : {
         "delId" : message.id
       }
     }
@@ -77,7 +77,7 @@ function MessageBubble({message, handleReply}) {
           <div className={style.sendTimestamp}>{new Date(message?.timestamp).toLocaleDateString("en-US", {day: "2-digit", month:"2-digit", year:"numeric", hour: "2-digit", minute:"2-digit", hour12: true})}</div>
         </div>
 
-       {message.content.attachments && message.content.attachments.length > 0 && (
+       {!showMessageEditModal && message.content.attachments && message.content.attachments.length > 0 && (
           <div className={style.attachemtContent}>
             {message.content.attachments[0].type.startsWith('image/') && (
               <div className={style.imageCon}>
@@ -103,7 +103,6 @@ function MessageBubble({message, handleReply}) {
             )}
 
             {message.content.attachments[0].type.startsWith("application/") && 
-            
               <div className={style.fileContent}>
                 <div className={style.fileIcon}>📃</div>
                 <div className={style.fileIcon}> 
