@@ -14,7 +14,7 @@ import { mimeToExtension } from '../utils/filesRename'
 import { uploadTOS3 } from '../utils/uploadTOS3'
 
 
-function MessageComposer({replyTo, handleReply}){
+function MessageComposer({replyTo, handleReply, setReplyTo}){
 
   const [message, setmessage] = useState("")
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
@@ -60,6 +60,7 @@ function MessageComposer({replyTo, handleReply}){
           sender_id: user.id,
           receiver_id: state.activeChannel.id,
           receiver_type: state.activeChannel ? "channel" : "user",
+          thread_parent_id: replyTo ? replyTo.id : "",
           Sender: {
             id: user.id,
             fullname: user.fullname,
@@ -67,7 +68,6 @@ function MessageComposer({replyTo, handleReply}){
           }
         }
       });
-      setmessage("")
     }
 
     if(selectedFile){
@@ -88,6 +88,7 @@ function MessageComposer({replyTo, handleReply}){
             sender_id: user.id,
             receiver_id: state.activeChannel.id,
             receiver_type: state.activeChannel ? "channel" : "user",
+            thread_parent_id: replyTo ? replyTo.id : "",
             Sender: {
               id: user.id,
               fullname: user.fullname,
@@ -98,11 +99,16 @@ function MessageComposer({replyTo, handleReply}){
 
       console.log("Sending the data: ", fileMessage)
       sendMessage(fileMessage);
-      setmessage("")
       setselectedFile(null)
     }
+    setmessage("")
+    handleReply(null)
   }
 
+
+  useEffect(()=>{
+    console.log("Message thread: ", replyTo)
+  }, [replyTo])
 
   function handleFileSelect(e){
     const file = e.target.files[0]
@@ -128,6 +134,14 @@ function MessageComposer({replyTo, handleReply}){
     document.addEventListener("mousedown", handleOutsideClick)
     return () => document.removeEventListener("mousedown", handleOutsideClick)
   }, [])
+
+
+  // Change the message, selected file and reply to empty when we change the channel
+  useEffect(()=>{
+    setmessage("")
+    setselectedFile(null)
+    handleReply(null)
+  }, [state.activeChannel.id])
 
 
   return (
@@ -203,7 +217,7 @@ function MessageComposer({replyTo, handleReply}){
               <SendHorizonal 
                 onClick={handleSendMesssage}
                 className={style.sendIcon} 
-                style={message == "" ? { backgroundColor: "#3b36365b", color: "gray" } : { color: "green", backgroundColor: "#0080005d"  }} />
+                style={!message && !audioUrl && !selectedFile ? { backgroundColor: "#3b36365b", color: "gray" } : { color: "green", backgroundColor: "#0080005d"  }} />
             </div>
         </div>
     </div>

@@ -71,6 +71,7 @@ func main() {
 
 	// Messaging service now
 	http.Handle("/ws", corsMiddleware(http.HandlerFunc(messageHandler.HandleWebsocketConnection)))
+	http.Handle("/fetch_parent_message", corsMiddleware(http.HandlerFunc(messageHandler.GetParentMessage)))
 
 	log.Println("Server running :8008")
 	http.ListenAndServe(":8008", nil)

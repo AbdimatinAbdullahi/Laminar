@@ -45,11 +45,12 @@ function ChannelHeader({channel, handelUserBarActive}){
 
 function Converstation({channel}){
 
-  const messageContainerRef = useRef(null)
   const { state, fetchMessages } = useChat()
-  const {activeChannel, messageCursor, hasMoreMessages, messages} = state;
   const [replyTo, setReplyTo] = useState(null)
+  const messageContainerRef = useRef(null)
+
   const handleReply = useCallback((message) => setReplyTo(message), [])
+  const {activeChannel, messageCursor, hasMoreMessages, messages} = state;
 
   // On intial render, Fetch the messages from backend without the cursor
   useEffect(()=>{
@@ -72,10 +73,10 @@ function Converstation({channel}){
     <div className={style.converstationWindow}>
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
           { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
-              <MessageBubble message={msg} handleReply={handleReply} key={index} />
+              <MessageBubble message={msg} handleReply={handleReply} key={index} replyTo={replyTo} />
           )): <h2>No message</h2>}
       </div>
-      <MessageComposer replyTo={replyTo} handleReply={handleReply} />
+      <MessageComposer replyTo={replyTo} handleReply={handleReply} setReplyTo={setReplyTo} />
     </div>
   )
 }

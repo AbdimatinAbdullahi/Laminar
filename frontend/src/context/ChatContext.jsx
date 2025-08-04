@@ -68,7 +68,8 @@ const reducer = (state, action)=>{
         case "SET_USERS":
             return {...state, loading: false, channelUsersRes: action.payload}
         
-        case "REACTION":{
+        case "REACTION":
+            {
             const {messageId, reactorId, emoji} = action.payload.Payload;
             const messageIndex = state.messages.findIndex(msg => msg.id === messageId); // the message index
             if(messageIndex === -1) return state
@@ -85,7 +86,6 @@ const reducer = (state, action)=>{
                     [emoji] : [...emojiReactors, reactorId]
                 }
             }
-
 
             const updatedMessages = [...state.messages]
             updatedMessages[messageIndex] = updatedMessage;

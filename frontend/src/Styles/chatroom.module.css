@@ -227,7 +227,7 @@
 }
 
 .chatuiContainer{
-    /* width: calc(100% - 25%); */
+    width: calc(100% - 25%);
     flex-grow: 1;
     height: 100%;
     background-color: #555;
@@ -420,7 +420,7 @@ textarea::-webkit-scrollbar{
 }
 
 .messageBubble{
-    max-width: 1500px;
+    width: 98%;
     min-height: fit-content;
     display: flex;
     box-sizing: border-box;
@@ -450,6 +450,40 @@ textarea::-webkit-scrollbar{
     color: white;
 }
 
+.parentMessage{
+    width: 100%;
+    height: 50px;
+    border-radius: 6px;
+    background-color: inherit;
+    border: 1px solid white;
+    position: relative;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 16px;
+    cursor: pointer;
+}
+
+.replyInd{
+    position: absolute;
+    left: 6px;
+    height: 90%;
+    width: 4px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background-color: rgb(105, 100, 194);
+    transform: translateY(-50%);
+    top: 50%;
+}
+
+.replyContent{
+    font-family: var(--font-noto-sans);
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: inherit;
+}
+
 .messageContent{
     display: flex;
     flex-direction: column;
@@ -475,6 +509,13 @@ textarea::-webkit-scrollbar{
     background-color: inherit;
     background-color: transparent;
 }
+
+.highlight{
+    width: 100%;
+    height: 100%;
+    background-color: #9A4A9F;
+}
+
 .sendTimestamp{
     margin-right: 16px;
     font-family: var(--font-noto-sans);
