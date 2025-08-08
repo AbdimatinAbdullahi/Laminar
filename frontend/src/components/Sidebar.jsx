@@ -1,14 +1,18 @@
 import React, { use } from 'react'
+import { useNavigate } from 'react-router'
 import style from '../Styles/chatroom.module.css'
 import { Plus, Settings } from 'lucide-react'
 import {useAuth} from '../context/AuthContext'
+import { useChat } from '../context/ChatContext'
 
 
 function Sidebar({ state, dispatch, setUserbarActive }) {
-
-  const {workspaces, channels, loading, selectedWorkspace, activeChannel} = state
+  
+  const navigate = useNavigate()
   const {user, logout} = useAuth()
-
+  const {workspaces, channels, selectedWorkspace} = state
+  const {, openCreateChannelModal, workspaceCreateModalOpen } = useChat()
+  
   function handleWorkspaceSelect(ws){
     dispatch({type: "SELECT_WORKSPACE", payload: ws})
   }
@@ -30,19 +34,25 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
               {workspace.name.charAt().slice(0, 3)}
             </div>
           ))}
+          <div className={style.addWorkspace} onClick={()=>} >
+            <Plus style={{backgroundColor: "inherit"}} size={30} />
+          </div>
       </div>
 
       <div className={style.workspaceDetail}>
 
-        <div className={style.workspaceHeader}>
+        {/* Workspace Header => onclick workspace page */}
+        <div className={style.workspaceHeader} onClick={()=>navigate(`/setting/${selectedWorkspace.id}`)} >
             <Settings className={style.icon}  size={30}/>
             <h3>{selectedWorkspace?.name || "Workspace"}</h3>
         </div>
 
+        
+        {/* Workspace channels */}
         <div className={style.channelsContainer}>
           <div className={style.channelHeader}>
             <h4>Channels</h4>
-            <Plus className={style.channelAddIcon} />
+            <Plus className={style.channelAddIcon} onClick={() =>openCreateChannelModal()} />
           </div>
 
           <div className={style.channels}>
@@ -52,6 +62,8 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
           </div>
         </div>
 
+
+        {/* User profile and showing details */}
         <div className={style.userProfile}>
               <div className={style.profileIcon}>
                   {user.fullname.slice(0,1)}
@@ -66,6 +78,9 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
                   <Settings color='#FF00C8' />
               </div>
         </div>
+
+
+
       </div>
 
     </div>

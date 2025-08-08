@@ -22,26 +22,21 @@ function UserManagement() {
 
   return (
     <div className={style.userContainer}>
-
-      {/* 100vh */}
+      
       <div className={style.membersContainer}>
 
-        {/* 1 */}
         <div className={style.userHeader}>
           <div className={style.userMan}>
             <h2>User Management</h2>
             <p>{workspaceData.Name}</p>
           </div>
-          <div className={style.profile}>
-            <div>Profile</div>
+          <div className={style.userLength}>
+            Users({workspaceMemebers.length})
           </div>
         </div>
 
         {/* 2 */}
         <div className={style.tableWrapper}>
-          <div className={style.userLength}>
-            Users({workspaceMemebers.length})
-          </div>
 
           {/* Grid Header */}
           <div className={`${style.gridRow} ${style.gridHeader}`}>
@@ -67,7 +62,7 @@ function UserManagement() {
               <div><EllipsisVertical onClick={()=>{
                 setmodalUserOpen(true)
                 setselectedMember(member)
-              }} style={{ backgroundColor: "inherit", cursor: "pointer" }} size={50} /></div>
+              }} style={{ backgroundColor: "inherit", cursor: "pointer" }} size={20} /></div>
             </div>
           ))}
         </div>

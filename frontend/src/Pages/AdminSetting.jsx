@@ -25,19 +25,19 @@ function AdminSetting() {
               <h2>Managment</h2>
               
               <div className={`${style.general} ${selectedTab === "general" ? style.activeTab : ""}`} onClick={()=>setSelectedTab("general")} >
-                <Boxes size={60} className={style.icon}/>
+                <Boxes size={30} className={style.icon}/>
                  <span className={style.indicator}></span> {/* ACTIVE INDICATOR */}
                 <>General</>
               </div>
 
               <div className={`${style.usersTab} ${selectedTab === "usersManagement" ? style.activeTab : ""}`} onClick={()=>setSelectedTab("usersManagement")} >
-                <UserCog size={60} className={style.icon} />
+                <UserCog size={30} className={style.icon} />
                 <span className={style.indicator}></span> {/* ACTIVE INDICATOR */}
                 <>User managmenent</>
               </div>
 
               <div className={`${style.billing} ${selectedTab === "billing" ? style.activeTab : ""}`} onClick={()=>setSelectedTab("billing")} >
-                <ReceiptText size={60} className={style.icon} />
+                <ReceiptText size={30} className={style.icon} />
                 <span className={style.indicator}></span> {/* ACTIVE INDICATOR */}
                 Billing
               </div>
@@ -73,7 +73,6 @@ function General(){
     <div className={style.generalContainer}>
 
         <div className={style.workspaceName}>
-          <h3>Workspace name</h3>
           <p>Manage and Edit names of the workspace (Only creator or user with relevant role) </p>
           <input type="text" value={workspaceData?.Name}/>
           <p>Created on {workspaceData?.DateCreated || "25th May 2018"} </p>

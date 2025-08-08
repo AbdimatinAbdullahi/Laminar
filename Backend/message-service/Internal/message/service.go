@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"laminar/internal/models"
 	"log"
 	"time"
 
@@ -21,6 +22,7 @@ type Service interface {
 	NewReaction(msgId string, reactorId string, emoji string) error
 	EditMessage(msgId string, newContent string) error
 	DeleteMessage(msgId string) error
+	GetParentMessage(parentId string) (*models.Message, error)
 	GeneratePresignedURLL(filename string, contentType string) (s3url string, cloufrontURL string, err error)
 }
 
@@ -46,14 +48,15 @@ type Attachment struct {
 }
 
 type MessagePayload struct {
-	ID           primitive.ObjectID `json:"id" bson:"_id"`
-	Content      MessageContent     `json:"content" bson:"content"`
-	Timestamp    string             `json:"timestamp" bson:"timestamp"`
-	SenderID     string             `json:"sender_id" bson:"sender_id"`
-	ReceiverType string             `json:"receiver_type" bson:"receiver_type"`
-	ReceiverID   string             `json:"receiver_id" bson:"receiver_id"`
-	Edited       bool               `json:"edited" bson:"edited"`
-	Sender       SenderInfo         `json:"Sender" bson:"Sender"`
+	ID             primitive.ObjectID `json:"id" bson:"_id"`
+	Content        MessageContent     `json:"content" bson:"content"`
+	Timestamp      string             `json:"timestamp" bson:"timestamp"`
+	SenderID       string             `json:"sender_id" bson:"sender_id"`
+	ReceiverType   string             `json:"receiver_type" bson:"receiver_type"`
+	ReceiverID     string             `json:"receiver_id" bson:"receiver_id"`
+	Edited         bool               `json:"edited" bson:"edited"`
+	Sender         SenderInfo         `json:"Sender" bson:"Sender"`
+	ThreadParentID string             `json:"thread_parent_id" bson:"thread_parent_id"`
 }
 
 type Message struct {
@@ -164,4 +167,17 @@ func (s *service) GeneratePresignedURLL(filename string, contentType string) (s3
 	fmt.Println("Full CloudFront URL:", cloudfronturl)
 
 	return presignedReq.URL, cloudfronturl, nil
+}
+
+func (s *service) GetParentMessage(parentId string) (*models.Message, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	data, err := s.repo.GetParentMessage(ctx, parentId)
+
+	if err != nil {
+		return &models.Message{}, err
+	}
+
+	return data, err
 }

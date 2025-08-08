@@ -6,7 +6,7 @@ function DeleteWorkspace({ onClose }) {
   return (
     <div className={style.modalOverlay} >
         <div className={style.deleteModalContainer}>
-          <X className={style.Icon} size={57} onClick={onClose} />
+          <X className={style.Icon} size={40} onClick={onClose} />
             <div className={style.deleteTextContent}>
               <h2>Only the workspace creator can delete this workspace.</h2>
               <p>This action is permanent and will remove all messages, members, and data.</p>

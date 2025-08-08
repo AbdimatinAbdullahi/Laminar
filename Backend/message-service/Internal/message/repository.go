@@ -3,6 +3,7 @@ package message
 import (
 	"context"
 	"fmt"
+	"laminar/internal/models"
 	"log"
 	"time"
 
@@ -18,6 +19,7 @@ type Repository interface {
 	EditMessage(ctx context.Context, msgId string, newContent string) error
 	DeleteMessage(ctx context.Context, msgid primitive.ObjectID) error
 	NewReaction(ctx context.Context, msgId string, reactorId string, emoji string) error
+	GetParentMessage(ctx context.Context, parentId string) (*models.Message, error)
 }
 
 type repository struct {
@@ -46,6 +48,10 @@ func (r *repository) SaveMessageToDb(ctx context.Context, msg MessagePayload) er
 		"timestamp":     time.Now(),
 		"edited":        msg.Edited,
 		"sender_id":     uuid.UUID(uuid.MustParse(msg.SenderID)),
+	}
+
+	if msg.ThreadParentID != "" {
+		message["thread_parent_id"] = msg.ThreadParentID
 	}
 
 	log.Println("Message inserting into db")
@@ -134,4 +140,34 @@ func (r *repository) NewReaction(ctx context.Context, msgId string, reactorId st
 
 func (r *repository) Removereaction(ctx context.Context, msgId string, reactorId string) error {
 	return nil
+}
+
+func (r *repository) GetParentMessage(ctx context.Context, parentId string) (*models.Message, error) {
+	var message models.Message
+	collection := r.monngo.Client().Database("laminar").Collection("messages")
+
+	objectId, err := primitive.ObjectIDFromHex(parentId)
+	if err != nil {
+		return &models.Message{}, err
+	}
+
+	filer := bson.M{
+		"_id": objectId,
+	}
+
+	err = collection.FindOne(context.TODO(), filer).Decode(&message)
+
+	if err != nil {
+		return &models.Message{}, err
+	}
+
+	var sender models.User
+	err = r.db.Table("users").Select("id, fullname, email").Where("id = ?", message.SenderID).First(&sender).Error
+	if err != nil {
+		return &models.Message{}, err
+	}
+
+	message.Sender = &sender
+
+	return &message, nil
 }

@@ -1,14 +1,15 @@
-import React, { act, useEffect, useRef, useState, useLayoutEffect, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useLayoutEffect, useCallback } from 'react'
 import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
 
 import {Phone, Users, Video } from 'lucide-react'
 import MessageBubble from './MessageBubble'
+import ChannelCreationModal from '../modals/ChannelCreationModal'
 
 function Chat({handelUserBarActive}) {
 
-    const { state } = useChat()
+    const { state, createChannelModalOpen, workspaceCreateModalOpen, } = useChat()
     const { activeChannel } = state
 
     if(!activeChannel) return <div className={style.emptyChannel}>  <h4>Select Channel</h4> </div>
@@ -17,6 +18,8 @@ function Chat({handelUserBarActive}) {
     <div className={style.chatuiContainer}>
       <ChannelHeader channel={activeChannel} handelUserBarActive={handelUserBarActive} />
       <Converstation channel={activeChannel} />
+      {createChannelModalOpen && <ChannelCreationModal/>}
+      {}
     </div>
   )
 }
@@ -51,11 +54,31 @@ function Converstation({channel}){
 
   const handleReply = useCallback((message) => setReplyTo(message), [])
   const {activeChannel, messageCursor, hasMoreMessages, messages} = state;
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState(false)
 
   // On intial render, Fetch the messages from backend without the cursor
   useEffect(()=>{
     fetchMessages()
   }, [activeChannel])
+
+
+  const loadMoreMessages = async () => {
+    setLoadingMoreMessages(true);
+    const container = messageContainerRef.current;
+    const prevScrollHeight = container?.scrollHeight || 0;
+
+    await fetchMessages(messageCursor);
+
+    // Optional: Maintain scroll position
+    setTimeout(() => {
+      if (container) {
+        const newScrollHeight = container.scrollHeight;
+        container.scrollTop = newScrollHeight - prevScrollHeight;
+      }
+    }, 5000);
+
+    setLoadingMoreMessages(false);
+  };
 
 
   // On scroll Fetch more messages depending on hasMoreMessage state
@@ -64,7 +87,7 @@ function Converstation({channel}){
     if(!container) return;
 
     if(container.scrollTop == 0 && hasMoreMessages){
-      fetchMessages(messageCursor)
+      loadMoreMessages()
     }
   }
  
@@ -72,6 +95,7 @@ function Converstation({channel}){
   return (
     <div className={style.converstationWindow}>
       <div className={style.messagesView} ref={messageContainerRef} onScroll={handleScroll}>
+        {loadingMoreMessages && <div className={style.loadingMoreMessages}> loading ... </div>}
           { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
               <MessageBubble message={msg} handleReply={handleReply} key={index} replyTo={replyTo} />
           )): <h2>No message</h2>}

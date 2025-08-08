@@ -10,7 +10,7 @@ function Invite( { onClose } ) {
           <X size={55} className={style.Icon} onClick={onClose} strokeWidth={4} />
           <div className={style.inviteContent}>
 
-              <UsersRound className={style.teamIcon} size={150}  />
+              <UsersRound className={style.teamIcon} size={50}  />
               <div className={style.inviteText}>
                 <h3>Invite a member to your team by inviting them directly using email</h3>
                 <div className={style.inputEmail}>

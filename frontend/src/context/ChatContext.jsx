@@ -111,6 +111,17 @@ export const ChatProvider = ({children})=>{
 
     const [fileModalOpen, setFileModalOpen] = useState(false)
     const [fileModalContent, setfileModalContent] = useState({type: "", url: ""})
+    const [createChannelModalOpen, setCreateChannelModalOpen] = useState(false)
+    const [workspaceCreateModalOpen, setWorkspaceCreateModalOpen] = useState(false)
+
+    const handleWorkspaceCreateModalOpen = ()=>{
+        setWorkspaceCreateModalOpen(true)
+    }
+
+    const handleCloseWorkspaceCreateModal = ()=>{
+        setWorkspaceCreateModalOpen(false)
+    }
+
 
     const OpenFileModal = ({type, url})=>{
         console.log("Opening the modal")
@@ -121,6 +132,15 @@ export const ChatProvider = ({children})=>{
     const closeModal = ()=>{
         setfileModalContent({url: "", type: ""})
         setFileModalOpen(false)
+    }
+
+    const openCreateChannelModal = ()=>{
+        console.log("Opening the modal")
+        setCreateChannelModalOpen(true)
+    }
+
+    const closeCreateChannelModal = ()=>{
+        setCreateChannelModalOpen(false)
     }
 
     const { user } = useAuth()
@@ -228,7 +248,14 @@ export const ChatProvider = ({children})=>{
 
 
     return(
-        <ChatContext.Provider value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, sendReaction, sendEditMessage, sendDeleteMessage, fileModalOpen, fileModalContent, OpenFileModal, closeModal }} >
+        <ChatContext.Provider 
+            value={{ state, dispatch, fetchMessages, sendMessage, fetchChannelUsers, 
+                        sendReaction, sendEditMessage, sendDeleteMessage, fileModalOpen,   
+                        fileModalContent, OpenFileModal, closeModal, openCreateChannelModal, 
+                        closeCreateChannelModal, createChannelModalOpen, workspaceCreateModalOpen,
+                        handleWorkspaceCreateModalOpen, handleCloseWorkspaceCreateModal
+                        
+                        }} >
             {children}
         </ChatContext.Provider>
     )

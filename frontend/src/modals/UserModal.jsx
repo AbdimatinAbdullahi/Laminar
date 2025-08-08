@@ -14,7 +14,7 @@ function UserModal({onClose, user}) {
           <X className={style.Icon} size={55} onClick={onClose} />
           <div className={style.userContent}>
             <div className={style.userIcon}>
-                <User className={style.teamIcon} size={150} />
+                <User className={style.teamIcon} size={50} />
             </div>
             <div className={style.details}>
                 <div className={style.name}>

@@ -72,3 +72,14 @@ func (h *Handler) GetPresgnedURL(w http.ResponseWriter, r *http.Request) {
 	})
 
 }
+
+func (h *Handler) GetParentMessage(w http.ResponseWriter, r *http.Request) {
+	parentId := r.URL.Query().Get("parentMessageId")
+	log.Println("Got the parentMessageId: ", parentId)
+	data, err := h.scv.GetParentMessage(parentId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(data)
+}

@@ -9,8 +9,8 @@ function Leaveworkspace({onClose}) {
 
             <div className={style.LeaveWorskpaceTexts}>
                 <h2>Are you sure you want to leave Acme Inc?</h2>
-                <p>You’ll lose access to all channels, messages, and files in this workspace.</p>
-                <span>This action is immediate and cannot be undone, until the admin readds you to workspace</span>
+                <p>You’ll lose access to all channels, messages, and files in this workspace.
+                This action is immediate and cannot be undone, until the admin readds you to workspace</p>
             </div>
             
             <div className={style.leaveButton}>
