@@ -5,16 +5,20 @@ import { useChat } from '../context/ChatContext'
 
 function ChannelCreationModal() {
 
-    const {closeCreateChannelModal} = useChat()
+    const {closeCreateChannelModal, handleCreateChannel} = useChat()
     const [isPrivate, setIsPrivate] = useState(false)
     const [newChannelName, setNewChannelName] = useState("")
 
 
-    const handleCreateChannel = ()=>{
-        console.log(`Channel name: ${newChannelName} and channel type private: ${isPrivate}` )
-        closeCreateChannelModal()
+    const handleCreate = ()=>{
+        if(newChannelName == "") return
+        const result = handleCreateChannel(newChannelName, isPrivate)
+        if(result.success){
+            closeCreateChannelModal()
+        } else{
+            alert("Failed to create channel")
+        }
     }
-
 
   return (
     <div className={style.channelModalOverlay}>
@@ -34,7 +38,7 @@ function ChannelCreationModal() {
                 </div>
             </div>
 
-            <button style={newChannelName == "" ? {backgroundColor: "rgba(235, 255, 225)", color:'black'} : {}} onClick={handleCreateChannel} >Create Channel</button>
+            <button style={newChannelName == "" ? {backgroundColor: "rgba(235, 255, 225)", color:'black'} : {}} onClick={handleCreate} >Create Channel</button>
         </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useLayoutEffect, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useLayoutEffect, useCallback, act } from 'react'
 import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
@@ -6,21 +6,33 @@ import MessageComposer from './Composer'
 import {Phone, Users, Video } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import ChannelCreationModal from '../modals/ChannelCreationModal'
+import WorkspaceCreateModal from '../modals/WorkspaceCreateModal'
 
 function Chat({handelUserBarActive}) {
 
     const { state, createChannelModalOpen, workspaceCreateModalOpen, } = useChat()
     const { activeChannel } = state
 
-    if(!activeChannel) return <div className={style.emptyChannel}>  <h4>Select Channel</h4> </div>
 
   return (
-    <div className={style.chatuiContainer}>
-      <ChannelHeader channel={activeChannel} handelUserBarActive={handelUserBarActive} />
-      <Converstation channel={activeChannel} />
-      {createChannelModalOpen && <ChannelCreationModal/>}
-      {}
-    </div>
+    <>
+
+    {activeChannel ? (
+      <div className={style.chatuiContainer}>
+        <ChannelHeader channel={activeChannel} handelUserBarActive={handelUserBarActive} />
+        <Converstation channel={activeChannel} />
+      </div>
+      ):
+      (
+        <div className={style.emptyChannel}>
+            <h4>Select Channel</h4> 
+        </div>
+    )}
+
+      { workspaceCreateModalOpen && <WorkspaceCreateModal/> }
+      { createChannelModalOpen && <ChannelCreationModal/> }
+
+    </>
   )
 }
 

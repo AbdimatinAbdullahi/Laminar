@@ -210,6 +210,37 @@ export const ChatProvider = ({children})=>{
         }
     };
 
+    const handleCreateWorkspace = async (name) =>{
+        try {
+
+            const createWsRes = await axios.post("http://localhost:8008/create-workspace", { userId: user.id, workspaceName: name})
+            if(createWsRes.status == 200){
+                console.log(createWsRes.data)
+                dispatch({type: "NEW_WORKSPACE", payload: createWsRes.data})
+                return { success: true }
+            }
+        } catch (error) {
+            console.log(error)
+            return { success: false}
+        }
+    }
+
+    const handleCreateChannel = async (name, isPrivate)=>{
+        console.log("selected workspace id", state.selectedWorkspace.id)
+        console.log("user token", user.token)
+        console.log("Is private", isPrivate)
+        try {
+            const createChannelRes = await axios.post("http://localhost:8008/create-channel", {channelname: name, workspaceId: state.selectedWorkspace.id, creatorId: user.id, isPrivate:isPrivate})
+            if(createChannelRes.status === 200){
+                dispatch({type: "NEW_CHANNEL", payload: createChannelRes.data})
+                return {success: true}
+            }
+        } catch (error) {
+            console.log(error)
+            return {success: false}
+        }
+    }
+
 
     const fetchChannelUsers = async (roomId, isPrivate, selectedWorkspaceID) => {
         try {
@@ -253,7 +284,8 @@ export const ChatProvider = ({children})=>{
                         sendReaction, sendEditMessage, sendDeleteMessage, fileModalOpen,   
                         fileModalContent, OpenFileModal, closeModal, openCreateChannelModal, 
                         closeCreateChannelModal, createChannelModalOpen, workspaceCreateModalOpen,
-                        handleWorkspaceCreateModalOpen, handleCloseWorkspaceCreateModal
+                        handleWorkspaceCreateModalOpen, handleCloseWorkspaceCreateModal,
+                        handleCreateWorkspace, handleCreateChannel
                         
                         }} >
             {children}

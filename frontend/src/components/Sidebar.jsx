@@ -11,7 +11,7 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
   const navigate = useNavigate()
   const {user, logout} = useAuth()
   const {workspaces, channels, selectedWorkspace} = state
-  const {, openCreateChannelModal, workspaceCreateModalOpen } = useChat()
+  const {openCreateChannelModal,  handleWorkspaceCreateModalOpen } = useChat()
   
   function handleWorkspaceSelect(ws){
     dispatch({type: "SELECT_WORKSPACE", payload: ws})
@@ -34,7 +34,7 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
               {workspace.name.charAt().slice(0, 3)}
             </div>
           ))}
-          <div className={style.addWorkspace} onClick={()=>} >
+          <div className={style.addWorkspace} onClick={handleWorkspaceCreateModalOpen}  >
             <Plus style={{backgroundColor: "inherit"}} size={30} />
           </div>
       </div>
@@ -70,7 +70,7 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
               </div>
 
               <div className={style.userNameAndEmail}>
-                  <span className={style.spanWithFullname} >{user.fullname}</span>
+                  <span className={style.spanWithFullname} >{user.email}</span>
                   <span className={style.spanWithStatus} >Online</span>
               </div>
 
