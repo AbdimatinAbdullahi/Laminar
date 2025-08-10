@@ -83,3 +83,54 @@ func (h *Handler) GetParentMessage(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(data)
 }
+
+func (h *Handler) CreateChannel(w http.ResponseWriter, r *http.Request) {
+
+	type CreateChannelRequest struct {
+		Channelname string `json:"channelname"`
+		CreatorId   string `json:"creatorId"`
+		WorkspaceId string `json:"workspaceId"`
+		IsPrivate   bool   `json:"isprivate"`
+	}
+
+	var req CreateChannelRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer r.Body.Close()
+
+	channel, err := h.scv.CreateChannel(req.Channelname, req.WorkspaceId, req.IsPrivate, req.CreatorId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(&channel)
+
+}
+
+func (h *Handler) CreateWorkspace(w http.ResponseWriter, r *http.Request) {
+	type CreateWorkspaceRequest struct {
+		WorkspaceName string `json:"workspaceName"`
+		UserID        string `json:"userId"`
+	}
+
+	var reqest CreateWorkspaceRequest
+
+	err := json.NewDecoder(r.Body).Decode(&reqest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("Printing function reaching the backend: ", reqest)
+
+	workspace, err := h.scv.CreateWorkspace(reqest.WorkspaceName, reqest.UserID)
+	if err != nil {
+		log.Println("Error while creating workspace", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(&workspace)
+}

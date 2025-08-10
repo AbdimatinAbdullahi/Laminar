@@ -24,6 +24,8 @@ type Service interface {
 	DeleteMessage(msgId string) error
 	GetParentMessage(parentId string) (*models.Message, error)
 	GeneratePresignedURLL(filename string, contentType string) (s3url string, cloufrontURL string, err error)
+	CreateChannel(channelName string, workspaceId string, isPrivate bool, creatorId string) (models.Channels, error)
+	CreateWorkspace(workspaceName string, creatorId string) (models.Workspace, error)
 }
 
 type service struct {
@@ -180,4 +182,24 @@ func (s *service) GetParentMessage(parentId string) (*models.Message, error) {
 	}
 
 	return data, err
+}
+
+func (s *service) CreateChannel(channelName string, creatorId string, isPrivate bool, workspaceId string) (models.Channels, error) {
+	channel, err := s.repo.CreateNewChannel(channelName, workspaceId, creatorId, isPrivate)
+	if err != nil {
+		log.Println("Error while creating channel", err)
+		return models.Channels{}, err
+	}
+
+	return channel, nil
+}
+
+func (s *service) CreateWorkspace(workspaceName string, creatorId string) (models.Workspace, error) {
+
+	workspace, err := s.repo.CreateWorkspace(workspaceName, creatorId)
+	if err != nil {
+		return models.Workspace{}, err
+	}
+	return workspace, nil
+
 }

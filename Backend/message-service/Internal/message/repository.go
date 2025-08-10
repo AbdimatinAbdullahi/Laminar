@@ -20,6 +20,8 @@ type Repository interface {
 	DeleteMessage(ctx context.Context, msgid primitive.ObjectID) error
 	NewReaction(ctx context.Context, msgId string, reactorId string, emoji string) error
 	GetParentMessage(ctx context.Context, parentId string) (*models.Message, error)
+	CreateNewChannel(channelName string, workspaceId string, creatorId string, isPrivate bool) (models.Channels, error)
+	CreateWorkspace(workspaceName string, userId string) (models.Workspace, error)
 }
 
 type repository struct {
@@ -170,4 +172,74 @@ func (r *repository) GetParentMessage(ctx context.Context, parentId string) (*mo
 	message.Sender = &sender
 
 	return &message, nil
+}
+
+func (r *repository) CreateNewChannel(channelName string, workspaceId string, creatorId string, isPrivate bool) (models.Channels, error) {
+
+	parsedCreatorId, err := uuid.Parse(creatorId)
+
+	if err != nil {
+		return models.Channels{}, err
+	}
+
+	parsedWorkspaceId, err := uuid.Parse(workspaceId)
+	if err != nil {
+		return models.Channels{}, err
+	}
+
+	channel := models.Channels{
+		ID:          uuid.New(),
+		Name:        channelName,
+		CreatedBy:   parsedCreatorId,
+		WorkspaceID: parsedWorkspaceId,
+		IsPrivate:   isPrivate,
+	}
+
+	log.Println("Channel to be created: ", channel)
+
+	result := r.db.Create(&channel)
+	if result.Error != nil {
+		log.Println("Error while creating channel", result.Error)
+		return models.Channels{}, result.Error
+	}
+	return channel, nil
+}
+
+func (r *repository) CreateWorkspace(workspaceName string, userId string) (models.Workspace, error) {
+	parsedOwnerId, err := uuid.Parse(userId)
+	if err != nil {
+		return models.Workspace{}, err
+	}
+
+	workspace := models.Workspace{
+		ID:      uuid.New(),
+		OwnerID: parsedOwnerId,
+		Name:    workspaceName,
+	}
+
+	workspaceMembership := models.WorkspaceMemberships{
+		ID:          uuid.New(),
+		WorkspaceID: workspace.ID,
+		UserID:      parsedOwnerId,
+		Role:        "owner",
+		JoinedAt:    time.Now(),
+	}
+
+	result2 := r.db.Create(&workspaceMembership)
+	if result2.Error != nil {
+		log.Println("Something went wrong while creating workspaces")
+		return models.Workspace{}, result2.Error
+	}
+
+	log.Println("Workspace memberships created!")
+
+	result0 := r.db.Create(&workspace)
+	if result0.Error != nil {
+		return models.Workspace{}, result0.Error
+	}
+
+	log.Println("Workspace created!")
+
+	return workspace, nil
+
 }
