@@ -26,6 +26,7 @@ type Service interface {
 	GeneratePresignedURLL(filename string, contentType string) (s3url string, cloufrontURL string, err error)
 	CreateChannel(channelName string, workspaceId string, isPrivate bool, creatorId string) (models.Channels, error)
 	CreateWorkspace(workspaceName string, creatorId string) (models.Workspace, error)
+	ValidatePrivateUser(userId string, channelId string) (bool, error)
 }
 
 type service struct {
@@ -202,4 +203,12 @@ func (s *service) CreateWorkspace(workspaceName string, creatorId string) (model
 	}
 	return workspace, nil
 
+}
+
+func (s *service) ValidatePrivateUser(userId string, channelId string) (bool, error) {
+	exists, err := s.repo.ValidateUser(userId, channelId)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }

@@ -36,7 +36,6 @@ function MessageBubble({message, handleReply}) {
 
     async function fetchParentMessage(threadId) {
       const parentMessageRes = await axios.get(`http://localhost:8008/fetch_parent_message?parentMessageId=${threadId}`)
-      console.log("Parent message response: ", parentMessageRes)
       setParentMessage(parentMessageRes.data)
     }
     fetchParentMessage(message.thread_parent_id)

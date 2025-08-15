@@ -2,7 +2,7 @@ import React, {useReducer, useContext, createContext, useEffect, useState, act} 
 import axios from "axios";
 import {useNavigate} from 'react-router'
 import { useWebsocket } from "../hooks/useWebsocket";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./AuthContext"; 
 
 const ChatContext = createContext()
 
@@ -214,6 +214,7 @@ export const ChatProvider = ({children})=>{
         try {
 
             const createWsRes = await axios.post("http://localhost:8008/create-workspace", { userId: user.id, workspaceName: name})
+            console.log("Create workspace response: ", createWsRes)
             if(createWsRes.status == 200){
                 console.log(createWsRes.data)
                 dispatch({type: "NEW_WORKSPACE", payload: createWsRes.data})
@@ -231,6 +232,7 @@ export const ChatProvider = ({children})=>{
         console.log("Is private", isPrivate)
         try {
             const createChannelRes = await axios.post("http://localhost:8008/create-channel", {channelname: name, workspaceId: state.selectedWorkspace.id, creatorId: user.id, isPrivate:isPrivate})
+            console.log("Create channel response: ", createChannelRes)
             if(createChannelRes.status === 200){
                 dispatch({type: "NEW_CHANNEL", payload: createChannelRes.data})
                 return {success: true}

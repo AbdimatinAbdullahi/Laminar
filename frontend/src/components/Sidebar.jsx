@@ -1,9 +1,10 @@
-import React, { use } from 'react'
+import React, { use, useState } from 'react'
 import { useNavigate } from 'react-router'
 import style from '../Styles/chatroom.module.css'
-import { Plus, Settings } from 'lucide-react'
+import { Plus, Settings, User, X } from 'lucide-react'
 import {useAuth} from '../context/AuthContext'
 import { useChat } from '../context/ChatContext'
+import axios from 'axios'
 
 
 function Sidebar({ state, dispatch, setUserbarActive }) {
@@ -13,11 +14,29 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
   const {workspaces, channels, selectedWorkspace} = state
   const {openCreateChannelModal,  handleWorkspaceCreateModalOpen } = useChat()
   
+  const [channelSelectError, setChannelSelectError] = useState("")
+
   function handleWorkspaceSelect(ws){
     dispatch({type: "SELECT_WORKSPACE", payload: ws})
   }
 
-  function handleActiveSelect(channel){
+  async function handleActiveSelect(channel){
+
+    // If channel is private validate the user
+    if(channel.is_private){
+      const validateUserRes = await axios.get(`http://localhost:8008/validae_private_channel_user?channelId=${channel.id}`, {
+        headers: {
+          "Authorization" :  `Bearer ${user.token}` 
+        }
+      })
+      console.log(validateUserRes)
+      if(validateUserRes.status == 200){
+        dispatch({type: "SELECT_CHANNEL", payload: channel})
+      } else {
+        setChannelSelectError("You cannot joint this channel")
+      }
+    }
+
     setUserbarActive(false)
     dispatch({type: "SELECT_CHANNEL", payload: channel})
     console.log(channel)
@@ -50,6 +69,19 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
         
         {/* Workspace channels */}
         <div className={style.channelsContainer}>
+
+
+        { channelSelectError != "" &&
+          (
+            <div className={style.channelSelectError}>
+              <div className={style.errorChannel}>
+                {channelSelectError}
+              </div>
+              <X style={{backgroundColor: "inherit", color: "red", cursor: "pointer"}} onClick={()=>setChannelSelectError("")} />
+            </div>
+          )
+        }
+
           <div className={style.channelHeader}>
             <h4>Channels</h4>
             <Plus className={style.channelAddIcon} onClick={() =>openCreateChannelModal()} />

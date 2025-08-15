@@ -18,9 +18,8 @@
     background-color: black;
     display: flex;
     flex-direction: row;
+    position: relative;
 }
-
-
 
 
 .workspacesContainer{
@@ -95,6 +94,30 @@
     width: 100%;
     min-height: fit-content;
     background-color: black;
+    display: flex;
+    flex-direction: column;
+}
+
+.channelSelectError{
+    position: absolute;
+    top: 80px;
+    width: 90%;
+    height: 50px;
+    border-radius: 6px;
+    border: 1px solid red;
+    background-color: inherit;
+    z-index: 100;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 0.6em;
+}
+.channelSelectError .errorChannel{
+    background-color: inherit;
+    color: gray;
 }
 
 .channelHeader{

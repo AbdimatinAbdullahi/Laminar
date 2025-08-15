@@ -10,13 +10,14 @@ function ChannelCreationModal() {
     const [newChannelName, setNewChannelName] = useState("")
 
 
-    const handleCreate = ()=>{
+    const handleCreate = async ()=>{
         if(newChannelName == "") return
-        const result = handleCreateChannel(newChannelName, isPrivate)
+        const result = await handleCreateChannel(newChannelName, isPrivate)
         if(result.success){
             closeCreateChannelModal()
         } else{
             alert("Failed to create channel")
+            closeCreateChannelModal()
         }
     }
 

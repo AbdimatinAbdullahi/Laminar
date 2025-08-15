@@ -2,12 +2,57 @@ package message
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
+	"laminar/internal/config"
+
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
 )
+
+var jwtSecret = []byte(config.Load().SECRET_KEY)
+
+func getUserFromToken(r *http.Request) (string, error) {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		return "", errors.New("authorization missing")
+	}
+
+	parts := strings.Split(authHeader, "Bearer ")
+	if len(parts) != 2 {
+		return "", errors.New("invalid authorization header format")
+	}
+
+	tokenStr := parts[1]
+
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing methods")
+		}
+		return jwtSecret, nil
+	})
+
+	if err != nil {
+		log.Println("Invalid Token error: ", err)
+		return "", errors.New("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", errors.New("could not parse claims")
+	}
+
+	userId, ok := claims["sub"].(string)
+	if !ok {
+		return "", errors.New("user id claim not found")
+	}
+
+	return userId, nil
+}
 
 type Handler struct {
 	scv Service
@@ -75,7 +120,6 @@ func (h *Handler) GetPresgnedURL(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetParentMessage(w http.ResponseWriter, r *http.Request) {
 	parentId := r.URL.Query().Get("parentMessageId")
-	log.Println("Got the parentMessageId: ", parentId)
 	data, err := h.scv.GetParentMessage(parentId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -101,7 +145,7 @@ func (h *Handler) CreateChannel(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	channel, err := h.scv.CreateChannel(req.Channelname, req.WorkspaceId, req.IsPrivate, req.CreatorId)
+	channel, err := h.scv.CreateChannel(req.Channelname, req.CreatorId, req.IsPrivate, req.WorkspaceId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -133,4 +177,27 @@ func (h *Handler) CreateWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(&workspace)
+}
+
+func (h *Handler) ValidateUser(w http.ResponseWriter, r *http.Request) {
+	userId, err := getUserFromToken(r)
+	if userId == "" {
+		http.Error(w, "invalid header", http.StatusExpectationFailed)
+		return
+	}
+	channelId := r.URL.Query().Get("channelId")
+
+	log.Println("Channel Id", channelId)
+	log.Println("user Id", userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+
+	exists, err := h.scv.ValidatePrivateUser(userId, channelId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	json.NewEncoder(w).Encode(exists)
+
 }

@@ -74,6 +74,8 @@ func main() {
 	http.Handle("/fetch_parent_message", corsMiddleware(http.HandlerFunc(messageHandler.GetParentMessage)))
 	http.Handle("/create-channel", corsMiddleware(http.HandlerFunc(messageHandler.CreateChannel)))
 	http.Handle("/create-workspace", corsMiddleware(http.HandlerFunc(messageHandler.CreateWorkspace)))
+	http.Handle("/validae_private_channel_user", corsMiddleware(http.HandlerFunc(messageHandler.ValidateUser)))
+
 	log.Println("Server running :8008")
 	http.ListenAndServe(":8008", nil)
 

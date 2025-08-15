@@ -9,14 +9,14 @@ function WorkspaceCreateModal() {
 
   const { handleCloseWorkspaceCreateModal, handleCreateWorkspace } = useChat()
   
-  const handleCreate = ()=>{
+  const handleCreate = async ()=>{
     if(newWorkspaceName === "") return
-    const result = handleCreateWorkspace(newWorkspaceName)
-    console.log(result.success)
+    const result = await handleCreateWorkspace(newWorkspaceName)
     if(result.success){
       handleCloseWorkspaceCreateModal()
     } else{
       alert("Failed to create workspace")
+      handleCloseWorkspaceCreateModal()
     }
   }
 

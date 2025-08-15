@@ -22,6 +22,7 @@ type Repository interface {
 	GetParentMessage(ctx context.Context, parentId string) (*models.Message, error)
 	CreateNewChannel(channelName string, workspaceId string, creatorId string, isPrivate bool) (models.Channels, error)
 	CreateWorkspace(workspaceName string, userId string) (models.Workspace, error)
+	ValidateUser(userId string, channelId string) (bool, error)
 }
 
 type repository struct {
@@ -242,4 +243,13 @@ func (r *repository) CreateWorkspace(workspaceName string, userId string) (model
 
 	return workspace, nil
 
+}
+
+func (r *repository) ValidateUser(userId string, channelId string) (bool, error) {
+	var exists bool
+	err := r.db.Table("channel_memberships").Select("count(*) > 0").Where("user_id = ? AND channel_id = ?", userId, channelId).Scan(&exists).Error
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }

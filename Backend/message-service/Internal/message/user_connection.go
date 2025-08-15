@@ -38,9 +38,6 @@ func (u *UserConnection) ReadMessage() {
 
 		json.Unmarshal(msg, &incoming)
 
-		log.Println("The incoming request: ", string(msg))
-		log.Println("The incoming request: ", string(incoming.Payload))
-
 		switch incoming.Type {
 		case "join":
 			var payload struct {
