@@ -11,16 +11,17 @@ function ChatRoom() {
 
   const {state, dispatch, fileModalOpen } = useChat()
   const [userbarActive, setUserbarActive] = useState(false)
+  const [privateChannelJoinDenied, setPrivateChannelJoinDenied] = useState(false)
+
 
   const handleUserBarActive = ()=>{
-    console.log("Users bar clicked!")
     setUserbarActive(!userbarActive)
   }
 
   return (
     <div className={style.chatRoomContainer} >
       {fileModalOpen && <FileModal/>}
-      <Sidebar state={state} dispatch={dispatch} setUserbarActive={setUserbarActive} />
+      <Sidebar state={state} dispatch={dispatch} setUserbarActive={setUserbarActive}/>
       <Chat handelUserBarActive={handleUserBarActive} />
       {userbarActive && <UserBar handleUserBarActive={handleUserBarActive}/>}
     </div>

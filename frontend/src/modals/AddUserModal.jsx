@@ -1,16 +1,19 @@
-import React, { useState } from 'react'
+ import React, { useState } from 'react'
 import style from '../Styles/modals.module.css'
 import { useChat } from '../context/ChatContext'
 import { X } from 'lucide-react'
 import axios from 'axios'
+import { useAuth } from '../context/AuthContext'
 
 function AddUserModal({onClose}) {
 
+
+    const { user } = useAuth()
     const { state } = useChat()
-    const [loading, setLoading] = useState(false)
-    const [workspaceUsers, setWorkspaceUsers] = useState([])
-    const [selectedUser, setselectedUser] = useState(null)
-    const [addUserError, setAddUserError] = useState("")
+    const [ loading, setLoading ] = useState(false)
+    const [ workspaceUsers, setWorkspaceUsers ] = useState([])
+    const [ selectedUser, setselectedUser ] = useState("")
+    const [ addUserError, setAddUserError ] = useState("")
 
     const handleFetchUsers = async ()=>{
         if(workspaceUsers.length > 0) return
@@ -28,14 +31,27 @@ function AddUserModal({onClose}) {
     }
 
     const addUserToTheChannel = async ()=>{
-        if(selectedUser == null) return
+        if(selectedUser == "" && !state.activeChannel.id) return;
         try {
-            const addUserRs = await axios.post(`http://localhost:8008/add-user-to-channel`, { userId: selectedUser.id, channelId: state.activeChannel.Id})
+            console.log("User id", selectedUser)
+            console.log("channel id", state.activeChannel.id)
+            const addUserRs = await axios.post(`http://localhost:8008/add-user-to-channel`,
+                 { userId: selectedUser, channelId: state.activeChannel.id, workspaceId: state.selectedWorkspace.id },
+                {headers: {
+                    "Authorization": `Bearer ${user.token}`
+                }}
+                )
             if(addUserRs.status == 200){
-                onClose
+                onClose()
             }
         } catch (error) {
-            console.log(error)
+            if(error.response?.status == 403){
+                setAddUserError("you dont have permission to add member to the channel")
+            } else if(error.response?.status == 409){
+                setAddUserError("user already exist")
+            } else {
+                setAddUserError("Internal server error")
+            }
         }
     }
 
@@ -46,11 +62,19 @@ function AddUserModal({onClose}) {
         <div className={style.addModalUserContainer}>
             <X onClick={onClose} className={style.closeIcon} />
             <h3>Add user to {state.activeChannel?.name}</h3>
+
+            {addUserError != "" && ( 
+                <div className={style.addUserError} >
+                    <span>{addUserError}</span>
+                    <X size={30} className={style.closeIconTwo} onClick={()=>setAddUserError("")}/>
+                </div> 
+            )}
+
             <div className={style.selectContainer} onFocus={handleFetchUsers}>
                 <select value={selectedUser} onChange={(e)=>setselectedUser(e.target.value)} >
                     {workspaceUsers.map((user)=>(
                         <option value={user.id}>
-                            {user.fullname}
+                            {user.fullname} {user.email}
                         </option>
                     ))}
                 </select>

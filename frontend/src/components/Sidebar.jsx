@@ -95,7 +95,7 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
             {filteredChannels.map((channel)=>(
               <div key={channel.id} 
                 onClick={()=>{ 
-                  if(channel.id == state.activeChannel.id) return;
+                  if(state.activeChannel && channel.id == state.activeChannel.id) return;
                   handleActiveSelect(channel)
                 }}>
                   {channel.name}
@@ -115,13 +115,10 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
                   <span className={style.spanWithFullname} >{user.email}</span>
                   <span className={style.spanWithStatus} >Online</span>
               </div>
-
               <div className={style.settingIconButton} onClick={logout} >
                   <Settings color='#FF00C8' />
               </div>
         </div>
-
-
 
       </div>
 

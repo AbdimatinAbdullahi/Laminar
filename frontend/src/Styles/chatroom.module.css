@@ -118,6 +118,8 @@
 .channelSelectError .errorChannel{
     background-color: inherit;
     color: gray;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
 }
 
 .channelHeader{
