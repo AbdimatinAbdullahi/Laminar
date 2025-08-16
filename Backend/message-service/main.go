@@ -67,7 +67,8 @@ func main() {
 	http.Handle("/delete-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.DeleteWorkspace)))
 	http.Handle("/chat", corsMiddleware(http.HandlerFunc(workspaceHandler.GetMessages)))
 	http.Handle("/users/workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.GetUsers)))
-	http.Handle("/generate-presigned-url", corsMiddleware(http.HandlerFunc(messageHandler.GetPresgnedURL)))
+	http.Handle("/workspaceUsers", corsMiddleware(http.HandlerFunc(workspaceHandler.FetchWorkspaceUsers)))
+	http.Handle("/add-user-to-channel", corsMiddleware(http.HandlerFunc(workspaceHandler.AddUserToTheChannel)))
 
 	// Messaging service now
 	http.Handle("/ws", corsMiddleware(http.HandlerFunc(messageHandler.HandleWebsocketConnection)))
@@ -75,6 +76,7 @@ func main() {
 	http.Handle("/create-channel", corsMiddleware(http.HandlerFunc(messageHandler.CreateChannel)))
 	http.Handle("/create-workspace", corsMiddleware(http.HandlerFunc(messageHandler.CreateWorkspace)))
 	http.Handle("/validae_private_channel_user", corsMiddleware(http.HandlerFunc(messageHandler.ValidateUser)))
+	http.Handle("/generate-presigned-url", corsMiddleware(http.HandlerFunc(messageHandler.GetPresgnedURL)))
 
 	log.Println("Server running :8008")
 	http.ListenAndServe(":8008", nil)

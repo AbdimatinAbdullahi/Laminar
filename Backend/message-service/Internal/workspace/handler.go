@@ -185,3 +185,42 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&users)
 
 }
+
+func (h *Handler) FetchWorkspaceUsers(w http.ResponseWriter, r *http.Request) {
+	workspaceID := r.URL.Query().Get("id")
+	if workspaceID == "" {
+		http.Error(w, "invalid workspace id", http.StatusNoContent)
+		return
+	}
+
+	data, err := h.svc.FetchWorkspaceUsers(workspaceID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(data)
+}
+
+func (h *Handler) AddUserToTheChannel(w http.ResponseWriter, r *http.Request) {
+	var RequestBody struct {
+		ChannelID string `json:"channelId"`
+		UserID    string `json:"userId"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&RequestBody); err != nil {
+		http.Error(w, "invalid request body", http.StatusInternalServerError)
+		return
+	}
+
+	err := h.svc.AddUserToChannel(RequestBody.UserID, RequestBody.ChannelID)
+	if err != nil {
+		if strings.Contains(err.Error(), "user already exists") {
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "user added to channel")
+}

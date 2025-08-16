@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"laminar/internal/models"
 	"log"
+	"strings"
 	"time"
 
 	// "go.mongodb.org/mongo-driver/internal/uuid"
+
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -28,6 +30,8 @@ type Repository interface {
 	GetSenderInfo(senderId string) (*models.User, error)
 	GetChannelUsers(channelId string) ([]models.User, error)
 	GetWorkspaceUsers(workspaceId string) ([]models.User, error)
+	FetchWorkspaceUsers(workspaceId string) ([]models.User, error)
+	AddUserToChannel(userId string, channelId string) error
 }
 
 type repository struct {
@@ -366,4 +370,48 @@ func (r *repository) GetWorkspaceUsers(workspaceId string) ([]models.User, error
 		return nil, err
 	}
 	return users, nil
+}
+
+func (r *repository) FetchWorkspaceUsers(workspaceId string) ([]models.User, error) {
+	var membersIds []string
+	err := r.postgres.Table("workspace_memberships").Select("user_id").Where("workspace_id = ?", workspaceId).Scan(&membersIds).Error
+	if err != nil {
+		return []models.User{}, err
+	}
+
+	var members []models.User
+	err = r.postgres.Table("users").Select("id, fullname, email").Where("id IN ?", membersIds).Scan(&members).Error
+	if err != nil {
+		return []models.User{}, err
+	}
+	return members, nil
+}
+
+func (r *repository) AddUserToChannel(userId string, channelId string) error {
+
+	parsedUserId, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
+
+	parsedChannelId, err := uuid.Parse(channelId)
+	if err != nil {
+		return err
+	}
+
+	userInChannel := models.ChannelMemberships{
+		UserID:    parsedUserId,
+		ChannelID: parsedChannelId,
+	}
+
+	result := r.postgres.Create(&userInChannel)
+
+	if result.Error != nil {
+		if strings.Contains(result.Error.Error(), "unique") {
+			return fmt.Errorf("user already exists")
+		}
+		return result.Error
+	}
+
+	return nil
 }

@@ -30,16 +30,16 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
         }
       })
       console.log(validateUserRes)
-      if(validateUserRes.status == 200){
+      if(validateUserRes.data){
         dispatch({type: "SELECT_CHANNEL", payload: channel})
       } else {
         setChannelSelectError("You cannot joint this channel")
+        return
       }
     }
 
     setUserbarActive(false)
     dispatch({type: "SELECT_CHANNEL", payload: channel})
-    console.log(channel)
   }
 
   const filteredChannels = channels.filter((channel) => channel.workspace_id === selectedWorkspace.id)
@@ -49,7 +49,11 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
 
       <div className={style.workspacesContainer}>
           {workspaces.map((workspace)=>(
-            <div className={style.workspace} key={workspace.id} onClick={()=> handleWorkspaceSelect(workspace)} >
+            <div className={style.workspace} key={workspace.id} 
+            onClick={()=>{ 
+              if(workspace.id === selectedWorkspace.id) return;
+              handleWorkspaceSelect(workspace)
+              }} >
               {workspace.name.charAt().slice(0, 3)}
             </div>
           ))}
@@ -89,7 +93,13 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
 
           <div className={style.channels}>
             {filteredChannels.map((channel)=>(
-              <div key={channel.id} onClick={()=> handleActiveSelect(channel)} >{channel.name}</div>
+              <div key={channel.id} 
+                onClick={()=>{ 
+                  if(channel.id == state.activeChannel.id) return;
+                  handleActiveSelect(channel)
+                }}>
+                  {channel.name}
+              </div>
             ))}
           </div>
         </div>

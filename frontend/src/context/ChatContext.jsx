@@ -113,6 +113,7 @@ export const ChatProvider = ({children})=>{
     const [fileModalContent, setfileModalContent] = useState({type: "", url: ""})
     const [createChannelModalOpen, setCreateChannelModalOpen] = useState(false)
     const [workspaceCreateModalOpen, setWorkspaceCreateModalOpen] = useState(false)
+    const [AddUserModalOpen, setAddUserModalOpen] = useState(false)
 
     const handleWorkspaceCreateModalOpen = ()=>{
         setWorkspaceCreateModalOpen(true)
@@ -142,6 +143,8 @@ export const ChatProvider = ({children})=>{
     const closeCreateChannelModal = ()=>{
         setCreateChannelModalOpen(false)
     }
+
+    
 
     const { user } = useAuth()
     const navigate = useNavigate()
@@ -287,7 +290,7 @@ export const ChatProvider = ({children})=>{
                         fileModalContent, OpenFileModal, closeModal, openCreateChannelModal, 
                         closeCreateChannelModal, createChannelModalOpen, workspaceCreateModalOpen,
                         handleWorkspaceCreateModalOpen, handleCloseWorkspaceCreateModal,
-                        handleCreateWorkspace, handleCreateChannel
+                        handleCreateWorkspace, handleCreateChannel, AddUserModalOpen, setAddUserModalOpen
                         
                         }} >
             {children}

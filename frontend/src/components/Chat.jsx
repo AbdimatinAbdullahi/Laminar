@@ -3,14 +3,15 @@ import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
 
-import {Phone, Users, Video } from 'lucide-react'
+import {Phone, UserPlus, Users, Video } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import ChannelCreationModal from '../modals/ChannelCreationModal'
 import WorkspaceCreateModal from '../modals/WorkspaceCreateModal'
+import AddUserModal from '../modals/AddUserModal'
 
 function Chat({handelUserBarActive}) {
 
-    const { state, createChannelModalOpen, workspaceCreateModalOpen, } = useChat()
+    const { state, createChannelModalOpen, workspaceCreateModalOpen, AddUserModalOpen, setAddUserModalOpen } = useChat()
     const { activeChannel } = state
 
 
@@ -31,6 +32,7 @@ function Chat({handelUserBarActive}) {
 
       { workspaceCreateModalOpen && <WorkspaceCreateModal/> }
       { createChannelModalOpen && <ChannelCreationModal/> }
+      { AddUserModalOpen && <AddUserModal onClose={()=>setAddUserModalOpen(false)} /> }
 
     </>
   )
@@ -39,6 +41,9 @@ function Chat({handelUserBarActive}) {
 
 
 function ChannelHeader({channel, handelUserBarActive}){
+
+  const { setAddUserModalOpen } = useChat()
+
   return (
     <div className={style.ChannelHeader}>
         {/* Name and Type of channel */}
@@ -49,8 +54,7 @@ function ChannelHeader({channel, handelUserBarActive}){
 
         {/* Video Calling and Audio Calling  Plus displaying Users of the channel */}
         <div className={style.channelMeeting}>
-          <Video className={style.meetingIcon} size={30} />
-          <Phone className={style.meetingIcon}  size={30} />
+          {channel.is_private && <UserPlus onClick={()=> setAddUserModalOpen(true)} />}
           <Users className={style.meetingIcon} size={30}  onClick={()=>handelUserBarActive()} />
         </div>
     </div>

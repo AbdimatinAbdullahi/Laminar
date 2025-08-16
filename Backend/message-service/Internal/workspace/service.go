@@ -16,6 +16,8 @@ type Service interface {
 	DeleteWorkspace(wsId string, userId string) error
 	GetMessage(channeId string, cursor string, receiverType string) ([]models.Message, error)
 	GetUsers(channelId string, workspaceId string) ([]models.User, error)
+	FetchWorkspaceUsers(workspaceId string) ([]models.User, error)
+	AddUserToChannel(userId string, channelId string) error
 }
 
 // One property that is called repo
@@ -149,4 +151,21 @@ func (s *service) GetUsers(channelId string, workspaceId string) ([]models.User,
 	}
 
 	return nil, errors.New("provide channel id or workspace id")
+}
+
+func (s *service) FetchWorkspaceUsers(workspaceId string) ([]models.User, error) {
+	data, err := s.repo.FetchWorkspaceUsers(workspaceId)
+	if err != nil {
+		log.Print("Error while fetchng the users from database", err)
+		return []models.User{}, err
+	}
+	return data, nil
+}
+
+func (s *service) AddUserToChannel(userId string, channelId string) error {
+	err := s.repo.AddUserToChannel(userId, channelId)
+	if err != nil {
+		return err
+	}
+	return nil
 }
