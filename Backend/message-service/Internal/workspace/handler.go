@@ -202,9 +202,15 @@ func (h *Handler) FetchWorkspaceUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) AddUserToTheChannel(w http.ResponseWriter, r *http.Request) {
+	actionPerformerId, err := getUserFromToken(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusConflict)
+		return
+	}
 	var RequestBody struct {
-		ChannelID string `json:"channelId"`
-		UserID    string `json:"userId"`
+		ChannelID   string `json:"channelId"`
+		UserID      string `json:"userId"`
+		WorkspaceId string `json:"workspaceId"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&RequestBody); err != nil {
@@ -212,12 +218,20 @@ func (h *Handler) AddUserToTheChannel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.svc.AddUserToChannel(RequestBody.UserID, RequestBody.ChannelID)
+	log.Println("Body Information", RequestBody)
+
+	err = h.svc.AddUserToChannel(RequestBody.UserID, RequestBody.ChannelID, RequestBody.WorkspaceId, actionPerformerId)
 	if err != nil {
 		if strings.Contains(err.Error(), "user already exists") {
 			http.Error(w, err.Error(), http.StatusConflict)
 			return
 		}
+
+		if strings.Contains(err.Error(), "role member is not allowed to add users to channels") {
+			http.Error(w, err.Error(), http.StatusForbidden)
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

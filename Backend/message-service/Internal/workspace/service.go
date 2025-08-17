@@ -2,6 +2,7 @@ package workspace
 
 import (
 	"errors"
+	"fmt"
 	"laminar/internal/models"
 	"log"
 	"strings"
@@ -17,7 +18,7 @@ type Service interface {
 	GetMessage(channeId string, cursor string, receiverType string) ([]models.Message, error)
 	GetUsers(channelId string, workspaceId string) ([]models.User, error)
 	FetchWorkspaceUsers(workspaceId string) ([]models.User, error)
-	AddUserToChannel(userId string, channelId string) error
+	AddUserToChannel(userId string, channelId string, workspaceId string, actionPerformerId string) error
 }
 
 // One property that is called repo
@@ -94,6 +95,7 @@ func (s *service) DeleteWorkspace(wsId string, userId string) error {
 
 	log.Println("Role of the user", role)
 	if role != "owner" {
+		log.Println("The role of the performer", role)
 		return errors.New("only creator can delete")
 	}
 
@@ -162,8 +164,19 @@ func (s *service) FetchWorkspaceUsers(workspaceId string) ([]models.User, error)
 	return data, nil
 }
 
-func (s *service) AddUserToChannel(userId string, channelId string) error {
-	err := s.repo.AddUserToChannel(userId, channelId)
+func (s *service) AddUserToChannel(userId string, channelId string, workspaceId string, actionPerformerId string) error {
+
+	role, err := s.repo.GetRole(actionPerformerId, workspaceId)
+	if err != nil {
+		return err
+	}
+
+	if role != "owner" && role != "admin" {
+		return fmt.Errorf("role '%s' is not allowed to add users to channels", role)
+
+	}
+
+	err = s.repo.AddUserToChannel(userId, channelId)
 	if err != nil {
 		return err
 	}

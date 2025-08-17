@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"laminar/internal/models"
 	"log"
-	"strings"
 	"time"
 
 	// "go.mongodb.org/mongo-driver/internal/uuid"
@@ -391,15 +390,34 @@ func (r *repository) AddUserToChannel(userId string, channelId string) error {
 
 	parsedUserId, err := uuid.Parse(userId)
 	if err != nil {
+		log.Println("err parsing user uuid: ", err)
 		return err
 	}
 
 	parsedChannelId, err := uuid.Parse(channelId)
 	if err != nil {
+		log.Println("err parsing channel uuid: ", err)
 		return err
 	}
 
+	var exists bool
+	err = r.postgres.Table("channel_memberships").
+		Select("1").
+		Where("channel_id = ? AND user_id = ?", parsedChannelId, parsedUserId).
+		Limit(1).
+		Find(&exists).Error
+
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		log.Println("The exist value ", exists)
+		return fmt.Errorf("user already exists")
+	}
+
 	userInChannel := models.ChannelMemberships{
+		ID:        uuid.New(),
 		UserID:    parsedUserId,
 		ChannelID: parsedChannelId,
 	}
@@ -407,11 +425,11 @@ func (r *repository) AddUserToChannel(userId string, channelId string) error {
 	result := r.postgres.Create(&userInChannel)
 
 	if result.Error != nil {
-		if strings.Contains(result.Error.Error(), "unique") {
-			return fmt.Errorf("user already exists")
-		}
+		log.Println("Error adding user to channel", result.Error)
 		return result.Error
 	}
+
+	log.Println("User added")
 
 	return nil
 }
