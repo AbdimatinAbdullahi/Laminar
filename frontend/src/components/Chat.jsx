@@ -3,7 +3,7 @@ import style from '../Styles/chatroom.module.css'
 import { useChat } from '../context/ChatContext'
 import MessageComposer from './Composer'
 
-import {Phone, UserPlus, Users, Video } from 'lucide-react'
+import { UserPlus, Users } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import ChannelCreationModal from '../modals/ChannelCreationModal'
 import WorkspaceCreateModal from '../modals/WorkspaceCreateModal'
@@ -54,7 +54,7 @@ function ChannelHeader({channel, handelUserBarActive}){
 
         {/* Video Calling and Audio Calling  Plus displaying Users of the channel */}
         <div className={style.channelMeeting}>
-          {channel.is_private && <UserPlus onClick={()=> setAddUserModalOpen(true)} />}
+          {channel.is_private && <UserPlus className={style.meetingIcon} onClick={()=> setAddUserModalOpen(true)} />}
           <Users className={style.meetingIcon} size={30}  onClick={()=>handelUserBarActive()} />
         </div>
     </div>

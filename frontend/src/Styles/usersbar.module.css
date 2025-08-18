@@ -8,4 +8,69 @@
     width: 20%;
     height: 100%;
     background-color: #323131;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.channelHeader{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 0.5em;
+    font-family: var(--font-noto-sans);
+}
+
+.usersContainer{
+    width: 100%;
+    margin-top: 10px;
+    background-color:  inherit;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 0 0.3em;
+    overflow: auto;
+}
+
+.singleUsers{
+    background-color: inherit;
+    height: 60px;
+    width: 100%;
+    border: 1px solid gray;
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: center;
+    box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 0.4em;
+}
+
+.singleUsers h2{
+    justify-self:flex-end;
+}
+.iconS{
+    width: 50px;
+    height: 50px;
+    background-color: #5a67d8;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-seculr-one);
+    font-size: 20px;
+}
+
+.singleUsers h2{
+    background-color: inherit;
+    color: white;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
+    font-size: 15px;
 }

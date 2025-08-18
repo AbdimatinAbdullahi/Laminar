@@ -66,7 +66,8 @@ const reducer = (state, action)=>{
             return {...state, loading:false, workspaces:action.payload.workspaces, channels:action.payload.channels, selectedWorkspace: action.payload.selectedWorkspace}
         
         case "SET_USERS":
-            return {...state, loading: false, channelUsersRes: action.payload}
+            console.log("Response: ", action.payload)
+            return {...state, loading: false, activeRoomUsers:[ ...action.payload]}
         
         case "REACTION":
             {
@@ -251,7 +252,8 @@ export const ChatProvider = ({children})=>{
         try {
             const channelUsersRes = await axios.get(`http://localhost:8008/users/workspace?spaceId=${selectedWorkspaceID}&${isPrivate ? `channelId=${roomId}`: ""}`);
             if(channelUsersRes.status == 200){
-                dispatch({type: "SET_USERS", payload:channelUsersRes.data.users})
+                dispatch({type: "SET_USERS", payload:channelUsersRes.data})
+                return channelUsersRes.data
             }
         } catch (error) {
             console.log("Error while loading users", error)
