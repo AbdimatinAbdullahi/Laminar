@@ -1,7 +1,7 @@
 import React, { use, useState } from 'react'
 import { useNavigate } from 'react-router'
 import style from '../Styles/chatroom.module.css'
-import { Plus, Settings, User, X } from 'lucide-react'
+import { LogOut, Plus, Settings, X } from 'lucide-react'
 import {useAuth} from '../context/AuthContext'
 import { useChat } from '../context/ChatContext'
 import axios from 'axios'
@@ -116,7 +116,7 @@ function Sidebar({ state, dispatch, setUserbarActive }) {
                   <span className={style.spanWithStatus} >Online</span>
               </div>
               <div className={style.settingIconButton} onClick={logout} >
-                  <Settings color='#FF00C8' />
+                  <LogOut color='#FF00C8' />
               </div>
         </div>
 

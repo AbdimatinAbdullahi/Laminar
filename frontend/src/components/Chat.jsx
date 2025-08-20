@@ -62,7 +62,7 @@ function ChannelHeader({channel, handelUserBarActive}){
 }
 
 
-function Converstation({channel}){
+function Converstation(){
 
   const { state, fetchMessages } = useChat()
   const [replyTo, setReplyTo] = useState(null)
@@ -114,7 +114,7 @@ function Converstation({channel}){
         {loadingMoreMessages && <div className={style.loadingMoreMessages}> loading ... </div>}
           { Array.isArray(messages) && messages.length > 0 ? messages.map((msg, index)=>(
               <MessageBubble message={msg} handleReply={handleReply} key={index} replyTo={replyTo} />
-          )): <h2>No message</h2>}
+          )): <div className={style.noMessageDisplay} >Looks like no one has said anything yet. Start the conversation!</div>}
       </div>
       <MessageComposer replyTo={replyTo} handleReply={handleReply} setReplyTo={setReplyTo} />
     </div>

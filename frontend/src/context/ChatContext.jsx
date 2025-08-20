@@ -168,7 +168,6 @@ export const ChatProvider = ({children})=>{
                     }              
                 }) 
                 if(res.status == 200){
-
                     const data = res.data[0]
                     console.log("Response data: ", res.data)
                     dispatch({
@@ -182,8 +181,6 @@ export const ChatProvider = ({children})=>{
                 }
 
             } catch (error) {
-                navigate('/')
-                dispatch({type: "LOAD_ERROR", payload: error})
                 console.error("Error fetching the data from backend: ", error)
             }
         }

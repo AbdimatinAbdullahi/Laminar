@@ -88,14 +88,14 @@ export const AdminProvider = ({children}) =>{
 
 
     // Those without and creator privilieges only leaveing the workspace
-        const leaveWorkspace = async (wsId, userId) => {
+        const leaveWorkspace = async (userId) => {
             try {
                 dispatch({type: "LOAD_START"})
                 const lvRs = await axios.delete("http://localhost:8008/leave-workspace", {
                     params: 
                     {
                         userId: userId,
-                        workspaceId: wsId
+                        workspaceId: workspaceId
                     }
                 }
                 )
@@ -115,33 +115,27 @@ export const AdminProvider = ({children}) =>{
 
 
         // Only for creator of workspace
-        const deleteWorkspace = async (userId, wsId)=>{
+        const deleteWorkspace = async (userId)=>{
+            console.log("User id", userId)
             try {
                 dispatch({type: "LOAD_START"})
                 const dlRs = await axios.delete("http://localhost:8008/delete-workspace", {
                     params: {
                         userId: userId, 
-                        workspaceId: wsId
+                        workspaceId: workspaceId
                     }
-                } )
-
+                })
+                
                 if(dlRs.status == 200){
-                    // delete all the user
-                    // Permanently delete the messages
-                    // delete all the channels
-                    // any associated with this workspace
-                }
+                    return {success : true}
+                } 
+                return {success : false}
+
             } catch (error) {
                 console.error("Somethings happens while deleting workspace: ", error)
-            } finally{
-                dispatch({type: "LOAD_END"})
+                return {success : false}
             }
         }
-
-
-        useEffect(()=>{
-            console.log("State change obsertvations: ", state)
-        }, [state])
 
     return (
         <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace }}  >

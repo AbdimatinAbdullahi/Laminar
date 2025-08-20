@@ -337,6 +337,20 @@
 }
 
 
+.noMessageDisplay{
+    width: 100%;
+    height: 100px;
+    border-radius: 6px;
+    background-color: inherit;
+    font-family: var(--font-noto-sans);
+    font-size: 1.4em;
+    border: 1px solid gray;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    font-style: italic;
+}
+
 .loadingMoreMessages{
     width: 100%;
     height: 40px;
@@ -362,6 +376,8 @@
     gap: 1em;
     position: relative;
 }
+
+
 
 
 .formatingIcons{
