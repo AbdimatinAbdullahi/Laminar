@@ -21,6 +21,7 @@ type WorkspaceMemberships struct {
 	Role        string    `gorm:"type:varchar(20);not null" json:"role"`
 	JoinedAt    time.Time `gorm:"autoCreateTime" json:"joined_at"`
 }
+
 type User struct {
 	ID       uuid.UUID `json:"id" gorm:"column:id"`
 	FullName string    `json:"fullname" gorm:"column:fullname"`

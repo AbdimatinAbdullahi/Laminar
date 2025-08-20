@@ -102,8 +102,6 @@ export const AdminProvider = ({children}) =>{
 
                 if(lvRs.status == 200){
                     dispatch({type: "LOAD_END"})
-                    // Log the user out of current workspace and so on
-                    // Remove the user from the workspace member list
                 }
 
             } catch (error) {
@@ -137,8 +135,22 @@ export const AdminProvider = ({children}) =>{
             }
         }
 
+
+            async function InviteUser(email, role){
+                try {
+                    const inviteRes = await axios.post(`http://localhost:8008/join-workspace`, { email: email, role: role, workspaceId: workspaceId })
+                    if(inviteRes.status == 200){
+                        return {success: true}
+                    }
+                } catch (error) {
+                    console.error("Invite user error: ", error)
+                    return {success : false}
+                }
+            }
+
+
     return (
-        <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace }}  >
+        <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace,  InviteUser}}  >
             {children}
         </AdminContext.Provider>
     )

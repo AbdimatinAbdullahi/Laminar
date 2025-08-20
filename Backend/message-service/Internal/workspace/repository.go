@@ -12,6 +12,7 @@ import (
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gorm.io/gorm"
@@ -212,9 +213,63 @@ func (r *repository) LeaveWorkspace(workspaceId string, userId string) error {
 }
 
 func (r *repository) DeleteWorkspace(workspaceId string) error {
+	var channelIds []string
+	err := r.postgres.Table("channels").Select("id").Where("workspace_id = ? ", workspaceId).Scan(&channelIds).Error
+	if err != nil {
+		return fmt.Errorf("failed to delete workspace data")
+	}
+
+	var binaryIDs []primitive.Binary
+	for _, idStr := range channelIds {
+		u, err := uuid.Parse(idStr)
+		if err != nil {
+			return fmt.Errorf("invalid channel UUID '%s': %w", idStr, err)
+		}
+		binaryIDs = append(binaryIDs, primitive.Binary{
+			Subtype: 0x00, // matching your MongoDB Binary subtype
+			Data:    u[:],
+		})
+	}
+
 	// Delete first all messages
+	if len(binaryIDs) > 0 {
+		collection := r.mongo.Client().Database("laminar").Collection("messages")
+		filter := bson.M{
+			"receiver_id": bson.M{"$in": binaryIDs},
+		}
+
+		_, err := collection.DeleteMany(context.TODO(), filter)
+		if err != nil {
+			return fmt.Errorf("failed to delete messages %w", err)
+		}
+
+	}
+
 	// Delete all channels
-	// Remove all the workspace memberships
+	query := `DELETE FROM channels where workspace_id = ?`
+	err = r.postgres.Exec(query, workspaceId).Error
+	if err != nil {
+		return fmt.Errorf("failes to delete workspace %w", err)
+	}
+
+	// Clean the channel memberships table
+	err = r.postgres.Where("channel_id IN ?", channelIds).Delete(&models.ChannelMemberships{}).Error
+	if err != nil {
+		return fmt.Errorf("failed to delete channel memberhips")
+	}
+
+	// Clean the workspace memberships table
+	err = r.postgres.Where("workspace_id = ?", workspaceId).Delete(&models.WorkspaceMemberships{}).Error
+	if err != nil {
+		return fmt.Errorf("failed to delete workspace memberhips")
+	}
+
+	// Clean workspace table
+	err = r.postgres.Where("id = ?", workspaceId).Delete(&models.Workspace{}).Error
+	if err != nil {
+		return fmt.Errorf("failed to delete workspace")
+	}
+
 	return nil
 }
 

@@ -73,6 +73,7 @@ func (h *Handler) GetWorkspaceAndChannels(w http.ResponseWriter, r *http.Request
 		http.Error(w, "Failed to load workspaces", http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
@@ -138,6 +139,8 @@ func (h *Handler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 	userId := r.URL.Query().Get("userId")
 	workspaceId := r.URL.Query().Get("workspaceId")
 
+	log.Println("User id ", userId)
+
 	if userId == "" || workspaceId == "" {
 		http.Error(w, "Missing user id and workspace id", http.StatusBadRequest)
 		return
@@ -145,6 +148,7 @@ func (h *Handler) DeleteWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	err := h.svc.DeleteWorkspace(workspaceId, userId)
 	if err != nil {
+		log.Println("Error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

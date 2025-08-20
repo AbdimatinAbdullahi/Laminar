@@ -203,6 +203,19 @@ func (r *repository) CreateNewChannel(channelName string, workspaceId string, cr
 		log.Println("Error while creating channel", result.Error)
 		return models.Channels{}, result.Error
 	}
+
+	channelMember := models.ChannelMemberships{
+		ID:        uuid.New(),
+		ChannelID: channel.ID,
+		UserID:    parsedCreatorId,
+	}
+
+	result = r.db.Create(&channelMember)
+	if result.Error != nil {
+		log.Println("Something went wromg while creating channel member")
+		return models.Channels{}, result.Error
+	}
+
 	return channel, nil
 }
 
