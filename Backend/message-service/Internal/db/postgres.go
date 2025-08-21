@@ -61,6 +61,7 @@ func AutoMigrateTables() {
 		&models.WorkspaceMemberships{},
 		&models.Channels{},
 		&models.ChannelMemberships{},
+		&models.WorkspaceInvitations{},
 	); err != nil {
 		log.Fatalf("Failed to migrate the models: %v", err)
 	}

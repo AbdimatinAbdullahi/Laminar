@@ -3,10 +3,13 @@ package workspace
 import (
 	"errors"
 	"fmt"
+	"laminar/internal/config"
 	"laminar/internal/models"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type Service interface {
@@ -19,6 +22,8 @@ type Service interface {
 	GetUsers(channelId string, workspaceId string) ([]models.User, error)
 	FetchWorkspaceUsers(workspaceId string) ([]models.User, error)
 	AddUserToChannel(userId string, channelId string, workspaceId string, actionPerformerId string) error
+	CreateInvitations(email string, workspaceId string, role string) (*models.WorkspaceInvitations, error)
+	AcceptInvitation(token string, email string) (bool, error)
 }
 
 // One property that is called repo
@@ -181,4 +186,97 @@ func (s *service) AddUserToChannel(userId string, channelId string, workspaceId 
 		return err
 	}
 	return nil
+}
+
+func (s *service) CreateInvitations(email string, workspaceId string, role string) (*models.WorkspaceInvitations, error) {
+	token, err := GenerateToken(email, workspaceId, role)
+	if err != nil {
+		return &models.WorkspaceInvitations{}, fmt.Errorf("error while generating token: %v", err)
+	}
+
+	log.Println("Role: ", role)
+
+	invitation, err := s.repo.CreateInvitations(email, workspaceId, token, role)
+	if err != nil {
+		return &models.WorkspaceInvitations{}, err
+	}
+
+	// send a token via and email
+
+	return invitation, nil
+}
+
+func (s *service) AcceptInvitation(token string, email string) (bool, error) {
+
+	claims, err := GetClaimsFromToken(token)
+
+	if err != nil {
+		return false, fmt.Errorf("error while getting claims from token: %v", err)
+	}
+
+	tokenEmail, ok := claims["email"].(string)
+	if !ok || tokenEmail != email {
+		return false, fmt.Errorf("email do not match")
+	}
+
+	return true, nil
+}
+
+func GenerateToken(email string, workspaceId string, role string) (string, error) {
+	secretKey := []byte(config.Load().SECRET_KEY)
+	log.Println("Secret key for signing the token: ", secretKey)
+
+	// Define claims or payload
+	claims := jwt.MapClaims{
+		"email":       email,
+		"workspaceId": workspaceId,
+		"role":        role,
+		"iat":         time.Now().Unix(),
+		"exp":         time.Now().Add(time.Hour * 3 * 24).Unix(),
+	}
+
+	// create a token object
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	log.Println("Token header: ", token.Header)
+	log.Println("Token claims: ", token.Claims)
+
+	// sign thr token with scret key
+	tokenString, err := token.SignedString(secretKey)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+
+}
+
+func GetClaimsFromToken(tokenString string) (jwt.MapClaims, error) {
+	secretKey := []byte(config.Load().SECRET_KEY)
+
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return secretKey, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, fmt.Errorf("invalid claims")
+	}
+
+	if exp, ok := claims["exp"].(float64); !ok && int(exp) < int(time.Now().Unix()) {
+		return nil, fmt.Errorf("token expired")
+	}
+
+	return claims, nil
+
 }

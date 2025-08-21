@@ -32,6 +32,7 @@ type Repository interface {
 	GetWorkspaceUsers(workspaceId string) ([]models.User, error)
 	FetchWorkspaceUsers(workspaceId string) ([]models.User, error)
 	AddUserToChannel(userId string, channelId string) error
+	CreateInvitations(email string, workspaceId string, token string, role string) (*models.WorkspaceInvitations, error)
 }
 
 type repository struct {
@@ -487,4 +488,39 @@ func (r *repository) AddUserToChannel(userId string, channelId string) error {
 	log.Println("User added")
 
 	return nil
+}
+
+func (r *repository) CreateInvitations(email string, workspaceId string, token string, role string) (*models.WorkspaceInvitations, error) {
+	var exist bool
+	err := r.postgres.Table("workspace_invitations").Select("1").Where("email = ? And workspace_id = ?", email, workspaceId).Limit(1).Find(&exist).Error
+	if err != nil {
+		return &models.WorkspaceInvitations{}, err
+	}
+	if exist {
+		return &models.WorkspaceInvitations{}, fmt.Errorf("user already invited to workspace")
+	}
+
+	log.Println("Role: ", role)
+
+	parsedWorkspaceId, err := uuid.Parse(workspaceId)
+	if err != nil {
+		log.Println("err parsing workspace uuid: ", err)
+		return &models.WorkspaceInvitations{}, fmt.Errorf("error parsing workspace id")
+	}
+
+	invitation := &models.WorkspaceInvitations{
+		ID:          uuid.New(),
+		WorkspaceID: parsedWorkspaceId,
+		Email:       email,
+		Role:        role,
+		Token:       token,
+	}
+
+	result := r.postgres.Create(&invitation)
+	if result.Error != nil {
+		return &models.WorkspaceInvitations{}, fmt.Errorf("error creating invitations : %w", result.Error)
+	}
+
+	return invitation, nil
+
 }

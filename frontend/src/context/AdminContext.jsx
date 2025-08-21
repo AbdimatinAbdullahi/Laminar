@@ -138,8 +138,11 @@ export const AdminProvider = ({children}) =>{
 
             async function InviteUser(email, role){
                 try {
-                    const inviteRes = await axios.post(`http://localhost:8008/join-workspace`, { email: email, role: role, workspaceId: workspaceId })
+                    const inviteRes = await axios.post(`http://localhost:8008/invite-to-workspace`, 
+                        { email: email, role: role, workspaceId: workspaceId }
+                    )
                     if(inviteRes.status == 200){
+                        console.log(inviteRes.data)
                         return {success: true}
                     }
                 } catch (error) {

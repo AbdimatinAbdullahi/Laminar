@@ -22,6 +22,15 @@ type WorkspaceMemberships struct {
 	JoinedAt    time.Time `gorm:"autoCreateTime" json:"joined_at"`
 }
 
+type WorkspaceInvitations struct {
+	ID          uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	WorkspaceID uuid.UUID `gorm:"type:uuid;not null" json:"workspace_id"`
+	Token       string    `gorm:"type:varchar(512);not null" json:"token"`
+	Email       string    `gorm:"type:varchar(256);not null" json:"email"`
+	InvitedAt   time.Time `gorm:"autoCreateTime" json:"invited_at"`
+	Role        string    `gorm:"type:varchar(100);not null"`
+}
+
 type User struct {
 	ID       uuid.UUID `json:"id" gorm:"column:id"`
 	FullName string    `json:"fullname" gorm:"column:fullname"`
@@ -49,4 +58,8 @@ func (Workspace) TableName() string {
 
 func (WorkspaceMemberships) TableName() string {
 	return "workspace_memberships"
+}
+
+func (WorkspaceInvitations) TableName() string {
+	return "workspace_invitations"
 }

@@ -69,6 +69,8 @@ func main() {
 	http.Handle("/users/workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.GetUsers)))
 	http.Handle("/workspaceUsers", corsMiddleware(http.HandlerFunc(workspaceHandler.FetchWorkspaceUsers)))
 	http.Handle("/add-user-to-channel", corsMiddleware(http.HandlerFunc(workspaceHandler.AddUserToTheChannel)))
+	http.Handle("/invite-to-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.CreateInvitations)))
+	http.Handle("/join-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.AcceptInvitation)))
 
 	// Messaging service now
 	http.Handle("/ws", corsMiddleware(http.HandlerFunc(messageHandler.HandleWebsocketConnection)))

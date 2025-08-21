@@ -242,3 +242,54 @@ func (h *Handler) AddUserToTheChannel(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, "user added to channel")
 }
+
+func (h *Handler) CreateInvitations(w http.ResponseWriter, r *http.Request) {
+	var RequestBody struct {
+		Email       string `json:"email"`
+		Role        string `json:"role"`
+		WorkspaceID string `json:"workspaceId"`
+	}
+
+	log.Println("Workspace id: ", RequestBody.WorkspaceID)
+	log.Println("Email id: ", RequestBody.Email)
+	log.Println("Role: ", RequestBody.Role)
+
+	if err := json.NewDecoder(r.Body).Decode(&RequestBody); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Println("Workspace id: ", RequestBody.WorkspaceID)
+	log.Println("Email id: ", RequestBody.Email)
+	log.Println("Role: ", RequestBody.Role)
+
+	inviation, err := h.svc.CreateInvitations(RequestBody.Email, RequestBody.WorkspaceID, RequestBody.Role)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(inviation)
+
+}
+
+func (h *Handler) AcceptInvitation(w http.ResponseWriter, r *http.Request) {
+	var RequestBody struct {
+		Token string `json:"token"`
+		Email string `json:"email"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&RequestBody); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := h.svc.AcceptInvitation(RequestBody.Token, RequestBody.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(&data)
+}
