@@ -2,13 +2,16 @@ import React, { useState } from 'react'
 import style from '../Styles/modals.module.css'
 import { X } from 'lucide-react'
 import { useChat } from '../context/ChatContext'
+import axios from 'axios'
+import { useAuth } from '../context/AuthContext'
 
 function WorkspaceCreateModal() {
 
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [invitedToken, setinvitedToken] = useState("")
   const [ newWorkspaceName, setnewWorkspaceName ] = useState("")
-  const [createWorkspaceError, setCreateWorkspaceError] = useState("Something went wrong while creating workspace")
+  const [createWorkspaceError, setCreateWorkspaceError] = useState("")
 
   const { handleCloseWorkspaceCreateModal, handleCreateWorkspace } = useChat()
   
@@ -19,13 +22,37 @@ function WorkspaceCreateModal() {
       handleCloseWorkspaceCreateModal()
     } else{
       setCreateWorkspaceError("Something went wrong while creating workspace")
-      alert("Failed to create workspace")
-      handleCloseWorkspaceCreateModal()
     }
   }
 
-  const handleAcceptInvitation = async ()=>{
-    
+  const handleAcceptInvitation = async (invitationCode)=>{
+    const token = invitationCode.trim()
+    console.log("Token: ", token)
+    if(token == "") {
+      setCreateWorkspaceError("Provide the code that was sent to your email")
+      return
+    }
+    setCreateWorkspaceError("")
+    setLoading(true)
+    try {
+      const acceptResponse = await axios.post(`http://localhost:8008/join-workspace` , { email: user.email, token: token})
+      if(acceptResponse.status == 200){
+        alert("Youve joined workspace")
+        handleCloseWorkspaceCreateModal()
+      }
+    } catch (error) {
+      if(error.status == 403){
+        setCreateWorkspaceError(error.response.data)
+        console.log(error)
+        
+      } else if (error.status == 401) {
+        setCreateWorkspaceError("An authorized login or expired token")
+      } else {
+        setCreateWorkspaceError("Something went wrong while accepting invitation")
+      }
+    } finally{
+      setLoading(false)
+    }
   }
 
   return (
@@ -43,13 +70,13 @@ function WorkspaceCreateModal() {
           <div className={style.ownWorkspace}> 
               <span> Create Workspace </span>
               <input type="text" placeholder='Enter workspace name' value={newWorkspaceName} onChange={(e) => setnewWorkspaceName(e.target.value)}/>
-              <button onClick={handleCreate} >Create worspace</button>
+              <button onClick={handleCreate} style={ loading ? { backgroundColor: "gray" }: {} } disabled={loading} >Create worspace</button>
           </div>
             <div className={style.Or} />
           <div className={style.invitedContainer}>
             <span> Paste the invited code </span>
               <input type="text" value={invitedToken} onChange={(e)=>setinvitedToken(e.target.value)} placeholder='Paste the token here' />
-              <button onClick={handleAcceptInvitation} > Accept invitation </button>
+              <button onClick={() => handleAcceptInvitation(invitedToken)} style={ loading ? { backgroundColor: "gray" }: {} } disabled={loading}> Accept invitation </button>
           </div>
 
         </div>

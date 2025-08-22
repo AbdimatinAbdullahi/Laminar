@@ -262,7 +262,7 @@
     justify-content: space-evenly;
 }
 
-.inviteError, .createWorkspaceError{
+.inviteError, .createWorkspaceError, .deleteUserError{
     width: 96%;
     height: 60px;
     border: 1px solid red;
@@ -277,7 +277,13 @@
     border-radius: 4px;
 }
 
-.inviteError span, .createWorkspaceError span{
+.deleteUserError{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.inviteError span, .createWorkspaceError span, .deleteUserError span{
     color: red;
     font-family: var(--font-noto-sans);
     font-size: 16px;

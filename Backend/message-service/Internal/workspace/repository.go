@@ -33,6 +33,8 @@ type Repository interface {
 	FetchWorkspaceUsers(workspaceId string) ([]models.User, error)
 	AddUserToChannel(userId string, channelId string) error
 	CreateInvitations(email string, workspaceId string, token string, role string) (*models.WorkspaceInvitations, error)
+	AcceptInvitation(email string, workspaceId string, role string) error
+	RemoveUserFromWorkspace(email string) error
 }
 
 type repository struct {
@@ -523,4 +525,75 @@ func (r *repository) CreateInvitations(email string, workspaceId string, token s
 
 	return invitation, nil
 
+}
+
+func (r *repository) AcceptInvitation(email string, workspaceId string, role string) error {
+
+	var userID string
+
+	err := r.postgres.Table("users").Select("id").Where("email = ? ", email).Scan(&userID).Error
+	if err != nil {
+		return err
+	}
+
+	parsedUserId, err := uuid.Parse(userID)
+	if err != nil {
+		return err
+	}
+
+	parsedWorkspaceId, err := uuid.Parse(workspaceId)
+	if err != nil {
+		return err
+	}
+
+	log.Println("User id: ", userID)
+	log.Println("workspace id: ", workspaceId)
+	log.Println("Role ", role)
+	log.Println("Email", email)
+
+	WorkspaceMember := models.WorkspaceMemberships{
+		ID:          uuid.New(),
+		UserID:      parsedUserId,
+		Role:        role,
+		WorkspaceID: parsedWorkspaceId,
+		JoinedAt:    time.Now(),
+	}
+
+	result := r.postgres.Create(&WorkspaceMember)
+
+	if result.Error != nil {
+		log.Println("Error while creating workspace memberships", result.Error)
+		return result.Error
+	}
+
+	query := "DELETE FROM workspace_invitations WHERE email = ? AND workspace_id = ?"
+	err = r.postgres.Exec(query, email, workspaceId).Error
+	if err != nil {
+		return fmt.Errorf("error while deleting user from workspace invitations")
+	}
+
+	return nil
+
+}
+
+func (r *repository) RemoveUserFromWorkspace(email string) error {
+
+	var userId string
+
+	err := r.postgres.Table("users").Select("id").Where("email = ?", email).Scan(&userId).Error
+	if err != nil {
+		return err
+	}
+
+	log.Println("User id in repository: ", userId)
+
+	query := `DELETE FROM workspace_memberships WHERE user_id = ?`
+
+	err = r.postgres.Exec(query, userId).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

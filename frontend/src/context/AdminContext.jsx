@@ -151,9 +151,24 @@ export const AdminProvider = ({children}) =>{
                 }
             }
 
+        async function deleteUser(email){
+            console.log("Email: ", email)
+            try {
+                const deleteRes = await axios.delete(`http://localhost:8008/delete-user?email=${email}`)
+                if(deleteRes.status == 200){
+                    return {success : true}
+                } else {
+                    return {success: false}
+                }
+            } catch (error) {
+                console.log("Error deleting user: ", error)
+                return {success: false}
+            }
+        }
+
 
     return (
-        <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace,  InviteUser}}  >
+        <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace,  InviteUser, deleteUser}}  >
             {children}
         </AdminContext.Provider>
     )

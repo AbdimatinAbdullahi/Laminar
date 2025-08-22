@@ -24,6 +24,7 @@ type Service interface {
 	AddUserToChannel(userId string, channelId string, workspaceId string, actionPerformerId string) error
 	CreateInvitations(email string, workspaceId string, role string) (*models.WorkspaceInvitations, error)
 	AcceptInvitation(token string, email string) (bool, error)
+	RemoveUserFromWorkspace(email string) error
 }
 
 // One property that is called repo
@@ -216,7 +217,27 @@ func (s *service) AcceptInvitation(token string, email string) (bool, error) {
 
 	tokenEmail, ok := claims["email"].(string)
 	if !ok || tokenEmail != email {
+		log.Println("Email from the claims: ", tokenEmail)
+		log.Println("Email from the user: ", email)
 		return false, fmt.Errorf("email do not match")
+	}
+
+	workspaceId, ok := claims["workspaceId"].(string)
+	if !ok {
+		log.Println("Workspace id: ", workspaceId)
+		return false, fmt.Errorf("Workspace id not available")
+	}
+
+	role, ok := claims["role"].(string)
+	if !ok {
+		log.Println("Role not availanle", role)
+		return false, fmt.Errorf("role not available in claims")
+	}
+
+	err = s.repo.AcceptInvitation(tokenEmail, workspaceId, role)
+	if err != nil {
+		log.Println("Error while working on invitation database: ", err)
+		return false, err
 	}
 
 	return true, nil
@@ -261,22 +282,36 @@ func GetClaimsFromToken(tokenString string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
+		log.Println("Error decoding the token: ", err)
 		return nil, err
 	}
 
 	if !token.Valid {
+		log.Println("Invalid tokens: ", err)
 		return nil, fmt.Errorf("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
+		log.Println("Invalid claims: ", err)
 		return nil, fmt.Errorf("invalid claims")
 	}
 
 	if exp, ok := claims["exp"].(float64); !ok && int(exp) < int(time.Now().Unix()) {
+		log.Println("Tokens expired: ", err)
 		return nil, fmt.Errorf("token expired")
 	}
 
 	return claims, nil
 
+}
+
+func (s *service) RemoveUserFromWorkspace(email string) error {
+
+	err := s.repo.RemoveUserFromWorkspace(email)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

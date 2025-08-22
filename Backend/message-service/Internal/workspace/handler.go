@@ -285,11 +285,39 @@ func (h *Handler) AcceptInvitation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println("The email: ", RequestBody.Email)
+	log.Println("The Token: ", RequestBody.Token)
+
 	data, err := h.svc.AcceptInvitation(RequestBody.Token, RequestBody.Email)
 	if err != nil {
+		if strings.Contains(err.Error(), "email do not match") {
+			http.Error(w, "User mismatch: Login with right email", http.StatusForbidden)
+			return
+		}
+		if strings.Contains(err.Error(), "expired") {
+			http.Error(w, "Token expired: contact the administrator of the token to get new one", http.StatusUnauthorized)
+			return
+		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	json.NewEncoder(w).Encode(&data)
+}
+
+func (h *Handler) RemoveUserFromWorkspace(w http.ResponseWriter, r *http.Request) {
+	email := r.URL.Query().Get("email")
+
+	if email == "" {
+		http.Error(w, "Missing email parameter", http.StatusBadRequest)
+		return
+	}
+
+	err := h.svc.RemoveUserFromWorkspace(email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
