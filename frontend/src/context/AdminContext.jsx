@@ -185,7 +185,7 @@ export const AdminProvider = ({children}) =>{
             try {
 
                  const updateRs = await axios.patch(`http://localhost:8008/update-role`,
-                    { updatorID: updatorID, email:email, role:role }
+                    { updatorID: updatorID, email:email, role:role, workspaceId: workspaceId }
                 )
 
                 if(updateRs.status == 200){
@@ -193,6 +193,7 @@ export const AdminProvider = ({children}) =>{
                     return {success: true}
                 }
             } catch (error) {
+                console.log(error)
                 return { success: false }
             }
         }
