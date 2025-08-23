@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import style from '../Styles/admin.module.css'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -15,9 +15,9 @@ function UserManagement() {
 
   const { state } = useAdminContext();
   const { workspaceMemebers, workspaceData, invitations } = state;
-  const [modalUserOpen, setmodalUserOpen] = useState(false)
-  const [selectedMember, setselectedMember] = useState(null)
-  const [inviteModalOpen, setinviteModalOpen] = useState(false)
+  const [ modalUserOpen, setmodalUserOpen ] = useState(false)
+  const [ selectedMember, setselectedMember ] = useState(null)
+  const [ inviteModalOpen, setinviteModalOpen ] = useState(false)
 
 
   return (
@@ -60,9 +60,9 @@ function UserManagement() {
               <div>{member.WorkspaceInfo.Role}</div>
               <div>Active</div>
               <div><EllipsisVertical onClick={()=>{
-                setmodalUserOpen(true)
-                setselectedMember(member)
-              }} style={{ backgroundColor: "inherit", cursor: "pointer" }} size={20} /></div>
+                      setmodalUserOpen(true)
+                      setselectedMember(member)
+                    }} style={{ backgroundColor: "inherit", cursor: "pointer" }} size={20} /></div>
             </div>
           ))}
         </div>
@@ -80,17 +80,14 @@ function UserManagement() {
             <button onClick={()=>setinviteModalOpen(true)} >Invite</button>
             <div className={style.invitationList}>
               <div className={`${style.gridRow} ${style.gridHeader}`}>
-                <div>Name</div>
                 <div>Email</div>
                 <div>Status</div>
                 <div>Invited At</div>
-                <div>Action</div>
               </div>
 
               {invitations.map((invite, index) => (
                 <div key={invite.Email} className={`${style.gridRow} ${style.tableRows}`} style={{ backgroundColor: index % 2 === 0 ? 'rgba(0,0,0,0.03)' : 'transparent' }}
                 >
-                  <div>{invite.Name || '—'}</div>
                   <div>{invite.Email}</div>
                   <div>Pending</div>
                   <div>{dayjs(invite.InvitedAt).fromNow()}</div>
@@ -110,7 +107,7 @@ function UserManagement() {
         </div>
       </div>
       
-      {modalUserOpen && selectedMember && <UserModal user={selectedMember} onClose={()=>setmodalUserOpen(false)} />}
+      {modalUserOpen && selectedMember && <UserModal member={selectedMember} onClose={()=>setmodalUserOpen(false)} />}
       {inviteModalOpen && <Invite onClose={()=>setinviteModalOpen(false)} />}
     </div>
 

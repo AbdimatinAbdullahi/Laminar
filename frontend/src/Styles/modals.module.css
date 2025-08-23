@@ -262,7 +262,7 @@
     justify-content: space-evenly;
 }
 
-.inviteError, .createWorkspaceError, .deleteUserError{
+.inviteError, .createWorkspaceError, .deleteUserError, .roleUpdateSucess{
     width: 96%;
     height: 60px;
     border: 1px solid red;
@@ -275,12 +275,24 @@
     margin-top: 40px;
     z-index: 100;
     border-radius: 4px;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
 }
 
 .deleteUserError{
     position: absolute;
     top: 20px;
     left: 20px;
+}
+
+.roleUpdateSucess{
+    position: absolute;
+    top: 20px;
+    left: 14px;
+    border-color: green;
+}
+.roleUpdateSucess span{
+    color: green;
 }
 
 .inviteError span, .createWorkspaceError span, .deleteUserError span{
