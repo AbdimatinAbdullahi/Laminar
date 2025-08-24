@@ -8,10 +8,14 @@ import (
 )
 
 type Config struct {
-	MongoURI     string
-	POSTGRES_DSN string
-	MONGO_DB     string
-	SECRET_KEY   string
+	MongoURI       string
+	POSTGRES_DSN   string
+	MONGO_DB       string
+	SECRET_KEY     string
+	FROM_EMAIL     string
+	EMAIL_PASSWORD string
+	SMTP_HOST      string
+	SMTP_PORT      string
 }
 
 func Load() *Config {
@@ -20,9 +24,13 @@ func Load() *Config {
 	}
 
 	return &Config{
-		MongoURI:     os.Getenv("MONGO_URI"),
-		MONGO_DB:     os.Getenv("MONGO_DB"),
-		POSTGRES_DSN: os.Getenv("POSTGRES_DSN"),
-		SECRET_KEY:   os.Getenv("SECRET_KEY"),
+		MongoURI:       os.Getenv("MONGO_URI"),
+		MONGO_DB:       os.Getenv("MONGO_DB"),
+		POSTGRES_DSN:   os.Getenv("POSTGRES_DSN"),
+		SECRET_KEY:     os.Getenv("SECRET_KEY"),
+		EMAIL_PASSWORD: os.Getenv("EMAIL_PASSWORD"),
+		FROM_EMAIL:     os.Getenv("FROM_EMAIL"),
+		SMTP_HOST:      os.Getenv("SMTP_HOST"),
+		SMTP_PORT:      os.Getenv("SMTP_PORT"),
 	}
 }

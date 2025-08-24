@@ -6,6 +6,7 @@ import (
 	"laminar/internal/config"
 	"laminar/internal/models"
 	"log"
+	"net/smtp"
 	"strings"
 	"time"
 
@@ -206,6 +207,11 @@ func (s *service) CreateInvitations(email string, workspaceId string, role strin
 
 	// send a token via and email
 
+	err = SendEmail(email, token)
+	if err != nil {
+		log.Println("Error at sending email")
+	}
+
 	return invitation, nil
 }
 
@@ -219,26 +225,21 @@ func (s *service) AcceptInvitation(token string, email string) (bool, error) {
 
 	tokenEmail, ok := claims["email"].(string)
 	if !ok || tokenEmail != email {
-		log.Println("Email from the claims: ", tokenEmail)
-		log.Println("Email from the user: ", email)
 		return false, fmt.Errorf("email do not match")
 	}
 
 	workspaceId, ok := claims["workspaceId"].(string)
 	if !ok {
-		log.Println("Workspace id: ", workspaceId)
 		return false, fmt.Errorf("Workspace id not available")
 	}
 
 	role, ok := claims["role"].(string)
 	if !ok {
-		log.Println("Role not availanle", role)
 		return false, fmt.Errorf("role not available in claims")
 	}
 
 	err = s.repo.AcceptInvitation(tokenEmail, workspaceId, role)
 	if err != nil {
-		log.Println("Error while working on invitation database: ", err)
 		return false, err
 	}
 
@@ -247,7 +248,6 @@ func (s *service) AcceptInvitation(token string, email string) (bool, error) {
 
 func GenerateToken(email string, workspaceId string, role string) (string, error) {
 	secretKey := []byte(config.Load().SECRET_KEY)
-	log.Println("Secret key for signing the token: ", secretKey)
 
 	// Define claims or payload
 	claims := jwt.MapClaims{
@@ -260,8 +260,6 @@ func GenerateToken(email string, workspaceId string, role string) (string, error
 
 	// create a token object
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	log.Println("Token header: ", token.Header)
-	log.Println("Token claims: ", token.Claims)
 
 	// sign thr token with scret key
 	tokenString, err := token.SignedString(secretKey)
@@ -284,7 +282,6 @@ func GetClaimsFromToken(tokenString string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
-		log.Println("Error decoding the token: ", err)
 		return nil, err
 	}
 
@@ -300,7 +297,6 @@ func GetClaimsFromToken(tokenString string) (jwt.MapClaims, error) {
 	}
 
 	if exp, ok := claims["exp"].(float64); !ok && int(exp) < int(time.Now().Unix()) {
-		log.Println("Tokens expired: ", err)
 		return nil, fmt.Errorf("token expired")
 	}
 
@@ -329,8 +325,6 @@ func (s *service) UpdateRole(email string, updatorId string, workspaceId string,
 		return fmt.Errorf("internal server error")
 	}
 
-	log.Println("Role of the changer: ", role)
-
 	if updatorRole != "owner" && updatorRole != "admin" {
 		return fmt.Errorf("permission denied")
 	}
@@ -358,5 +352,26 @@ func (s *service) CancelInvitation(email string, workspaceId string, cancelorId 
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func SendEmail(sendTo string, token string) error {
+	cfg := config.Load()
+
+	to := []string{sendTo}
+
+	message := []byte("To: " + sendTo + "\r\n" +
+		"Subject: Someone invited you to http://localhost:5173/  Laminar workspace: Login or create account if you dont have one and use token below to join that workspace:\r\n" +
+		"\r\n" +
+		"Find the token below: " + token + "\r\n")
+
+	auth := smtp.PlainAuth("", cfg.FROM_EMAIL, cfg.EMAIL_PASSWORD, cfg.SMTP_HOST)
+
+	err := smtp.SendMail(cfg.SMTP_HOST+":"+cfg.SMTP_PORT, auth, cfg.FROM_EMAIL, to, message)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
