@@ -25,6 +25,8 @@ type Service interface {
 	CreateInvitations(email string, workspaceId string, role string) (*models.WorkspaceInvitations, error)
 	AcceptInvitation(token string, email string) (bool, error)
 	RemoveUserFromWorkspace(email string) error
+	CancelInvitation(email string, workspaceId string, cancelorId string) error
+	UpdateRole(email string, updatorId string, workspaceId string, role string) error
 }
 
 // One property that is called repo
@@ -313,5 +315,48 @@ func (s *service) RemoveUserFromWorkspace(email string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (s *service) UpdateRole(email string, updatorId string, workspaceId string, role string) error {
+	updatorRole, err := s.repo.GetRole(updatorId, workspaceId)
+
+	if role == "owner" {
+		return fmt.Errorf("you cant change role to owner")
+	}
+
+	if err != nil {
+		return fmt.Errorf("internal server error")
+	}
+
+	log.Println("Role of the changer: ", role)
+
+	if updatorRole != "owner" && updatorRole != "admin" {
+		return fmt.Errorf("permission denied")
+	}
+
+	err = s.repo.UpdateRole(email, workspaceId, role)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (s *service) CancelInvitation(email string, workspaceId string, cancelorId string) error {
+	cancelorRole, err := s.repo.GetRole(cancelorId, workspaceId)
+	if err != nil {
+		return err
+	}
+
+	if cancelorRole != "owner" && cancelorRole != "admin" {
+		return fmt.Errorf("permission denied")
+	}
+
+	err = s.repo.CancelInvitation(email, workspaceId)
+	if err != nil {
+		return err
+	}
 	return nil
 }

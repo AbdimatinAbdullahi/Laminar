@@ -35,6 +35,8 @@ type Repository interface {
 	CreateInvitations(email string, workspaceId string, token string, role string) (*models.WorkspaceInvitations, error)
 	AcceptInvitation(email string, workspaceId string, role string) error
 	RemoveUserFromWorkspace(email string) error
+	CancelInvitation(email string, workspaceId string) error
+	UpdateRole(email string, workspaceId string, role string) error
 }
 
 type repository struct {
@@ -590,6 +592,33 @@ func (r *repository) RemoveUserFromWorkspace(email string) error {
 	query := `DELETE FROM workspace_memberships WHERE user_id = ?`
 
 	err = r.postgres.Exec(query, userId).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *repository) UpdateRole(email string, workspaceId string, role string) error {
+	var userId string
+	err := r.postgres.Table("users").Select("id").Where("email = ?", email).Scan(&userId).Error
+	if err != nil {
+		return err
+	}
+
+	err = r.postgres.Table("workspace_memberships").Where("workspace_id = ? AND user_id = ?", workspaceId, userId).Update("role", role).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *repository) CancelInvitation(email string, workspaceId string) error {
+	query := `DELETE FROM workspace_invitations WHERE email = ? AND workspace_id = ?`
+
+	err := r.postgres.Exec(query, email, workspaceId).Error
 
 	if err != nil {
 		return err

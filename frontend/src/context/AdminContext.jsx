@@ -7,7 +7,7 @@ const inititialState = {
     workspaceMemebers : [],
     workspaceCreator : null,
     workspaceData: null,
-    invitations: [{Name: "Abdimatin Abdullahi", Email: "abdimatabdullahi@gmail.com", invitedAt: "2024-01-20"}, {Name: "Abdimatin Abdull", Email: "abdimatabdui@gmail.com", invitedAt: "2024-01-26"}],
+    invitations: [],
     loading: false,
     // invitations: []
 }
@@ -34,7 +34,35 @@ const reducer = (state, action) =>{
              return {...state, workspaceMemebers: updatedMembers}
         
         case "UPDATE_ROLE":
-            console.log("Update user payload: ", action.payload)
+            const { email: updatedEmail, role: newRole } = action.payload;
+            const roleUpdatedMembers = state.workspaceMemebers.map(member => {
+                if (member.User.Email === updatedEmail) {
+                    return {
+                        ...member, // Member has User with email and WorkaspaceInfo with role and joined time
+                         WorkspaceInfo: {
+                            ...member.WorkspaceInfo,
+                            Role: newRole
+                        } 
+                    };
+                }
+                return member;
+            });
+            return { ...state, workspaceMembers: roleUpdatedMembers };
+        
+        case "ADD_TO_INVITATION":
+            const newInviedMember = {
+                Email: action.payload.email,
+                invitedAt: action.payload.invited_at
+            }
+            
+            return {...state, invitations: [...state.invitations, newInviedMember]}
+
+        case "REMOVE_FROM_INVITATION":
+            console.log("Action.payload", action.payload)
+            const updatedInvitations = state.invitations.filter((member)=> member.Email !== action.payload)
+            return { ...state, invitations: updatedInvitations };
+
+
 
         default:
             return state
@@ -151,6 +179,7 @@ export const AdminProvider = ({children}) =>{
                     )
                     if(inviteRes.status == 200){
                         // Add user to inviations
+                        dispatch({type: "ADD_TO_INVITATION", payload:inviteRes.data})
                         console.log(inviteRes.data)
                         return {success: true}
                     }
@@ -184,7 +213,7 @@ export const AdminProvider = ({children}) =>{
         async function updateRole(updatorID, email, role){
             try {
 
-                 const updateRs = await axios.patch(`http://localhost:8008/update-role`,
+                 const updateRs = await axios.post(`http://localhost:8008/update-role`,
                     { updatorID: updatorID, email:email, role:role, workspaceId: workspaceId }
                 )
 
@@ -199,8 +228,26 @@ export const AdminProvider = ({children}) =>{
         }
 
 
+        async function cancelInvite(email, cancelorID){
+            try {
+                const cnInviteRes = await axios.post(`http://localhost:8008/cancel-invite`, 
+                    {workspaceId:workspaceId, email:email, cancelorID: cancelorID}
+                 )
+
+                 if(cnInviteRes.status == 200){
+                    dispatch({type: "REMOVE_FROM_INVITATION", payload: email})
+                    return { success: true }
+                 }
+                 return {success: false}
+            } catch (error) {
+                console.log("Error canceling invite: ", error)
+                return {success: false}
+            }
+        }
+
+
     return (
-        <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace,  InviteUser, deleteUser, updateRole}}  >
+        <AdminContext.Provider value={{ state, dispatch, deleteWorkspace, leaveWorkspace,  InviteUser, deleteUser, updateRole, cancelInvite}}  >
             {children}
         </AdminContext.Provider>
     )

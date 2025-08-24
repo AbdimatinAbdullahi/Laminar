@@ -321,3 +321,57 @@ func (h *Handler) RemoveUserFromWorkspace(w http.ResponseWriter, r *http.Request
 
 	w.WriteHeader(http.StatusOK)
 }
+
+func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
+	var RequestBody struct {
+		UpdatorID   string `json:"updatorID"`
+		Email       string `json:"email"`
+		Role        string `json:"role"`
+		WorkspaceID string `json:"workspaceId"`
+	}
+
+	log.Println("Request body: ", r.Body)
+
+	if err := json.NewDecoder(r.Body).Decode(&RequestBody); err != nil {
+		log.Println("Error while working on update role in handler", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	log.Println("Request body two: ", RequestBody)
+
+	err := h.svc.UpdateRole(RequestBody.Email, RequestBody.UpdatorID, RequestBody.WorkspaceID, RequestBody.Role)
+	if err != nil {
+		log.Println("Error while working on update role in handler", err)
+		if strings.Contains(err.Error(), "permission") {
+			http.Error(w, "Permission denied", http.StatusForbidden)
+			return
+		}
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) CancelInvitation(w http.ResponseWriter, r *http.Request) {
+	var RequestBody struct {
+		WorkspaceID string `json:"workspaceId"`
+		Email       string `json:"email"`
+		CancelorID  string `json:"cancelorID"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&RequestBody); err != nil{
+		http.Error(w, "Error while decoding the body", http.StatusInternalServerError)
+		return
+	}
+
+	err := h.svc.CancelInvitation(RequestBody.Email, RequestBody.WorkspaceID, RequestBody.CancelorID)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+}

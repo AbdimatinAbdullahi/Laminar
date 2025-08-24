@@ -73,6 +73,7 @@ func main() {
 	http.Handle("/join-workspace", corsMiddleware(http.HandlerFunc(workspaceHandler.AcceptInvitation)))
 	http.Handle("/delete-user", corsMiddleware(http.HandlerFunc(workspaceHandler.RemoveUserFromWorkspace)))
 	http.Handle("/update-role", corsMiddleware(http.HandlerFunc(workspaceHandler.UpdateRole)))
+	http.Handle("/cancel-invite", corsMiddleware(http.HandlerFunc(workspaceHandler.CancelInvitation)))
 
 	// Messaging service now
 	http.Handle("/ws", corsMiddleware(http.HandlerFunc(messageHandler.HandleWebsocketConnection)))

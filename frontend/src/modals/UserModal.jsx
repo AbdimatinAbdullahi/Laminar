@@ -9,12 +9,11 @@ import { useAuth } from '../context/AuthContext'
 function UserModal({onClose, member}) {
 
   const { user } = useAuth()
-  const { deleteUser, updateRole } = useAdminContext()
-  const [ loadingUpdate, setloadingUpdate ] = useState(false)
-  const [ loadingDelete, setLoadingDelete ] = useState(false)
   const [ deleteError, setDeleteError ] = useState("")
-  const [ role, setRole ] = useState(member.WorkspaceInfo.Role.toLowerCase())
+  const { deleteUser, updateRole } = useAdminContext()
+  const [ loadingDelete, setLoadingDelete ] = useState(false)
   const [ roleUpdateSucess, setRoleUpdateSucess ] = useState("")
+  const [ role, setRole ] = useState(member.WorkspaceInfo.Role.toLowerCase())
 
   async function handleDeleteUser(){
     setLoadingDelete(true)
@@ -53,7 +52,6 @@ function UserModal({onClose, member}) {
     }
   
   }
-
 
   return (
     <div className={style.modalOverlay} >

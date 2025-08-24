@@ -322,9 +322,9 @@
 }
 
 /* Invite Button */
-.invitationEmptyState button,
+
 .invitationsTable > button, .cancelInvite {
-  margin-bottom: 1rem;
+  margin-bottom: 0.4rem;
   padding: 0.5rem 1rem;
   background-color:  #5a67d8;
   color: #fff;
@@ -333,9 +333,22 @@
   border-radius: 8px;
   cursor: pointer;
   font-size: 2em;
-  width: 10%;
+  width: 300px;
   font-family: var(--font-noto-sans);
 }
+
+.invitationEmptyState button{
+    width: 300px;
+    height: 60px;
+    background-color: #5a67d8;
+    border: none;
+    outline: none;
+    font: var(--font-noto-sans);
+    font-size: 600;
+    color: white;
+     border-radius: 4px;
+}
+
 
 .invitationsTable > button{
     height: 50px;

@@ -9,16 +9,22 @@ dayjs.extend(relativeTime);
 import { useAdminContext } from '../context/AdminContext';
 import UserModal from '../modals/UserModal';
 import Invite from '../modals/Invite';
+import { useAuth } from '../context/AuthContext';
 
 function UserManagement() {
 
 
-  const { state } = useAdminContext();
+  const { user } = useAuth()
+  const { state, cancelInvite } = useAdminContext();
   const { workspaceMemebers, workspaceData, invitations } = state;
   const [ modalUserOpen, setmodalUserOpen ] = useState(false)
   const [ selectedMember, setselectedMember ] = useState(null)
   const [ inviteModalOpen, setinviteModalOpen ] = useState(false)
 
+
+  async function handleCancelIncite(email, cancelorID) {
+    const result = await cancelInvite(email, cancelorID)
+  }
 
   return (
     <div className={style.userContainer}>
@@ -91,7 +97,7 @@ function UserManagement() {
                   <div>{invite.Email}</div>
                   <div>Pending</div>
                   <div>{dayjs(invite.InvitedAt).fromNow()}</div>
-                  <button className={style.cancelInvite}>Cancel Invite</button>
+                  <button className={style.cancelInvite} onClick={() => handleCancelIncite(invite.Email, user.id)} >Cancel Invite</button>
                 </div>
               ))}
             </div>
