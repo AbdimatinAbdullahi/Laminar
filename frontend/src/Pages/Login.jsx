@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Link} from 'react-router'
 import style from '../Styles/login.module.css'
-import {Eye, EyeOff} from 'lucide-react'
+import {Eye, EyeOff, X} from 'lucide-react'
 import {useAuth} from '../context/AuthContext'
 
 
@@ -9,17 +9,21 @@ import {useAuth} from '../context/AuthContext'
 
 function Login() {
 
-  const {login} = useAuth()
-  const [typePassword, settypePassword] = useState("password")
-  const [userCredintials, setUserCredintials] = useState({ password: "", email: ""})
+  const { login} = useAuth()
+  const [ typePassword, settypePassword ] = useState("password")
+  const [ loginError, setLoginError ] = useState("")
+  const [ userCredintials, setUserCredintials ] = useState({ password: "", email: ""})
 
 
-  const handleLogin = (e)=>{
+  const handleLogin = async (e)=>{
     e.preventDefault()
     if(userCredintials.email === "" || userCredintials.password === ""){
       return
     }
-    login(userCredintials.email, userCredintials.password)
+    const result = await login(userCredintials.email, userCredintials.password)
+    if(!result.success){
+      setLoginError("Error while login")
+    }
   }
 
 
@@ -30,6 +34,15 @@ function Login() {
         <div className={style.formHeader}>
             Welcome to Laminar
         </div>
+
+        {
+          loginError != "" && (
+            <div className={style.loginError} >
+                <span> {loginError} </span>
+                <X onClick={()=> setLoginError("")} />
+            </div>
+          )
+        }
 
         <div className={style.emailInput}>
           <input type="email" placeholder='Email' onChange={(e)=> setUserCredintials({...userCredintials, email: e.target.value})} />

@@ -12,6 +12,7 @@ const inititialState = {
     // invitations: []
 }
 
+const chatURL = import.meta.env.VITE_CHAT_API_URL
 
 // Function that takes in current state and function and returns new state
 const reducer = (state, action) =>{
@@ -30,7 +31,6 @@ const reducer = (state, action) =>{
         case "REMOVE_USER_FROM_WORKSPACE":
              const email = action.payload
              const updatedMembers = state.workspaceMemebers.filter((member) => member.User.Email != email)
-             console.log("Updated members: ", updatedMembers)
              return {...state, workspaceMemebers: updatedMembers}
         
         case "UPDATE_ROLE":
@@ -58,7 +58,6 @@ const reducer = (state, action) =>{
             return {...state, invitations: [...state.invitations, newInviedMember]}
 
         case "REMOVE_FROM_INVITATION":
-            console.log("Action.payload", action.payload)
             const updatedInvitations = state.invitations.filter((member)=> member.Email !== action.payload)
             return { ...state, invitations: updatedInvitations };
 
@@ -85,18 +84,18 @@ export const AdminProvider = ({children}) =>{
 
             try {
 
-                const wsResponse = await axios.get("http://localhost:8008/workspace-data",
+                const wsResponse = await axios.get(`${chatURL}/workspace-data`,
                     { params:  { wsId : workspaceId } }
                     )
 
                 if(wsResponse.status == 200){
-                    console.log(wsResponse.data)
                     dispatch({ type: "LOAD_WORKSPACE_DATA", payload: wsResponse.data })
                 }
 
             } catch (error) {
-                console.error("Error fetching workspace data", error)
+                return
             }
+
         }
 
 
@@ -106,7 +105,7 @@ export const AdminProvider = ({children}) =>{
 
                 dispatch({type: "LOAD_START"})
 
-                const memebersRs = await axios.get('http://localhost:8008/workspace-members',  {
+                const memebersRs = await axios.get(`${chatURL}/workspace-members`,  {
                     params: { wsId: workspaceId }
                 })
 
@@ -116,7 +115,6 @@ export const AdminProvider = ({children}) =>{
                 }
 
             } catch (error) {
-                console.error("Error fetching workspace members :" , error)
             }
         }
 
@@ -128,7 +126,7 @@ export const AdminProvider = ({children}) =>{
     // Those without and creator privilieges only leaveing the workspace
         const leaveWorkspace = async (userId) => {
             try {
-                const lvRs = await axios.delete("http://localhost:8008/leave-workspace", {
+                const lvRs = await axios.delete(`${chatURL}/leave-workspace`, {
                     params: 
                     {
                         userId: userId,
@@ -142,7 +140,6 @@ export const AdminProvider = ({children}) =>{
                 }
 
             } catch (error) {
-                console.error("Failed leaving workspace: ", error)
             }
         }
 
@@ -151,7 +148,7 @@ export const AdminProvider = ({children}) =>{
         const deleteWorkspace = async (userId)=>{
             console.log("User id", userId)
             try {
-                const dlRs = await axios.delete("http://localhost:8008/delete-workspace", {
+                const dlRs = await axios.delete(`${chatURL}/delete-workspace`, {
                     params: {
                         userId: userId, 
                         workspaceId: workspaceId
@@ -166,7 +163,6 @@ export const AdminProvider = ({children}) =>{
                 return {success : false}
 
             } catch (error) {
-                console.error("Somethings happens while deleting workspace: ", error)
                 return {success : false}
             }
         }
@@ -174,13 +170,12 @@ export const AdminProvider = ({children}) =>{
 
         async function InviteUser(email, role){
                 try {
-                    const inviteRes = await axios.post(`http://localhost:8008/invite-to-workspace`, 
+                    const inviteRes = await axios.post(`${chatURL}/invite-to-workspace`, 
                         { email: email, role: role, workspaceId: workspaceId }
                     )
                     if(inviteRes.status == 200){
                         // Add user to inviations
                         dispatch({type: "ADD_TO_INVITATION", payload:inviteRes.data})
-                        console.log(inviteRes.data)
                         return {success: true}
                     }
                 } catch (error) {
@@ -191,11 +186,7 @@ export const AdminProvider = ({children}) =>{
 
         async function deleteUser(email){
             try {
-                const deleteRes = await axios.delete(`http://localhost:8008/delete-user?email=${email}`)
-                
-                // const deleteRes = {
-                //     status : 200
-                // }
+                const deleteRes = await axios.delete(`${chatURL}/delete-user?email=${email}`)
 
                 if(deleteRes.status == 200){
                     dispatch({type: "REMOVE_USER_FROM_WORKSPACE", payload: email})
@@ -204,7 +195,6 @@ export const AdminProvider = ({children}) =>{
                     return {success: false}
                 }
             } catch (error) {
-                console.log("Error deleting user: ", error)
                 return {success: false}
             }
         }
@@ -213,7 +203,7 @@ export const AdminProvider = ({children}) =>{
         async function updateRole(updatorID, email, role){
             try {
 
-                 const updateRs = await axios.post(`http://localhost:8008/update-role`,
+                 const updateRs = await axios.post(`${chatURL}/update-role`,
                     { updatorID: updatorID, email:email, role:role, workspaceId: workspaceId }
                 )
 
@@ -222,7 +212,6 @@ export const AdminProvider = ({children}) =>{
                     return {success: true}
                 }
             } catch (error) {
-                console.log(error)
                 return { success: false }
             }
         }
@@ -230,7 +219,7 @@ export const AdminProvider = ({children}) =>{
 
         async function cancelInvite(email, cancelorID){
             try {
-                const cnInviteRes = await axios.post(`http://localhost:8008/cancel-invite`, 
+                const cnInviteRes = await axios.post(`${chatURL}/cancel-invite`, 
                     {workspaceId:workspaceId, email:email, cancelorID: cancelorID}
                  )
 
@@ -240,7 +229,6 @@ export const AdminProvider = ({children}) =>{
                  }
                  return {success: false}
             } catch (error) {
-                console.log("Error canceling invite: ", error)
                 return {success: false}
             }
         }

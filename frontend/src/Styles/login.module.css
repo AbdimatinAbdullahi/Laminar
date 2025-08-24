@@ -34,6 +34,22 @@
     font-size: 2em;
 }
 
+.loginError{
+    width: 96%;
+    height: 60px;
+    border: 1px solid red;
+    color: red;
+    border-radius: 4px;
+    font-family: var(--font-noto-sans);
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 0.6em;
+}
+
 .emailInput, .passwordInput{
     width: 95%;
     height: 50px;

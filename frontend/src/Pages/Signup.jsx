@@ -1,24 +1,29 @@
 import React, {useState} from 'react'
 import {Link} from 'react-router'
 import style from '../Styles/singupcontainer.module.css'
-import {Eye, EyeOff} from 'lucide-react'
+import {Eye, EyeOff, X} from 'lucide-react'
 import {useAuth} from '../context/AuthContext'
 
 
 function Signup() {
 
-  const {signup} = useAuth()
-  const [typePassword, settypePassword] = useState("password")
-  const [typeConfirmPassword, setTypeConfirmPassword] = useState("password")
-  const [userCredintials, setUserCredintials] = useState({ fullname: "", password: "", email: "", confirmPassword: ""})
+  const { signup } = useAuth()
+  const [ signupError, setSignupError ] = useState("")
+  const [ typePassword, settypePassword ] = useState("password")
+  const [ typeConfirmPassword, setTypeConfirmPassword ] = useState("password")
+  const [ userCredintials, setUserCredintials ] = useState({ fullname: "", password: "", email: "", confirmPassword: ""})
 
 
-  const handleRegister = (e)=>{
+  const handleRegister = async (e)=>{
     e.preventDefault()
     if(userCredintials.email === "" || userCredintials.password === ""){
+      setSignupError("Provide all required fields")
       return
     }
-    signup(userCredintials.fullname, userCredintials.email, userCredintials.password)
+    const result = await signup(userCredintials.fullname, userCredintials.email, userCredintials.password)
+    if(!result.succes){
+      setSignupError("Something went wrong while creating account")
+    }
   }
 
 
@@ -29,6 +34,15 @@ function Signup() {
         <div className={style.formHeader}>
             Welcome to Laminar
         </div>
+
+        {
+          signupError != "" && (
+            <div className={style.signupError} >
+                <span> {signupError} </span>
+                <X onClick={()=> setSignupError("")} />
+            </div>
+          )
+        }
 
         <div className={style.fullnameInput}>
           <input type="text" placeholder='Enter fullname' onChange={(e)=> setUserCredintials({...userCredintials, fullname: e.target.value})} />

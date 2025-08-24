@@ -10,7 +10,7 @@ backend/user-service/Pipfile.lock
 backend/user-service/Pipfile
 **/__pycache__/
 **/*.pyc
-
+.env
 
 backend/message-service/tmp/
 backend/message-service/.env

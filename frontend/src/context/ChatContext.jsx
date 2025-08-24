@@ -20,6 +20,8 @@ const initialState = {
 }
 
 
+const chatURL = import.meta.env.VITE_CHAT_API_URL
+
 const reducer = (state, action)=>{
     switch(action.type){
         case "LOAD_START":
@@ -107,6 +109,8 @@ const reducer = (state, action)=>{
     }
 }
 
+
+
 export const ChatProvider = ({children})=>{
 
 
@@ -162,7 +166,7 @@ export const ChatProvider = ({children})=>{
             dispatch({type: "LOAD_START"})
 
             try {
-                const res = await axios.get("http://localhost:8008/workspace", {
+                const res = await axios.get(`${chatURL}/workspace`, {
                     headers: {
                     "Authorization" : `Bearer ${token}`
                     }              
@@ -193,7 +197,7 @@ export const ChatProvider = ({children})=>{
 
     async function fetchMessages(beforeCursor = null){
         if(!state.activeChannel) return
-        const url = `http://localhost:8008/chat?chatId=${state.activeChannel.id}&type=channel${beforeCursor ? `&before=${beforeCursor}` : ""}`
+        const url = `${chatURL}/chat?chatId=${state.activeChannel.id}&type=channel${beforeCursor ? `&before=${beforeCursor}` : ""}`
         try {
             const mesRes = await axios.get(url)
             const newMessages = (mesRes.data || []).reverse() // reverse the messages so that it can be from oldest to newest: oldest will be at index 0
@@ -214,7 +218,7 @@ export const ChatProvider = ({children})=>{
     const handleCreateWorkspace = async (name) =>{
         try {
 
-            const createWsRes = await axios.post("http://localhost:8008/create-workspace", { userId: user.id, workspaceName: name})
+            const createWsRes = await axios.post(`${chatURL}/create-workspace`, { userId: user.id, workspaceName: name})
             console.log("Create workspace response: ", createWsRes)
             if(createWsRes.status == 200){
                 console.log(createWsRes.data)
@@ -232,7 +236,7 @@ export const ChatProvider = ({children})=>{
         console.log("user token", user.token)
         console.log("Is private", isPrivate)
         try {
-            const createChannelRes = await axios.post("http://localhost:8008/create-channel", {channelname: name, workspaceId: state.selectedWorkspace.id, creatorId: user.id, isPrivate:isPrivate})
+            const createChannelRes = await axios.post(`${chatURL}/create-channel`, {channelname: name, workspaceId: state.selectedWorkspace.id, creatorId: user.id, isPrivate:isPrivate})
             console.log("Create channel response: ", createChannelRes)
             if(createChannelRes.status === 200){
                 dispatch({type: "NEW_CHANNEL", payload: createChannelRes.data})
@@ -247,7 +251,7 @@ export const ChatProvider = ({children})=>{
 
     const fetchChannelUsers = async (roomId, isPrivate, selectedWorkspaceID) => {
         try {
-            const channelUsersRes = await axios.get(`http://localhost:8008/users/workspace?spaceId=${selectedWorkspaceID}&${isPrivate ? `channelId=${roomId}`: ""}`);
+            const channelUsersRes = await axios.get(`${chatURL}/users/workspace?spaceId=${selectedWorkspaceID}&${isPrivate ? `channelId=${roomId}`: ""}`);
             if(channelUsersRes.status == 200){
                 dispatch({type: "SET_USERS", payload:channelUsersRes.data})
                 return channelUsersRes.data

@@ -5,6 +5,7 @@ import axios from 'axios'
 
 const AuthContext = createContext() // Creating the context that is called Auth context
 
+const userURL = import.meta.env.VITE_USER_API_URL
 
 export const AuthProvider = ({children})=>{
 
@@ -21,14 +22,13 @@ export const AuthProvider = ({children})=>{
 
         // On rendering of application we get the access token from local storage and send it to server to authenticate the user
         const authenticateUser = async ()=>{
-
             const accessToken = localStorage.getItem("lam")
             if(!accessToken){
                 navigate("/")
                 return
             }
 
-            const authResponse = await axios.get(`http://127.0.0.1:5000/api/protected`, 
+            const authResponse = await axios.get(`${userURL}/api/protected`, 
                 {
                     headers :{
                         "Authorization" : `Bearer ${accessToken}`
@@ -53,8 +53,9 @@ export const AuthProvider = ({children})=>{
 
 
     const login = async (email, password)=>{
+        console.log("User url: ", userURL)
         try {
-            const authLoginResponse = await axios.post(`http://127.0.0.1:5000/api/login`,
+            const authLoginResponse = await axios.post(`${userURL}/api/login`,
              {password, email}   
             )
             if(authLoginResponse.status == 200){
@@ -66,11 +67,12 @@ export const AuthProvider = ({children})=>{
                     id: authLoginResponse.data.id
                 })
                 navigate('/@me')
-                //navigate to where user belongs or send it to message or workspace service
+                return { succes: true}
             }
             
         } catch (error) {
-            console.log("Login error: ", error)
+            console.log("Error: ", login)
+            return { succes: true }
         }
     }
 
@@ -78,15 +80,16 @@ export const AuthProvider = ({children})=>{
     //Signup => Automaticaly logins in user when signup complete
     const signup = async (fullname, email, password)=>{
         try {
-            const authSignupResponse = await axios.post(`http://127.0.0.1:5000/api/register`,
+            const authSignupResponse = await axios.post(`${userURL}/api/register`,
                 {fullname, email, password}
             )
 
             if(authSignupResponse.status == 200){
                 login(email, password)
+                return { succes: true }
             }
         } catch (error) {
-            console.log("Error signing up:", error)
+            return { succes: false }
         }
     };
 
@@ -97,7 +100,7 @@ export const AuthProvider = ({children})=>{
     }
 
     return (
-        <AuthContext.Provider value={{user, login, signup, logout}} >
+        <AuthContext.Provider value={{ user, login, signup, logout }} >
             {children}
         </AuthContext.Provider>
     )
