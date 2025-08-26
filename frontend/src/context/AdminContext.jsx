@@ -1,5 +1,5 @@
 import React, {useReducer, useContext, useEffect, createContext} from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 
 
@@ -74,8 +74,8 @@ const AdminContext = createContext()
 export const AdminProvider = ({children}) =>{
 
     // state, dispatch
-    const [state, dispatch] = useReducer(reducer, inititialState)
     const { workspaceId } = useParams()
+    const [state, dispatch] = useReducer(reducer, inititialState)
 
 
     useEffect(()=>{
@@ -125,6 +125,7 @@ export const AdminProvider = ({children}) =>{
 
     // Those without and creator privilieges only leaveing the workspace
         const leaveWorkspace = async (userId) => {
+            console.log("User Id leaving workspace", userId)
             try {
                 const lvRs = await axios.delete(`${chatURL}/leave-workspace`, {
                     params: 
@@ -132,14 +133,17 @@ export const AdminProvider = ({children}) =>{
                         userId: userId,
                         workspaceId: workspaceId
                     }
-                }
-                )
+                })
 
                 if(lvRs.status == 200){
-                    dispatch({type: "LOAD_END"})
+                    return { success: true, message: "Left successfully" }
                 }
 
             } catch (error) {
+                if(error?.status == 401){
+                    return { success: false, message: "Youre the creator of workspace! You cant leave"}
+                }
+                return { success: false, message : "Something went wrong" }
             }
         }
 

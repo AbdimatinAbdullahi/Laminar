@@ -35,13 +35,6 @@ function AdminSetting() {
                 <span className={style.indicator}></span> {/* ACTIVE INDICATOR */}
                 <>User managmenent</>
               </div>
-
-              <div className={`${style.billing} ${selectedTab === "billing" ? style.activeTab : ""}`} onClick={()=>setSelectedTab("billing")} >
-                <ReceiptText size={30} className={style.icon} />
-                <span className={style.indicator}></span> {/* ACTIVE INDICATOR */}
-                Billing
-              </div>
-
             </div>
         </div>
 
@@ -66,9 +59,9 @@ export default AdminSetting
 function General(){
 
   const { state } = useAdminContext()
-  const {leaveWorkspace, deleteWorkspace, workspaceCreator, workspaceData} = state;
-  const [deleteWorskspaceModalModalOpen, setdeleteWorskspaceModalModalOpen] = useState(false)
-  const [leaveModalOpen, setleaveModalOpen] = useState(false)
+  const [ leaveModalOpen, setleaveModalOpen] = useState(false)
+  const { leaveWorkspace, deleteWorkspace, workspaceCreator, workspaceData } = state;
+  const [ deleteWorskspaceModalModalOpen, setdeleteWorskspaceModalModalOpen ] = useState(false)
   return (
     <div className={style.generalContainer}>
 
@@ -85,8 +78,7 @@ function General(){
           <button onClick={()=> setleaveModalOpen(true)} >Leave  workspace</button>
         </div>
 
-        {leaveModalOpen && <Leaveworkspace onClose={()=> setleaveModalOpen(false)} />}
-
+          {leaveModalOpen && <Leaveworkspace onClose={()=> setleaveModalOpen(false)} />}
 
           <div className={style.name}>
               <h3>Creator Name</h3>

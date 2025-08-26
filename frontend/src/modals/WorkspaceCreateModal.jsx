@@ -4,14 +4,17 @@ import { X } from 'lucide-react'
 import { useChat } from '../context/ChatContext'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router'
 
 function WorkspaceCreateModal() {
 
   const { user } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [invitedToken, setinvitedToken] = useState("")
+  const navigate = useNavigate()
+  const [ loading, setLoading] = useState(false)
+  const [ invitedToken, setinvitedToken] = useState("")
   const [ newWorkspaceName, setnewWorkspaceName ] = useState("")
-  const [createWorkspaceError, setCreateWorkspaceError] = useState("")
+  const [ createWorkspaceError, setCreateWorkspaceError] = useState("")
+  const [ joinedSuccess, setJoinedSuccess ] = useState("")
 
   const { handleCloseWorkspaceCreateModal, handleCreateWorkspace } = useChat()
   
@@ -37,8 +40,11 @@ function WorkspaceCreateModal() {
     try {
       const acceptResponse = await axios.post(`http://localhost:8008/join-workspace` , { email: user.email, token: token})
       if(acceptResponse.status == 200){
-        alert("Youve joined workspace")
-        handleCloseWorkspaceCreateModal()
+        setJoinedSuccess("Youve joined workspace")
+        setTimeout(()=>{
+          handleCloseWorkspaceCreateModal()
+          window.location.reload()
+        }, 3000)
       }
     } catch (error) {
       if(error.status == 403){
@@ -64,6 +70,13 @@ function WorkspaceCreateModal() {
             <div className={style.createWorkspaceError}>
               <span> {createWorkspaceError} </span>
               <X onClick={()=>setCreateWorkspaceError("")} color='red' />
+            </div>
+          )}
+
+          { joinedSuccess != "" && (
+            <div className={style.joinedSuccess}>
+              <span>{joinedSuccess}</span>
+              <X onClick={()=>setJoinedSuccess("")} /> 
             </div>
           )}
 
