@@ -64,3 +64,13 @@ Laminar is microservices based architecture(Two):
    - Response: `ValidateUser(user_id, channel_id)`
 
 
+
+
+
+
+# 🎥 Upcoming Project: Audio, Video & Screen Sharing Platform
+
+          As a natural extension to **Laminar**, a second project is in development — a high-performance audio/video
+          communication platform built entirely in **Go**, using a custom **SFU (Selective Forwarding Unit)** architecture.
+
+🔗 **Link to the project will be added below once it's live.**
